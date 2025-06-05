@@ -126,11 +126,14 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 // ================= MIDDLEWARE =================
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+app.UseSwagger();
+app.UseSwaggerUI();
+
 app.UseDatabaseKeepAlive();
 app.UseCors("AllowAll");
 app.UseAuthentication();
