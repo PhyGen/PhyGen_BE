@@ -133,7 +133,11 @@ var app = builder.Build();
 //}
 app.UseSwagger();
 app.UseSwaggerUI();
-
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "PhyGen API V1");
+    c.RoutePrefix = "backend/swagger";
+});
 app.UseDatabaseKeepAlive();
 app.UseCors("AllowAll");
 app.UseAuthentication();
