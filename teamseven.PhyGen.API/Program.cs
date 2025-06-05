@@ -83,7 +83,8 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader();
     });
 });
-builder.WebHost.UseUrls("https://0.0.0.0:5000");
+// ================= THAY ĐỔI ĐỂ LẮNG NGHE HTTP =================
+builder.WebHost.UseUrls("http://0.0.0.0:5000"); // Đã thay đổi từ https sang http
 
 // ================= CẤU HÌNH SWAGGER =================
 builder.Services.AddEndpointsApiExplorer();
@@ -126,18 +127,13 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 // ================= MIDDLEWARE =================
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
 app.UseSwagger();
-app.UseSwaggerUI();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "PhyGen API V1");
-    c.RoutePrefix = "backend/swagger";
+    c.RoutePrefix = "backend/swagger"; // Giữ nguyên để khớp với proxy Nginx
 });
+
 app.UseDatabaseKeepAlive();
 app.UseCors("AllowAll");
 app.UseAuthentication();
@@ -145,7 +141,6 @@ app.UseAuthorization();
 app.MapControllers();
 app.Run();
 
-// ================= AUTHENTICATION CONFIGURATION FUNCTION =================
 // ================= AUTHENTICATION CONFIGURATION FUNCTION =================
 void ConfigureAuthentication(IServiceCollection services, IConfiguration config)
 {
@@ -190,20 +185,20 @@ void ConfigureAuthentication(IServiceCollection services, IConfiguration config)
     });
 
 
-// Google Authentication
-services.AddAuthentication()
-    .AddGoogle(googleOptions =>
-    {
-        googleOptions.ClientId = config["Authentication:Google:ClientId"];
-        googleOptions.ClientSecret = config["Authentication:Google:ClientSecret"];
-        googleOptions.SaveTokens = true;
-        googleOptions.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
-        googleOptions.ClaimActions.MapJsonKey("urn:google:locale", "locale", "string");
-    });
+    // Google Authentication
+    services.AddAuthentication()
+        .AddGoogle(googleOptions =>
+        {
+            googleOptions.ClientId = config["Authentication:Google:ClientId"];
+            googleOptions.ClientSecret = config["Authentication:Google:ClientSecret"];
+            googleOptions.SaveTokens = true;
+            googleOptions.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
+            googleOptions.ClaimActions.MapJsonKey("urn:google:locale", "locale", "string");
+        });
 
 
-// Authorization policies
-services.AddAuthorization(options =>
+    // Authorization policies
+    services.AddAuthorization(options =>
     {
         options.AddPolicy("DeliveringStaffPolicy", policy => policy.RequireClaim(ClaimTypes.Role, "Admin"));
         options.AddPolicy("SaleStaffPolicy", policy => policy.RequireClaim(ClaimTypes.Role, "staff"));
