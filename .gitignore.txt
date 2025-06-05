@@ -1,0 +1,74 @@
+# ASP.NET Core
+bin/
+obj/
+*.csproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Tệp cấu hình nhạy cảm
+appsettings.json
+appsettings.*.json
+
+# Tệp tạm thời và rác
+*.tmp
+*.temp
+*.bak
+*.cache
+*.log
+*.swp
+*~
+
+# Thư mục tạm thời
+[Tt]emp/
+[Tt]mp/
+
+# NuGet Packages
+*.nupkg
+packages/
+*.nuget.props
+*.nuget.targets
+
+# Visual Studio
+.vs/
+.vscode/
+.idea/
+*.sln.iml
+
+# Tệp được tạo tự động
+*.generated.cs
+*.g.cs
+*.g.i.cs
+
+# Thư mục xuất bản
+publish/
+
+# Tệp môi trường phát triển
+.env
+*.local
+
+# Tệp khóa
+*.lock.json
+
+# Tệp cấu hình của Azure
+*.azurePipelines.yml
+*.azure-pipelines.yml
+
+# Tệp build và artifact
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rchive/
+[Bb]uild/
+
+# Tệp kiểm thử
+[Tt]est[Rr]esult*/
+[Cc]overage*/
+*.trx
+*.xml
+
+# Tệp cá nhân hóa
+Thumbs.db
+.DS_Store
