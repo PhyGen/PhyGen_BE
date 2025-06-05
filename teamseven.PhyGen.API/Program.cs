@@ -131,7 +131,7 @@ app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "PhyGen API V1");
-    c.RoutePrefix = "backend/swagger"; // Giữ nguyên để khớp với proxy Nginx
+    c.RoutePrefix = string.Empty;
 });
 
 app.UseDatabaseKeepAlive();
