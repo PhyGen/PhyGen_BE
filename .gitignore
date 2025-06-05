@@ -1,3 +1,7 @@
+teamseven.PhyGen.API/bin/Debug/net8.0/appsettings.json
+teamseven.PhyGen.API/appsettings.json
+teamseven.PhyGen.API/appsettings.Development.json
+teamseven.PhyGen.API/bin/Debug/net8.0/appsettings.Development.json
 # ASP.NET Core
 bin/
 obj/
