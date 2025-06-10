@@ -130,7 +130,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "PhyGen API V1");
+    c.SwaggerEndpoint("/backend/swagger/v1/swagger.json", "PhyGen API V1");
     c.RoutePrefix = "swagger";
 });
 
