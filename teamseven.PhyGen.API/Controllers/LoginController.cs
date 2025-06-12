@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using teamseven.PhyGen.Services.Interfaces;
-using teamseven.PhyGen.Services.Object;
 using Swashbuckle.AspNetCore.Annotations;
+using TeamSeven.PhyGen.Services.Object.Requests;
 
 namespace teamseven.PhyGen.API.Controllers
 {
@@ -17,8 +16,6 @@ namespace teamseven.PhyGen.API.Controllers
             _loginService = loginService ?? throw new ArgumentNullException(nameof(loginService));
         }
 
-
-
         /// <summary>
         /// Authenticate user and return JWT token.
         /// </summary>
@@ -27,34 +24,15 @@ namespace teamseven.PhyGen.API.Controllers
             Summary = "User login",
             Description = "Authenticates the user and returns a JWT token."
         )]
-        public async Task<IActionResult> Login([FromBody] teamseven.PhyGen.Services.Object.Requests.LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            if (request == null)
+            var (isSuccess, resultOrError) = await _loginService.ValidateUserAsync(request);
+            if (!isSuccess)
             {
-                return BadRequest(new { message = "Request body cannot be null." });
+                return Unauthorized(new { message = resultOrError });
             }
 
-            try
-            {
-                string token = await _loginService.ValidateUserAsync(request.Email, request.Password);
-                return Ok(new { token, message = "Login successful." });
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "User not found." });
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Unauthorized(new { message = "Invalid password." });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Internal server error.", error = ex.Message });
-            }
+            return Ok(new { token = resultOrError, message = "Login successful" });
         }
     }
 }

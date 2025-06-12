@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using teamseven.PhyGen.Repository.Models;
+﻿using Microsoft.AspNetCore.Identity.Data;
 using teamseven.PhyGen.Repository.Repository;
 using teamseven.PhyGen.Services.Interfaces;
+using TeamSeven.PhyGen.Services.Object.Requests;
 
 namespace teamseven.PhyGen.Services.Services.Authentication
 {
@@ -26,50 +21,62 @@ namespace teamseven.PhyGen.Services.Services.Authentication
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
         }
 
-        public async Task<string> ValidateUserAsync(string email, string password)
+        public async Task<(bool IsSuccess, string ResultOrError)> ValidateUserAsync(TeamSeven.PhyGen.Services.Object.Requests.LoginRequest loginRequest)
         {
-            // Validation đầu vào
-            ValidateInput(email, password);
+            // Lấy user từ repository
+            var user = await _userRepository.GetByEmailAsync(loginRequest.Email);
+            if (user == null)
+            {
+                return (false, "Wrong email or password");
+            }
 
-            // Kiểm tra user tồn tại
-            User user = await ValidateUserExistence(email);
+            // So sánh mật khẩu hash
+            if (!_passwordEncryptionService.VerifyPassword(loginRequest.Password, user.PasswordHash))
+            {
+                return (false, "Invalid password");
+            }
 
-            // Kiểm tra mật khẩu
-            ValidatePassword(password, user.EncryptedPassword);
+            // Kiểm tra tài khoản có bị vô hiệu hóa không
+            if (!user.IsActive.GetValueOrDefault())
+            {
+                return (false, "This account is disabled");
+            }
 
             // Tạo và trả về token
-            return _authService.GenerateJwtToken(user);
+            var token = _authService.GenerateJwtToken(user);
+            return (true, token);
         }
 
-        private void ValidateInput(string email, string password)
-        {
-            if (string.IsNullOrEmpty(email))
-                throw new ArgumentException("Email is required.", nameof(email));
-            if (string.IsNullOrEmpty(password))
-                throw new ArgumentException("Password is required.", nameof(password));
-            if (!IsValidEmail(email))
-                throw new ArgumentException("Invalid email format.", nameof(email));
-        }
 
-        private async Task<User> ValidateUserExistence(string email)
-        {
-            User user = await _userRepository.GetByEmailAsync(email);
-            if (user == null)
-                throw new KeyNotFoundException("User not found.");
-            return user;
-        }
+        //private void ValidateInput(string email, string password)
+        //{
+        //    if (string.IsNullOrEmpty(email))
+        //        throw new ArgumentException("Email is required.", nameof(email));
+        //    if (string.IsNullOrEmpty(password))
+        //        throw new ArgumentException("Password is required.", nameof(password));
+        //    if (!IsValidEmail(email))
+        //        throw new ArgumentException("Invalid email format.", nameof(email));
+        //}
 
-        private void ValidatePassword(string password, string hashedPassword)
-        {
-            if (!_passwordEncryptionService.VerifyPassword(password, hashedPassword))
-                throw new UnauthorizedAccessException("Invalid password.");
-        }
+        //private async Task<User> ValidateUserExistence(string email)
+        //{
+        //    User user = await _userRepository.GetByEmailAsync(email);
+        //    if (user == null)
+        //        throw new KeyNotFoundException("User not found.");
+        //    return user;
+        //}
 
-        private bool IsValidEmail(string email)
-        {
-            // Regex đơn giản để kiểm tra định dạng email
-            string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-            return Regex.IsMatch(email, pattern);
-        }
+        //private void ValidatePassword(string password, string hashedPassword)
+        //{
+        //    if (!_passwordEncryptionService.VerifyPassword(password, hashedPassword))
+        //        throw new UnauthorizedAccessException("Invalid password.");
+        //}
+
+        //private bool IsValidEmail(string email)
+        //{
+        //    // Regex đơn giản để kiểm tra định dạng email
+        //    string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+        //    return Regex.IsMatch(email, pattern);
+        //}
     }
 }

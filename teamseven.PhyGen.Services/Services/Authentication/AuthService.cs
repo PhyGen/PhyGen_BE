@@ -15,7 +15,6 @@ namespace teamseven.PhyGen.Services.Services.Authentication
     public class AuthService : IAuthService
     {
         private readonly IConfiguration _configuration;
-        private readonly IImageService _imageService;
         public AuthService(IConfiguration configuration)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -110,15 +109,14 @@ namespace teamseven.PhyGen.Services.Services.Authentication
             var jwtKey = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT key is missing in configuration.");
 
             var claims = new List<Claim>
-    {
-        new Claim(JwtRegisteredClaimNames.Sub, user.Email), // Email
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Unique ID
-        new Claim("userid", user.UserId.ToString()), // User ID
-        new Claim("fullname", user.FullName), // Full Name
-        new Claim("email", user.Email), // Email
-        new Claim("img", user.ImageId?.ToString() ?? "null"), // Image 
-        new Claim("role", user.Role ?? "User") // Role (Admin, User...)
-    };
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("id", user.Id.ToString()),
+                new Claim("fullname", user.FullName ?? string.Empty),
+                new Claim("email", user.Email),
+                new Claim("roleId", user.RoleId.ToString())
+            };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

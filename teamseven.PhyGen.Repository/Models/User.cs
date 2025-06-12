@@ -7,25 +7,51 @@ namespace teamseven.PhyGen.Repository.Models;
 
 public partial class User
 {
-    public int UserId { get; set; }
+    public long Id { get; set; }
 
     public string Email { get; set; }
 
-    public string EncryptedPassword { get; set; }
-
-    public string Role { get; set; }
-
-    public string LoginType { get; set; }
-
-    public string FacebookId { get; set; }
-
-    public string GoogleId { get; set; }
+    public string PasswordHash { get; set; }
 
     public string FullName { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
+    public string AvatarUrl { get; set; }
+
+    public string PhoneNumber { get; set; }
+
+    public int RoleId { get; set; }
 
     public bool? IsActive { get; set; }
 
-    public int? ImageId { get; set; }
+    public DateTime? EmailVerifiedAt { get; set; }
+
+    public DateTime? LastLoginAt { get; set; }
+
+    public DateTime CreatedAt { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
+
+    public long? UpdatedBy { get; set; }
+
+    public virtual ICollection<ExamHistory> ExamHistories { get; set; } = new List<ExamHistory>();
+
+    public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
+
+    public virtual ICollection<User> InverseUpdatedByNavigation { get; set; } = new List<User>();
+
+    public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
+
+    public virtual Role Role { get; set; }
+
+    public virtual ICollection<SolutionReport> SolutionReports { get; set; } = new List<SolutionReport>();
+
+    public virtual ICollection<Solution> Solutions { get; set; } = new List<Solution>();
+
+    public virtual ICollection<SubscriptionType> SubscriptionTypes { get; set; } = new List<SubscriptionType>();
+
+    public virtual User UpdatedByNavigation { get; set; }
+
+    public virtual ICollection<UserSocialProvider> UserSocialProviders { get; set; } = new List<UserSocialProvider>();
+
+    public virtual ICollection<UserSubscription> UserSubscriptions { get; set; } = new List<UserSubscription>();
 }

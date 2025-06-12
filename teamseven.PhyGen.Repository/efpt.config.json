@@ -3,7 +3,7 @@
    "ContextClassName": "teamseven.phygen.dbContext",
    "ContextNamespace": null,
    "FilterSchemas": false,
-   "IncludeConnectionString": true,
+   "IncludeConnectionString": false,
    "ModelNamespace": null,
    "OutputContextPath": null,
    "OutputPath": "Models",
@@ -15,11 +15,71 @@
    "T4TemplatePath": null,
    "Tables": [
       {
-         "Name": "[dbo].[Images]",
+         "Name": "[dbo].[Chapter]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Exam]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ExamHistory]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ExamQuestion]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ExamType]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Grade]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Lesson]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Question]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Roles]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Semester]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Solution]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SolutionReport]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SolutionsLink]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SubscriptionType]",
          "ObjectType": 0
       },
       {
          "Name": "[dbo].[Users]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[UserSocialProviders]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[UserSubscriptions]",
          "ObjectType": 0
       }
    ],

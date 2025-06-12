@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using teamseven.PhyGen.Repository.Basic;
@@ -15,7 +14,6 @@ using teamseven.PhyGen.Services.Interfaces;
 using teamseven.PhyGen.Services.Services;
 using teamseven.PhyGen.Repository.Repository;
 using teamseven.PhyGen.Services.Services.Authentication;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,11 +37,9 @@ ConfigureAuthentication(builder.Services, builder.Configuration);
 
 // 📌 Repository Layer (Scoped)
 builder.Services.AddScoped(typeof(GenericRepository<>));
-builder.Services.AddScoped<ImageRepository>();
 builder.Services.AddScoped<UserRepository>();
 
 // 📌 Service Layer (Scoped)
-builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
@@ -51,6 +47,7 @@ builder.Services.AddScoped<IRegisterService, RegisterService>();
 // 📌 Utility & Helper Services
 builder.Services.AddTransient<IEmailService, EmailService>(); // Email service (Transient)
 builder.Services.AddSingleton<IPasswordEncryptionService, PasswordEncryptionService>(); // Encryption (Singleton)
+
 
 
 // 2. Singleton: Một instance duy nhất cho cả ứng dụng, dùng cho dịch vụ không trạng thái

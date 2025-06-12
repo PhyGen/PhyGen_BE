@@ -54,27 +54,46 @@ namespace teamseven.PhyGen.Repository.Repository
             await UpdateAsync(user);
         }
 
-        public async Task<int> ChangeUserRoleAsync(int userId, string role)
+       private static readonly Dictionary<string, int> ValidRoles = new()
         {
-            //var validRoles = new[] { "student", "staff", "admin" };
-            //if (!validRoles.Contains(role))
-            //{
-            //    throw new ArgumentException($"Invalid role. Role must be one of: {string.Join(", ", validRoles)}.");
-            //}
+            { "user", 1 },
+            { "admin", 2 },
+            { "staff", 3 }
+        };
 
-            // Lấy user
+        public async Task<(bool IsSuccess, string ResultOrError)> ChangeUserRoleAsync(int userId, string role)
+        {
+            // check hop le
+            if (string.IsNullOrEmpty(role) || !ValidRoles.ContainsKey(role.ToLower()))
+            {
+                return (false, $"Invalid role. Role must be one of: {string.Join(", ", ValidRoles.Keys)}");
+            }
+
+            // get user
             var user = await GetByIdAsync(userId);
             if (user == null)
             {
-                throw new KeyNotFoundException($"User with ID {userId} not found.");
+                return (false, $"User with ID {userId} not found");
             }
 
-            if (user.Role == role)
+            // check user role
+            int newRoleId = ValidRoles[role.ToLower()];
+            if (user.RoleId == newRoleId)
             {
-                return 0; 
+                return (true, "User already has this role");
             }
-            user.Role = role;
-            return await UpdateAsync(user);
+
+            // update new role
+            user.RoleId = newRoleId;
+            user.UpdatedAt = DateTime.UtcNow;
+            int affectedRows = await UpdateAsync(user);
+
+            if (affectedRows == 0)
+            {
+                return (false, "Failed to update user role");
+            }
+
+            return (true, "Role changed successfully");
         }
 
     }

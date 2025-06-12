@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 using teamseven.PhyGen.Services.Interfaces;
 using teamseven.PhyGen.Services.Object.Requests;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace teamseven.PhyGen.API.Controllers
 {
@@ -23,60 +23,44 @@ namespace teamseven.PhyGen.API.Controllers
             _loginService = loginService ?? throw new ArgumentNullException(nameof(loginService));
         }
 
+        /// <summary>
+        /// Register a new user and return JWT token.
+        /// </summary>
         [HttpPost]
         [SwaggerOperation(
-            Summary = "đăng kí",
-            Description = "đăng kí tài khoản"
+            Summary = "User registration",
+            Description = "Registers a new user, authenticates, and returns a JWT token."
         )]
         public async Task<IActionResult> SignUp([FromBody] RegisterRequest request)
         {
-            if (request == null)
+            // Validation cơ bản bởi Data Annotations và [ApiController]
+            var (isRegisterSuccess, registerError) = await _registerService.RegisterUserAsync(request);
+            if (!isRegisterSuccess)
             {
-                return BadRequest(new { message = "Request body cannot be null." });
+                return BadRequest(new { message = registerError });
             }
 
-            try
-            {
-                await _registerService.RegisterUserAsync(request.Email, request.Password, request.FullName);
-
-                var user = await _loginService.ValidateUserAsync(request.Email, request.Password);
-                if (user == null)
-                {
-                    return StatusCode(500, new { message = "Failed to retrieve user after registration." });
-                }
-
-                //// Tạo token JWT
-                //string token = _authService.GenerateJwtToken(user);
-                return Ok("Registration successfully");
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (InvalidOperationException ex)
-            {
-
-                return Conflict(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                // Xử lý lỗi khác (database, email service, v.v.)
-                return StatusCode(500, new { message = "Internal server error.", error = ex.Message });
-            }
+            return Ok(new {message = "Registration successful. Please login again." });
         }
-        [HttpPost("/change-role")]
-        public async Task<IActionResult> ChangeRole(int userId, string roleName, string supersecretkey)
+
+        /// <summary>
+        /// Change user role.
+        /// </summary>
+        [HttpPost("change-role")]
+        [SwaggerOperation(
+            Summary = "Change user role",
+            Description = "Changes the role of a user if the correct secret key is provided."
+        )]
+        public async Task<IActionResult> ChangeRole([FromBody] ChangeRoleRequest request)
         {
-            try
+            // Validation cơ bản bởi Data Annotations và [ApiController]
+            var (isSuccess, resultOrError) = await _registerService.ChangeUserRoleAsync(request.UserId, request.RoleName, request.SecretKey);
+            if (!isSuccess)
             {
-                await _registerService.ChangeUserRole(userId, roleName, supersecretkey);
-                return NoContent();
+                return BadRequest(new { message = resultOrError });
             }
-            catch (Exception e)
-            {
-                return StatusCode(500, new { error = e.Message });
-            }
+
+            return Ok(new { message = resultOrError });
         }
     }
-
 }
