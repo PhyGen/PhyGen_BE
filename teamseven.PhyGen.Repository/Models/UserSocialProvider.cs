@@ -7,9 +7,9 @@ namespace teamseven.PhyGen.Repository.Models;
 
 public partial class UserSocialProvider
 {
-    public long Id { get; set; }
+    public int Id { get; set; }
 
-    public long UserId { get; set; }
+    public int UserId { get; set; }
 
     public string ProviderName { get; set; }
 

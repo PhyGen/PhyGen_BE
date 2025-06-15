@@ -11,7 +11,7 @@ public partial class ExamHistory
 
     public int ExamId { get; set; }
 
-    public long ActionByUserId { get; set; }
+    public int ActionByUserId { get; set; }
 
     public string Action { get; set; }
 

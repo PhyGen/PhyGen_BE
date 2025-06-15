@@ -15,7 +15,7 @@ public partial class Exam
 
     public int ExamTypeId { get; set; }
 
-    public long CreatedByUserId { get; set; }
+    public int CreatedByUserId { get; set; }
 
     public bool IsDeleted { get; set; }
 

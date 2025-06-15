@@ -23,7 +23,7 @@ public partial class SubscriptionType
 
     public DateTime? UpdatedAt { get; set; }
 
-    public long? UpdatedBy { get; set; }
+    public int? UpdatedBy { get; set; }
 
     public virtual User UpdatedByNavigation { get; set; }
 

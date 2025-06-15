@@ -17,7 +17,7 @@ public partial class Question
 
     public int LessonId { get; set; }
 
-    public long CreatedByUserId { get; set; }
+    public int CreatedByUserId { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

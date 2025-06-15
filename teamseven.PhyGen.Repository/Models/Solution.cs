@@ -13,7 +13,7 @@ public partial class Solution
 
     public string Content { get; set; }
 
-    public long CreatedByUserId { get; set; }
+    public int CreatedByUserId { get; set; }
 
     public bool IsApproved { get; set; }
 

@@ -7,7 +7,7 @@ namespace teamseven.PhyGen.Repository.Models;
 
 public partial class User
 {
-    public long Id { get; set; }
+    public int Id { get; set; }
 
     public string Email { get; set; }
 
@@ -31,7 +31,7 @@ public partial class User
 
     public DateTime? UpdatedAt { get; set; }
 
-    public long? UpdatedBy { get; set; }
+    public int? UpdatedBy { get; set; }
 
     public virtual ICollection<ExamHistory> ExamHistories { get; set; } = new List<ExamHistory>();
 

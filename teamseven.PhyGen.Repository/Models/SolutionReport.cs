@@ -11,7 +11,7 @@ public partial class SolutionReport
 
     public int SolutionId { get; set; }
 
-    public long ReportedByUserId { get; set; }
+    public int ReportedByUserId { get; set; }
 
     public string Reason { get; set; }
 
