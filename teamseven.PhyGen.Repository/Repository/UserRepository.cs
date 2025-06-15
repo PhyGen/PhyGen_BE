@@ -95,6 +95,9 @@ namespace teamseven.PhyGen.Repository.Repository
 
             return (true, "Role changed successfully");
         }
-
+        public void Dispose()
+        {
+            _context?.Dispose();
+        }
     }
 }

@@ -8,5 +8,7 @@ namespace teamseven.PhyGen.Services.Interfaces
         //Task<(bool IsSuccess, string AccessToken, string ErrorMessage)> RefreshAccessTokenAsync(string refreshToken);
         bool IsUserInRole(string authHeader, string role);
         bool IsUserInPlan(string token, string plan);
+
+        Task<string> GoogleLoginAsync(string idToken);
     }
 }

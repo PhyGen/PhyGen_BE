@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Google.Apis.Auth;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using teamseven.PhyGen.Repository;
 using teamseven.PhyGen.Repository.Models;
 using teamseven.PhyGen.Services.Interfaces;
 
@@ -14,9 +16,12 @@ namespace teamseven.PhyGen.Services.Services.Authentication
 {
     public class AuthService : IAuthService
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
-        public AuthService(IConfiguration configuration)
+
+        public AuthService(IUnitOfWork unitOfWork, IConfiguration configuration)
         {
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
         private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
@@ -131,6 +136,75 @@ namespace teamseven.PhyGen.Services.Services.Authentication
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        public async Task<string> GoogleLoginAsync(string idToken)
+        {
+            try
+            {
+                // Xác thực token với Google
+                var settings = new GoogleJsonWebSignature.ValidationSettings
+                {
+                    Audience = new[] { _configuration["Authentication:Google:ClientId"] }
+                };
+                var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
 
+                // Kiểm tra UserSocialProvider
+                var socialProvider = await _unitOfWork.UserSocialProvider.GetByProviderAsync("Google", payload.Subject);
+                User user;
+
+                if (socialProvider == null)
+                {
+                    // Kiểm tra người dùng bằng email
+                    user = await _unitOfWork.UserRepository.GetByEmailAsync(payload.Email);
+                    if (user == null)
+                    {
+                        // Tạo người dùng mới
+                        user = new User
+                        {
+                            Email = payload.Email,
+                            FullName = payload.Name,
+                            AvatarUrl = payload.Picture,
+                            RoleId = 1, // Giả sử RoleId mặc định
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        };
+                        await _unitOfWork.UserRepository.AddUserAsync(user);
+                    }
+
+                    // Tạo UserSocialProvider
+                    var userSocialProvider = new UserSocialProvider
+                    {
+                        UserId = user.Id,
+                        ProviderName = "Google",
+                        ProviderId = payload.Subject,
+                        Email = payload.Email,
+                        ProfileUrl = payload.Picture,
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    await _unitOfWork.UserSocialProvider.AddAsync(userSocialProvider);
+
+                    // Lưu thay đổi với giao dịch
+                    await _unitOfWork.SaveChangesWithTransactionAsync();
+                }
+                else
+                {
+                    // Người dùng hiện có
+                    user = await _unitOfWork.UserRepository.GetByEmailAsync(payload.Email);
+                    if (user == null)
+                    {
+                        throw new Exception("User not found.");
+                    }
+                    user.LastLoginAt = DateTime.UtcNow;
+                    await _unitOfWork.UserRepository.UpdateAsync(user);
+                    await _unitOfWork.SaveChangesWithTransactionAsync();
+                }
+
+                // Tạo JWT
+                return GenerateJwtToken(user);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi xác thực Google.", ex);
+            }
+        }
     }
 }
