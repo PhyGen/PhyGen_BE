@@ -3,12 +3,12 @@ using teamseven.PhyGen.Services.Interfaces;
 
 namespace teamseven.PhyGen.Services.Services.ServiceProvider
 {
-    public class ServiceProvider : IServiceProvider
+    public class ServiceProviders : IServiceProviders
     {
         private readonly IAuthService _authService;
         private readonly ILoginService _loginService;
 
-        public ServiceProvider(IAuthService authService, ILoginService loginService)
+        public ServiceProviders(IAuthService authService, ILoginService loginService)
         {
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
             _loginService = loginService ?? throw new ArgumentNullException(nameof(loginService));

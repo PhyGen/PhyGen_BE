@@ -7,7 +7,7 @@ using teamseven.PhyGen.Services.Interfaces;
 
 namespace teamseven.PhyGen.Services.Services.ServiceProvider
 {
-    public interface IServiceProvider
+    public interface IServiceProviders
     {
         IAuthService AuthService { get; }
         ILoginService LoginService { get; }

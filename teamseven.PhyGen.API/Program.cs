@@ -15,6 +15,7 @@ using teamseven.PhyGen.Repository.Repository;
 using teamseven.PhyGen.Services.Services.Authentication;
 using teamseven.PhyGen.Repository;
 using teamseven.PhyGen.Repository.Repository.Interfaces;
+using teamseven.PhyGen.Services.Services.ServiceProvider;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,7 +47,7 @@ builder.Services.AddScoped<IUserSocialProviderRepository,UserSocialProviderRepos
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
-builder.Services.AddScoped<IServiceProvider, ServiceProvider>();
+builder.Services.AddScoped<IServiceProviders, ServiceProviders>();
 // 📌 Utility & Helper Services
 builder.Services.AddTransient<IEmailService, EmailService>(); // Email service (Transient)
 builder.Services.AddSingleton<IPasswordEncryptionService, PasswordEncryptionService>(); // Encryption (Singleton)

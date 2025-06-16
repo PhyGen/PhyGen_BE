@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using teamseven.PhyGen.Services.Object.Requests;
 using teamseven.PhyGen.Services.Services.ServiceProvider;
 using TeamSeven.PhyGen.Services.Object.Requests;
-using IServiceProvider = teamseven.PhyGen.Services.Services.ServiceProvider.IServiceProvider;
+using IServiceProviders = teamseven.PhyGen.Services.Services.ServiceProvider.IServiceProviders;
 
 namespace teamseven.PhyGen.API.Controllers
 {
@@ -13,9 +13,9 @@ namespace teamseven.PhyGen.API.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceProviders _serviceProvider;
 
-        public LoginController(IServiceProvider serviceProvider)
+        public LoginController(IServiceProviders serviceProvider)
         {
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
