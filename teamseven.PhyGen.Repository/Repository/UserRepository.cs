@@ -25,6 +25,23 @@ namespace teamseven.PhyGen.Repository.Repository
 
         public async Task<User?> GetByEmailAsync(string email) { return await _context.Users.FirstOrDefaultAsync(u => u.Email == email); }
 
+        public async Task<IEnumerable<User>?> GetAllUserAsync()
+        {
+            return await GetAllAsync();
+        }
+
+        public async Task<int> SetLoginDateTime(int id)
+        {
+            var user = await GetByIdAsync(id) ?? throw new ArgumentNullException(nameof(id));
+
+            user.LastLoginAt = DateTime.UtcNow;
+
+            Console.WriteLine("LOG: UPDATED LOGIN DATE TIME " + user.LastLoginAt + user.Id);
+
+            return await _context.SaveChangesAsync();
+
+        }
+
         public async Task AddUserAsync(User user)
         {
             _context.Users.Add(user);

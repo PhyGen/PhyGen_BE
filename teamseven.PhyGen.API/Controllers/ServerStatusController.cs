@@ -5,12 +5,12 @@ namespace teamseven.PhyGen.API.Controllers
 {
     [ApiController] // Chỉ ra rằng đây là một API Controller
     [Route("api/[controller]")] // Định nghĩa route cơ bản cho Controller này. Ví dụ: /api/testserver
-    public class TestServerController : ControllerBase // Kế thừa từ ControllerBase cho các API Controller
+    public class ServerStatusController : ControllerBase // Kế thừa từ ControllerBase cho các API Controller
     {
-        private readonly ILogger<TestServerController> _logger;
+        private readonly ILogger<ServerStatusController> _logger;
 
         // Constructor (tùy chọn: dùng để inject logger)
-        public TestServerController(ILogger<TestServerController> logger)
+        public ServerStatusController(ILogger<ServerStatusController> logger)
         {
             _logger = logger;
         }

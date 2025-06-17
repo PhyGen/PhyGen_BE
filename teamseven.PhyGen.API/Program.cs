@@ -16,6 +16,7 @@ using teamseven.PhyGen.Services.Services.Authentication;
 using teamseven.PhyGen.Repository;
 using teamseven.PhyGen.Repository.Repository.Interfaces;
 using teamseven.PhyGen.Services.Services.ServiceProvider;
+using teamseven.PhyGen.Services.Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,7 @@ builder.Services.AddScoped<IUserSocialProviderRepository,UserSocialProviderRepos
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IServiceProviders, ServiceProviders>();
 // 📌 Utility & Helper Services
 builder.Services.AddTransient<IEmailService, EmailService>(); // Email service (Transient)
@@ -201,7 +203,7 @@ void ConfigureAuthentication(IServiceCollection services, IConfiguration config)
     // Authorization policies
     services.AddAuthorization(options =>
     {
-        options.AddPolicy("DeliveringStaffPolicy", policy => policy.RequireClaim(ClaimTypes.Role, "Admin"));
-        options.AddPolicy("SaleStaffPolicy", policy => policy.RequireClaim(ClaimTypes.Role, "staff"));
+        options.AddPolicy("DeliveringStaffPolicy", policy => policy.RequireClaim("roleId", "2"));
+        options.AddPolicy("SaleStaffPolicy", policy => policy.RequireClaim(ClaimTypes.Role, "3"));
     });
 }

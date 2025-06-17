@@ -42,8 +42,14 @@ namespace teamseven.PhyGen.Services.Services.Authentication
                 return (false, "This account is disabled");
             }
 
+
+            //set last login
+            await _userRepository.SetLoginDateTime(user.Id);
+
+
             // Tạo và trả về token
             var token = _authService.GenerateJwtToken(user);
+
             return (true, token);
         }
 
