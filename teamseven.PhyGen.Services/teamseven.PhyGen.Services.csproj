@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Object\Responses\Class1.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.24.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
     <PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
@@ -22,10 +26,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\teamseven.PhyGen.Repository\teamseven.PhyGen.Repository.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Object\Responses\" />
   </ItemGroup>
 
 </Project>

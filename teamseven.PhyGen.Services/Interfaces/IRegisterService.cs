@@ -6,5 +6,6 @@ namespace teamseven.PhyGen.Services.Interfaces
     {
         Task<(bool IsSuccess, string ResultOrError)> RegisterUserAsync(RegisterRequest request);
         Task<(bool IsSuccess, string ResultOrError)> ChangeUserRoleAsync(int userId, string roleName, string providedSecretKey);
+
     }
 }
