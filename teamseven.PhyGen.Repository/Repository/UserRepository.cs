@@ -49,21 +49,22 @@ namespace teamseven.PhyGen.Repository.Repository
         }
         //public async Task DeleteUserAsync(int id) { var user = await _context.Users.FindAsync(id); if (user != null) { _context.Users.Remove(user); await _context.SaveChangesAsync(); } }
 
-        public async Task<int> SoftDeleteUserAsync(int id)
+        public async Task<User> SoftDeleteUserAsync(int id)
         {
-            var user = await GetByIdAsync(id); 
+            var user = await GetByIdAsync(id);
             if (user == null)
             {
                 throw new KeyNotFoundException($"User with ID {id} not found.");
             }
-            else
-            if ((bool)!user.IsActive)
+
+            if (!user.IsActive.HasValue || !user.IsActive.Value)
             {
-                return 0; 
+                return null; // User đã bị xóa mềm
             }
 
             user.IsActive = false;
-            return await UpdateAsync(user);
+            user.UpdatedAt = DateTime.UtcNow;
+            return user; // Trả về user đã thay đổi
         }
 
         public async Task UpdateUserAsync(User user)

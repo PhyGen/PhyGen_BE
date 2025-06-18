@@ -13,6 +13,7 @@ namespace teamseven.PhyGen.Services.Services.UserService
     {
         Task <IEnumerable<User>> GetUsersAsync ();
         Task <UserResponse> GetUserByIdAsync (int id);
+        Task<UserResponse> SoftDeleteUserAsync(int id);
     }
     public class UserService : IUserService
     {
@@ -42,6 +43,32 @@ namespace teamseven.PhyGen.Services.Services.UserService
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt
             };   
+        }
+        public async Task<UserResponse> SoftDeleteUserAsync(int id)
+        {
+            var user = await _unitOfWork.UserRepository.SoftDeleteUserAsync(id);
+            if (user == null)
+            {
+                throw new InvalidOperationException("User is already soft deleted or not found.");
+            }
+
+            // Lưu thay đổi với transaction
+            await _unitOfWork.SaveChangesWithTransactionAsync();
+
+            return new UserResponse
+            {
+                Id = user.Id,
+                Email = user.Email,
+                FullName = user.FullName,
+                AvatarUrl = user.AvatarUrl,
+                PhoneNumber = user.PhoneNumber,
+                RoleId = user.RoleId,
+                IsActive = user.IsActive ?? false,
+                EmailVerifiedAt = user.EmailVerifiedAt,
+                LastLoginAt = user.LastLoginAt,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt
+            };
         }
 
         //

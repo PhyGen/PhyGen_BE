@@ -45,6 +45,33 @@ namespace teamseven.PhyGen.API.Controllers
                 return StatusCode(500, "An error occurred while retrieving the user");
             }
         }
+        [HttpPut("{id}/soft-delete")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SoftDeleteUser(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Invalid user ID");
+            }
+
+            try
+            {
+                var userDto = await _serviceProvider.UserService.SoftDeleteUserAsync(id);
+                return Ok(userDto);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while soft deleting the user");
+            }
+        }
 
     }
 }
