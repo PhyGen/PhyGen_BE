@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using teamseven.PhyGen.Services.Object.Requests;
+
+using teamseven.PhyGen.Services.Services.UserService;
 using teamseven.PhyGen.Services.Services.ServiceProvider;
 
 namespace teamseven.PhyGen.API.Controllers
@@ -72,6 +75,33 @@ namespace teamseven.PhyGen.API.Controllers
                 return StatusCode(500, "An error occurred while soft deleting the user");
             }
         }
+        [HttpPut("{id}/profile")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateUserProfile(int id, [FromBody] UpdateUserProfileRequest request)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Invalid user ID");
+            }
 
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var (isSuccess, resultOrError) = await _serviceProvider.UserService.UpdateUserProfileAsync(id, request);
+                if (!isSuccess)
+                {
+                    return BadRequest(resultOrError);
+                }
+                return Ok(new { Message = resultOrError });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
     }
 }

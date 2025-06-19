@@ -72,8 +72,12 @@ namespace teamseven.PhyGen.Repository.Repository
         {
             await UpdateAsync(user);
         }
+        public void Update(User user)
+        {
+            _context.Users.Update(user);
+        }
 
-       private static readonly Dictionary<string, int> ValidRoles = new()
+        private static readonly Dictionary<string, int> ValidRoles = new()
         {
             { "user", 1 },
             { "admin", 2 },
