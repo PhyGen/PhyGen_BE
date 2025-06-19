@@ -52,8 +52,11 @@ namespace teamseven.PhyGen.Services.Services.UserService
                 throw new InvalidOperationException("User is already soft deleted or not found.");
             }
 
-            // Lưu thay đổi với transaction
-            await _unitOfWork.SaveChangesWithTransactionAsync();
+           int affectedRows = await _unitOfWork.SaveChangesWithTransactionAsync();
+            if (affectedRows == 0)
+            {
+                throw new InvalidOperationException("Failed to update user status in database");
+            }
 
             return new UserResponse
             {

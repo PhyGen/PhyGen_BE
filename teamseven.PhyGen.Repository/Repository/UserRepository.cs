@@ -59,12 +59,13 @@ namespace teamseven.PhyGen.Repository.Repository
 
             if (!user.IsActive.HasValue || !user.IsActive.Value)
             {
-                return null; // User đã bị xóa mềm
+                return null; 
             }
 
             user.IsActive = false;
             user.UpdatedAt = DateTime.UtcNow;
-            return user; // Trả về user đã thay đổi
+            _context.Users.Update(user);
+            return user; 
         }
 
         public async Task UpdateUserAsync(User user)
