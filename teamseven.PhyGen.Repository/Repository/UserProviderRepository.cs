@@ -21,7 +21,7 @@ namespace teamseven.PhyGen.Repository.Repository
         public async Task<UserSocialProvider> GetByProviderAsync(string providerName, string providerId)
         {
             return await _context.UserSocialProviders
-                .FirstOrDefaultAsync(usp => usp.ProviderName == providerName && usp.ProviderId == providerId);
+                .FirstOrDefaultAsync(usp => usp.ProviderName == providerName && usp.ProviderId == providerId) ?? new UserSocialProvider();
         }
 
         public async Task AddAsync(UserSocialProvider userSocialProvider)

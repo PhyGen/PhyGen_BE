@@ -149,24 +149,32 @@ public partial class teamsevenphygendbContext : DbContext
 
         modelBuilder.Entity<ExamQuestion>(entity =>
         {
-            entity.HasKey(e => new { e.ExamId, e.QuestionId }).HasName("PK__ExamQues__F9A9273DA3FC8A76");
+            // Set ExamId as the sole primary key
+            entity.HasKey(e => e.ExamId)
+                  .HasName("PK__ExamQuestion__ExamId");
 
+            // Map to ExamQuestion table
             entity.ToTable("ExamQuestion");
 
-            entity.HasIndex(e => e.ExamId, "IX_ExamQuestion_ExamId");
-
+            // Index on QuestionId for query performance
             entity.HasIndex(e => e.QuestionId, "IX_ExamQuestion_QuestionId");
 
-            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            // Set default value for CreatedAt
+            entity.Property(e => e.CreatedAt)
+                  .HasDefaultValueSql("(getdate())");
 
-            entity.HasOne(d => d.Exam).WithMany(p => p.ExamQuestions)
-                .HasForeignKey(d => d.ExamId)
-                .HasConstraintName("FK__ExamQuest__ExamI__47A6A41B");
+            // One-to-one relationship with Exam
+            entity.HasOne(d => d.Exam)
+                  .WithOne() // No navigation property on Exam side, or specify if needed
+                  .HasForeignKey<ExamQuestion>(d => d.ExamId)
+                  .HasConstraintName("FK__ExamQuest__ExamI__47A6A41B");
 
-            entity.HasOne(d => d.Question).WithMany(p => p.ExamQuestions)
-                .HasForeignKey(d => d.QuestionId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ExamQuest__Quest__489AC854");
+            // One-to-many relationship with Question
+            entity.HasOne(d => d.Question)
+                  .WithMany(p => p.ExamQuestions)
+                  .HasForeignKey(d => d.QuestionId)
+                  .OnDelete(DeleteBehavior.ClientSetNull)
+                  .HasConstraintName("FK__ExamQuest__Quest__489AC854");
         });
 
         modelBuilder.Entity<ExamType>(entity =>
