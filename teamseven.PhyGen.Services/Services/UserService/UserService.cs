@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using teamseven.PhyGen.Repository;
 using teamseven.PhyGen.Repository.Models;
+using teamseven.PhyGen.Repository.Repository;
 using teamseven.PhyGen.Services.Object.Requests;
 using teamseven.PhyGen.Services.Object.Responses;
+using teamseven.PhyGen.Services.Requests;
 
 namespace teamseven.PhyGen.Services.Services.UserService
 {
@@ -118,6 +120,40 @@ namespace teamseven.PhyGen.Services.Services.UserService
             return (true, "User profile updated successfully");
         }
         //
+        public async Task<(bool IsSuccess, string ResultOrError)> CreateQuestionAsync(CreateQuestionRequest request)
+        {
+            // Kiểm tra Lesson tồn tại
+            var lesson = await _unitOfWork.UserRepository.GetByIdAsync(request.LessonId);
+            if (lesson == null)
+            {
+                return (false, $"Lesson with ID {request.LessonId} not found");
+            }
+            // Kiểm tra User (người tạo) tồn tại
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(request.CreatedByUserId) as User;
+            if (user == null)
+            {
+                return (false, $"User with ID {request.CreatedByUserId} not found");
+            }
+            // Tạo mới Question
+            var question = new Question
+            {
+                Content = request.Content,
+                QuestionSource = request.QuestionSource,
+                DifficultyLevel = request.DifficultyLevel,
+                LessonId = request.LessonId,
+                CreatedByUserId = request.CreatedByUserId,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            // Lưu vào database
+            _unitOfWork.UserRepository.AddQuestionAsync(question);
+
+            // Gửi email chào mừng
+            //SendWelcomeMail(user);
+
+            return (true, "User registered successfully");
+        }
         public async Task<IEnumerable<User>> GetUsersAsync()
         {
            return await _unitOfWork.UserRepository.GetAllUserAsync() ?? throw new KeyNotFoundException("No user in database");

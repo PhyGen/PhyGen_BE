@@ -47,6 +47,11 @@ namespace teamseven.PhyGen.Repository.Repository
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
         }
+        public async Task AddQuestionAsync(Question question)
+        {
+            _context.Questions.Add(question);
+            await _context.SaveChangesAsync();
+        }
         //public async Task DeleteUserAsync(int id) { var user = await _context.Users.FindAsync(id); if (user != null) { _context.Users.Remove(user); await _context.SaveChangesAsync(); } }
 
         public async Task<User> SoftDeleteUserAsync(int id)
