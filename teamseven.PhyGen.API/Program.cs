@@ -38,17 +38,17 @@ ConfigureAuthentication(builder.Services, builder.Configuration);
 //    - Lý do: Đảm bảo nhất quán trong request, an toàn với nhiều request đồng thời
 
 
-// 📌 Repository Layer (Scoped)
-builder.Services.AddScoped(typeof(GenericRepository<>));
-builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IUserSocialProviderRepository,UserSocialProviderRepository>();
+//// 📌 Repository Layer (Scoped)
+//builder.Services.AddScoped(typeof(GenericRepository<>));
+//builder.Services.AddScoped<UserRepository>();
+//builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+//builder.Services.AddScoped<IUserSocialProviderRepository,UserSocialProviderRepository>();
 
 // 📌 Service Layer (Scoped)
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ILoginService, LoginService>();
-builder.Services.AddScoped<IRegisterService, RegisterService>();
-builder.Services.AddScoped<IUserService, UserService>();
+//builder.Services.AddScoped<IAuthService, AuthService>();
+//builder.Services.AddScoped<ILoginService, LoginService>();
+//builder.Services.AddScoped<IRegisterService, RegisterService>();
+//builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IServiceProviders, ServiceProviders>();
 // 📌 Utility & Helper Services
 builder.Services.AddTransient<IEmailService, EmailService>(); // Email service (Transient)

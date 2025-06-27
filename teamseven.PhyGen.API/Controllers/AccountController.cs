@@ -26,6 +26,9 @@ namespace teamseven.PhyGen.API.Controllers
             return Ok(await _serviceProvider.UserService.GetUsersAsync());
 
         }
+
+
+
         [HttpGet("{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetUserById(int id)

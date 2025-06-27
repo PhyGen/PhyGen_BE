@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\teamseven.PhyGen.Repository\teamseven.PhyGen.Repository.csproj" />
     <ProjectReference Include="..\teamseven.PhyGen.Services\teamseven.PhyGen.Services.csproj" />
   </ItemGroup>
 
