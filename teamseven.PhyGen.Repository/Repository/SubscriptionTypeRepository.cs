@@ -10,11 +10,11 @@ namespace teamseven.PhyGen.Repository.Repository
 {
     public class SubscriptionTypeRepository: GenericRepository<SubscriptionType>
     {
-        private readonly UserRepository _userRepository;
+        private readonly teamsevenphygendbContext _context;
 
-        public SubscriptionTypeRepository(UserRepository userRepository)
+        public SubscriptionTypeRepository(teamsevenphygendbContext context)
         {
-            _userRepository = userRepository;
+            _context = context;
         }
 
         public async Task<int> CreateSubcritionTypeAsync(SubscriptionType subcritionType)
