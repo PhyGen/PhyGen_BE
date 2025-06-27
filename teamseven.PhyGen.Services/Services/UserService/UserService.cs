@@ -18,7 +18,11 @@ namespace teamseven.PhyGen.Services.Services.UserService
         Task <UserResponse> GetUserByIdAsync (int id);
         Task<UserResponse> SoftDeleteUserAsync(int id);
         Task<(bool IsSuccess, string ResultOrError)> UpdateUserProfileAsync(int id, UpdateUserProfileRequest request);
+
+        Task<string?> GetOnlyUserNameById(int id);
     }
+
+
     public class UserService : IUserService
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -147,7 +151,7 @@ namespace teamseven.PhyGen.Services.Services.UserService
             };
 
             // Lưu vào database
-            _unitOfWork.UserRepository.AddQuestionAsync(question);
+          await  _unitOfWork.UserRepository.AddQuestionAsync(question);
 
             // Gửi email chào mừng
             //SendWelcomeMail(user);
@@ -159,5 +163,11 @@ namespace teamseven.PhyGen.Services.Services.UserService
            return await _unitOfWork.UserRepository.GetAllUserAsync() ?? throw new KeyNotFoundException("No user in database");
         }
 
+        public async Task<string?> GetOnlyUserNameById(int id)
+        {
+            //do user id ton tai, ko can validation vi day la ham phu
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(id);
+            return user.FullName;
+        }
     }
 }

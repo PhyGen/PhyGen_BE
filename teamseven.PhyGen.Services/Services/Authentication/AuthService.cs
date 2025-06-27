@@ -148,7 +148,7 @@ namespace teamseven.PhyGen.Services.Services.Authentication
                 var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
 
                 // Kiểm tra UserSocialProvider
-                var socialProvider = await _unitOfWork.UserSocialProvider.GetByProviderAsync("Google", payload.Subject);
+                var socialProvider = await _unitOfWork.UserSocialProviderRepository.GetByProviderAsync("Google", payload.Subject);
                 User user;
 
                 if (socialProvider == null)
@@ -180,7 +180,7 @@ namespace teamseven.PhyGen.Services.Services.Authentication
                         ProfileUrl = payload.Picture,
                         CreatedAt = DateTime.UtcNow
                     };
-                    await _unitOfWork.UserSocialProvider.AddAsync(userSocialProvider);
+                    await _unitOfWork.UserSocialProviderRepository.AddAsync(userSocialProvider);
 
                     // Lưu thay đổi với giao dịch
                     await _unitOfWork.SaveChangesWithTransactionAsync();
