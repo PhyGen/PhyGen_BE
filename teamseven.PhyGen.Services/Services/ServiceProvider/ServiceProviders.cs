@@ -2,6 +2,7 @@
 using teamseven.PhyGen.Services.Interfaces;
 using teamseven.PhyGen.Services.Services.ChapterService;
 using teamseven.PhyGen.Services.Services.GradeService;
+using teamseven.PhyGen.Services.Services.LessonService;
 using teamseven.PhyGen.Services.Services.QuestionsService;
 using teamseven.PhyGen.Services.Services.SemesterService;
 using teamseven.PhyGen.Services.Services.UserService;
@@ -16,10 +17,11 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         private readonly IQuestionsService _questionsService;
         private readonly IGradeService _gradeService;
         private readonly IChapterService _chapterService;
-        public readonly ISemesterService _semesterService;
+        private readonly ISemesterService _semesterService;
+        private readonly ILessonService _lessonService;
 
         public ServiceProviders(IAuthService authService, ILoginService loginService, IUserService userService, IQuestionsService questions,
-            IGradeService gradeService, IChapterService chapterService, ISemesterService semesterService)
+            IGradeService gradeService, IChapterService chapterService, ISemesterService semesterService, ILessonService lessonService)
         {
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
             _loginService = loginService ?? throw new ArgumentNullException(nameof(loginService));
@@ -28,6 +30,7 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
             _gradeService = gradeService ?? throw new ArgumentNullException(nameof(gradeService));
             _chapterService = chapterService ?? throw new ArgumentNullException(nameof(chapterService));
             _semesterService = semesterService ?? throw new ArgumentNullException(nameof(semesterService));
+            _lessonService = lessonService ?? throw new ArgumentNullException(nameof(lessonService));
         }
 
         public IAuthService AuthService => _authService;
@@ -42,5 +45,7 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         public IChapterService ChapterService => _chapterService;
 
         public ISemesterService SemesterService => _semesterService;
+
+        public ILessonService LessonService => _lessonService;
     }
 }
