@@ -47,7 +47,7 @@ namespace teamseven.PhyGen.Repository.Repository
 
         public async Task<int> UpdateAsync(UserSubscription subscription)
         {
-            return await base.UpdateAsync(subscription);
+            return await UpdateAsync(subscription);
         }
 
         public async Task<bool> DeleteAsync(UserSubscription subscription)

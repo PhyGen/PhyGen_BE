@@ -9,6 +9,7 @@ using teamseven.PhyGen.Services.Services.GradeService;
 using teamseven.PhyGen.Services.Services.QuestionsService;
 using teamseven.PhyGen.Services.Services.SemesterService;
 using teamseven.PhyGen.Services.Services.UserService;
+using teamseven.PhyGen.Services.Services.UserSocialProviderService;
 
 namespace teamseven.PhyGen.Services.Services.ServiceProvider
 {
@@ -20,11 +21,5 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         IUserService UserService { get; }
 
         IQuestionsService QuestionsService { get; }
-
-        IGradeService GradeService { get; }
-
-        IChapterService ChapterService { get; }
-
-        ISemesterService SemesterService { get; }
     }
 }
