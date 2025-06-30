@@ -4,7 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using teamseven.PhyGen.Services.Interfaces;
+using teamseven.PhyGen.Services.Services.ChapterService;
+using teamseven.PhyGen.Services.Services.GradeService;
 using teamseven.PhyGen.Services.Services.QuestionsService;
+using teamseven.PhyGen.Services.Services.SemesterService;
 using teamseven.PhyGen.Services.Services.UserService;
 using teamseven.PhyGen.Services.Services.UserSocialProviderService;
 
@@ -18,7 +21,5 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         IUserService UserService { get; }
 
         IQuestionsService QuestionsService { get; }
-
-        IUserSocialProviderService UserSocialProviderService { get; }
     }
 }
