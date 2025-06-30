@@ -18,17 +18,19 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         private readonly IChapterService _chapterService;
         public readonly ISemesterService _semesterService;
 
-        public ServiceProviders(IAuthService authService, ILoginService loginService, IUserService userService, IQuestionsService questions,
-            IGradeService gradeService, IChapterService chapterService, ISemesterService semesterService)
-        {
-            _authService = authService ?? throw new ArgumentNullException(nameof(authService));
-            _loginService = loginService ?? throw new ArgumentNullException(nameof(loginService));
-            _userService = userService ?? throw new ArgumentNullException( nameof(userService));
-            _questionsService = questions ?? throw new ArgumentNullException(nameof(_questionsService));
-            _gradeService = gradeService ?? throw new ArgumentNullException(nameof(gradeService));
-            _chapterService = chapterService ?? throw new ArgumentNullException(nameof(chapterService));
-            _semesterService = semesterService ?? throw new ArgumentNullException(nameof(semesterService));
-        }
+        //public ServiceProviders(IAuthService authService, ILoginService loginService, IUserService userService, IQuestionsService questions,
+        //    IGradeService gradeService, IChapterService chapterService, ISemesterService semesterService)
+        //{
+        //    _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+        //    _loginService = loginService ?? throw new ArgumentNullException(nameof(loginService));
+        //    _userService = userService ?? throw new ArgumentNullException( nameof(userService));
+        //    _questionsService = questions ?? throw new ArgumentNullException(nameof(_questionsService));
+        //    _gradeService = gradeService ?? throw new ArgumentNullException(nameof(gradeService));
+        //    _chapterService = chapterService ?? throw new ArgumentNullException(nameof(chapterService));
+        //    _semesterService = semesterService ?? throw new ArgumentNullException(nameof(semesterService));
+        //}
+
+        public ServiceProviders() { }
 
         public IAuthService AuthService => _authService;
         public ILoginService LoginService => _loginService;

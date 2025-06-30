@@ -8,14 +8,11 @@ namespace teamseven.PhyGen.Repository.Models;
 
 public partial class ExamQuestion
 {
-    [Key]
+    public int Id { get; set; } 
     public int ExamId { get; set; }
-
     public int QuestionId { get; set; }
-
+    public int Order { get; set; }
     public DateTime CreatedAt { get; set; }
-
     public virtual Exam Exam { get; set; }
-
     public virtual Question Question { get; set; }
 }
