@@ -8,26 +8,14 @@ namespace teamseven.PhyGen.Repository.Models;
 public partial class Question
 {
     public int Id { get; set; }
-
     public string Content { get; set; }
-
     public string QuestionSource { get; set; }
-
     public string DifficultyLevel { get; set; }
-
     public int LessonId { get; set; }
-
     public int CreatedByUserId { get; set; }
-
     public DateTime CreatedAt { get; set; }
-
     public DateTime? UpdatedAt { get; set; }
-
     public virtual User CreatedByUser { get; set; }
-
-    public virtual ICollection<ExamQuestion> ExamQuestions { get; set; } = new List<ExamQuestion>();
-
     public virtual Lesson Lesson { get; set; }
-
     public virtual ICollection<Solution> Solutions { get; set; } = new List<Solution>();
 }

@@ -8,28 +8,16 @@ namespace teamseven.PhyGen.Repository.Models;
 public partial class Exam
 {
     public int Id { get; set; }
-
     public string Name { get; set; }
-
     public int LessonId { get; set; }
-
     public int ExamTypeId { get; set; }
-
     public int CreatedByUserId { get; set; }
-
     public bool IsDeleted { get; set; }
-
     public DateTime CreatedAt { get; set; }
-
     public DateTime? UpdatedAt { get; set; }
-
     public virtual User CreatedByUser { get; set; }
-
     public virtual ICollection<ExamHistory> ExamHistories { get; set; } = new List<ExamHistory>();
-
     public virtual ICollection<ExamQuestion> ExamQuestions { get; set; } = new List<ExamQuestion>();
-
     public virtual ExamType ExamType { get; set; }
-
     public virtual Lesson Lesson { get; set; }
 }

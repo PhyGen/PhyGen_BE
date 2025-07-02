@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using teamseven.PhyGen.Repository.Dtos;
 using teamseven.PhyGen.Services.Extensions;
 using teamseven.PhyGen.Services.Object.Requests;
+using teamseven.PhyGen.Services.Object.Responses;
 using teamseven.PhyGen.Services.Services.ServiceProvider;
 
 namespace teamseven.PhyGen.Controllers
@@ -22,6 +24,35 @@ namespace teamseven.PhyGen.Controllers
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
+        }
+
+        [HttpGet]
+        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [SwaggerOperation(Summary = "Get all semesters")]
+        [SwaggerResponse(200, "Semesters retrieved successfully.", typeof(IEnumerable<SemesterDataResponse>))]
+        [SwaggerResponse(500, "Internal server error.")]
+        public async Task<IActionResult> GetAllSemesters()
+        {
+            var semesters = await _serviceProvider.SemesterService.GetAllSemesterAsync();
+            return Ok(semesters);
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [SwaggerOperation(Summary = "Get semester by ID")]
+        [SwaggerResponse(200, "Semester found.", typeof(SemesterDataResponse))]
+        [SwaggerResponse(404, "Semester not found.")]
+        public async Task<IActionResult> GetSemesterById(int id)
+        {
+            try
+            {
+                var semester = await _serviceProvider.SemesterService.GetSemesterByIdAsync(id);
+                return Ok(semester);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
         }
 
         [HttpPost]
@@ -52,6 +83,34 @@ namespace teamseven.PhyGen.Controllers
             {
                 _logger.LogError(ex, "Unexpected error: {Message}", ex.Message);
                 return StatusCode(500, new { Message = "An error occurred while creating the semester." });
+            }
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [SwaggerOperation(Summary = "Update semester")]
+        [SwaggerResponse(200, "Semester updated.")]
+        [SwaggerResponse(400, "Invalid request.")]
+        [SwaggerResponse(404, "Semester not found.")]
+        [SwaggerResponse(500, "Internal server error.")]
+        public async Task<IActionResult> UpdateSemester(int id, [FromBody] SemesterDataRequest request)
+        {
+            if (!ModelState.IsValid || id != request.Id)
+                return BadRequest(new { Message = "Invalid data or ID mismatch." });
+
+            try
+            {
+                await _serviceProvider.SemesterService.UpdateSemesterAsync(request);
+                return Ok(new { Message = "Semester updated successfully." });
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating semester.");
+                return StatusCode(500, new { Message = "Internal server error." });
             }
         }
 
