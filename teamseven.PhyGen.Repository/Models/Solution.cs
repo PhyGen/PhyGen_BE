@@ -13,6 +13,8 @@ public partial class Solution
 
     public string Content { get; set; }
 
+    public string Explanation { get; set; }
+
     public int CreatedByUserId { get; set; }
 
     public bool IsApproved { get; set; }

@@ -27,7 +27,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Get all grades", Description = "Retrieves all grades.")]
         [SwaggerResponse(200, "Grades retrieved successfully.", typeof(IEnumerable<GradeDataResponse>))]
         public async Task<IActionResult> GetAllGrades()
@@ -37,7 +37,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Get grade by ID", Description = "Retrieves a grade by its ID.")]
         [SwaggerResponse(200, "Grade found.", typeof(GradeDataResponse))]
         [SwaggerResponse(404, "Grade not found.")]

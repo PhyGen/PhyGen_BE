@@ -202,6 +202,7 @@ public partial class teamsevenphygendbContext : DbContext
             entity.HasIndex(e => e.IsDeleted, "IX_Solution_IsDeleted");
             entity.HasIndex(e => e.QuestionId, "IX_Solution_QuestionId");
             entity.Property(e => e.Content).IsRequired();
+            entity.Property(e => e.Explanation);
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.IsApproved).HasDefaultValue(true);
             entity.HasOne(d => d.CreatedByUser).WithMany(p => p.Solutions)

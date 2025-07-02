@@ -109,6 +109,7 @@ namespace teamseven.PhyGen.Controllers
         /// </summary>
         /// <param name="id">The question ID.</param>
         /// <returns>The question details.</returns>
+        [AllowAnonymous]
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get a question by ID", Description = "Retrieves a question by its ID (placeholder).")]
         [SwaggerResponse(200, "Question found.", typeof(QuestionDataResponse))]

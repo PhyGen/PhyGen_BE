@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using teamseven.PhyGen.Repository.Models;
 
@@ -11,9 +12,11 @@ using teamseven.PhyGen.Repository.Models;
 namespace teamseven.PhyGen.Repository.Migrations
 {
     [DbContext(typeof(teamsevenphygendbContext))]
-    partial class teamsevenphygendbContextModelSnapshot : ModelSnapshot
+    [Migration("20250702141235_MinusChangesSolution")]
+    partial class MinusChangesSolution
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

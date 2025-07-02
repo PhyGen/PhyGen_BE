@@ -27,7 +27,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Get all semesters")]
         [SwaggerResponse(200, "Semesters retrieved successfully.", typeof(IEnumerable<SemesterDataResponse>))]
         [SwaggerResponse(500, "Internal server error.")]
@@ -38,7 +38,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Get semester by ID")]
         [SwaggerResponse(200, "Semester found.", typeof(SemesterDataResponse))]
         [SwaggerResponse(404, "Semester not found.")]

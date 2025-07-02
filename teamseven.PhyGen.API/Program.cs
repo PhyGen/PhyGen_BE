@@ -18,6 +18,7 @@ using teamseven.PhyGen.Services.Services;
 using teamseven.PhyGen.Services.Services.Authentication;
 using teamseven.PhyGen.Services.Services.ChapterService;
 using teamseven.PhyGen.Services.Services.GradeService;
+using teamseven.PhyGen.Services.Services.LessonService;
 using teamseven.PhyGen.Services.Services.QuestionsService;
 using teamseven.PhyGen.Services.Services.SemesterService;
 using teamseven.PhyGen.Services.Services.ServiceProvider;
@@ -66,6 +67,7 @@ builder.Services.AddScoped<ISolutionLinkService, SolutionLinkService>();
 builder.Services.AddScoped<ISolutionReportService, SolutionReportService>();
 builder.Services.AddScoped<ISubscriptionTypeService, SubscriptionTypeService>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
+builder.Services.AddScoped<ILessonService, LessonService>();
 builder.Services.AddScoped<IServiceProviders, ServiceProviders>();
 
 // 📌 Utility & Helper Services

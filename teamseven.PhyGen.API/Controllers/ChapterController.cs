@@ -27,7 +27,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Get all chapters")]
         [SwaggerResponse(200, "Chapters retrieved successfully.", typeof(IEnumerable<ChapterDataResponse>))]
         [SwaggerResponse(500, "Internal server error.", typeof(ProblemDetails))]
@@ -38,7 +38,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Get chapter by ID")]
         [SwaggerResponse(200, "Chapter found.", typeof(ChapterDataResponse))]
         [SwaggerResponse(404, "Chapter not found.")]
