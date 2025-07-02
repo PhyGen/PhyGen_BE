@@ -49,5 +49,11 @@ namespace teamseven.PhyGen.Repository.Repository
         {
             return await base.GetByIdAsync(examId);
         }
+
+        public async Task<ExamQuestion?> GetByExamAndQuestionIdAsync(int examId, int questionId)
+        {
+            return await _context.ExamQuestions
+                .FirstOrDefaultAsync(eq => eq.ExamId == examId && eq.QuestionId == questionId);
+        }
     }
 }

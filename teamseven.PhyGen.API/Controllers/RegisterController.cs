@@ -2,6 +2,7 @@
 using teamseven.PhyGen.Services.Interfaces;
 using teamseven.PhyGen.Services.Object.Requests;
 using Swashbuckle.AspNetCore.Annotations;
+using teamseven.PhyGen.Services.Services.ServiceProvider;
 
 namespace teamseven.PhyGen.API.Controllers
 {
@@ -9,18 +10,12 @@ namespace teamseven.PhyGen.API.Controllers
     [ApiController]
     public class RegisterController : ControllerBase
     {
-        private readonly IRegisterService _registerService;
-        private readonly IAuthService _authService;
-        private readonly ILoginService _loginService;
+       private readonly IServiceProviders _serviceProvider;
 
         public RegisterController(
-            IRegisterService registerService,
-            IAuthService authService,
-            ILoginService loginService)
+            IServiceProviders serviceProvider )
         {
-            _registerService = registerService ?? throw new ArgumentNullException(nameof(registerService));
-            _authService = authService ?? throw new ArgumentNullException(nameof(authService));
-            _loginService = loginService ?? throw new ArgumentNullException(nameof(loginService));
+            _serviceProvider = serviceProvider;
         }
 
         /// <summary>
@@ -33,16 +28,24 @@ namespace teamseven.PhyGen.API.Controllers
         )]
         public async Task<IActionResult> SignUp([FromBody] RegisterRequest request)
         {
-            // Validation cơ bản bởi Data Annotations và [ApiController]
-            var (isRegisterSuccess, registerError) = await _registerService.RegisterUserAsync(request);
+            if (request == null)
+            {
+                return BadRequest(new { message = "Request body is invalid or missing." });
+            }
+
+            //if (_serviceProvider?.RegisterService == null)
+            //{
+            //    return StatusCode(500, new { message = "Service provider or RegisterService is not initialized." });
+            //}
+
+            var (isRegisterSuccess, registerError) = await _serviceProvider.RegisterService.RegisterUserAsync(request);
             if (!isRegisterSuccess)
             {
                 return BadRequest(new { message = registerError });
             }
 
-            return Ok(new {message = "Registration successful. Please login again." });
+            return Ok(new { message = "Registration successful. Please login again." });
         }
-
         /// <summary>
         /// Change user role.
         /// </summary>
@@ -54,7 +57,7 @@ namespace teamseven.PhyGen.API.Controllers
         public async Task<IActionResult> ChangeRole([FromBody] ChangeRoleRequest request)
         {
             // Validation cơ bản bởi Data Annotations và [ApiController]
-            var (isSuccess, resultOrError) = await _registerService.ChangeUserRoleAsync(request.UserId, request.RoleName, request.SecretKey);
+            var (isSuccess, resultOrError) = await _serviceProvider.RegisterService.ChangeUserRoleAsync(request.UserId, request.RoleName, request.SecretKey);
             if (!isSuccess)
             {
                 return BadRequest(new { message = resultOrError });

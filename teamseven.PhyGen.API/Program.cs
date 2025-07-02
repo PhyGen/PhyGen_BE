@@ -1,23 +1,31 @@
 ﻿using Azure.Storage.Blobs;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using System.Text;
+using teamseven.PhyGen.Repository;
 using teamseven.PhyGen.Repository.Basic;
 using teamseven.PhyGen.Repository.Models;
+using teamseven.PhyGen.Repository.Repository;
+using teamseven.PhyGen.Repository.Repository.Interfaces;
+using teamseven.PhyGen.Services.Extensions;
 using teamseven.PhyGen.Services.Interfaces;
 using teamseven.PhyGen.Services.Services;
-using teamseven.PhyGen.Repository.Repository;
 using teamseven.PhyGen.Services.Services.Authentication;
-using teamseven.PhyGen.Repository;
-using teamseven.PhyGen.Repository.Repository.Interfaces;
+using teamseven.PhyGen.Services.Services.ChapterService;
+using teamseven.PhyGen.Services.Services.GradeService;
+using teamseven.PhyGen.Services.Services.QuestionsService;
+using teamseven.PhyGen.Services.Services.SemesterService;
 using teamseven.PhyGen.Services.Services.ServiceProvider;
+using teamseven.PhyGen.Services.Services.SolutionLinkService;
+using teamseven.PhyGen.Services.Services.SolutionReportService;
+using teamseven.PhyGen.Services.Services.SubscriptionTypeService;
 using teamseven.PhyGen.Services.Services.UserService;
-
+using teamseven.PhyGen.Services.Services.UserSocialProviderService;
 var builder = WebApplication.CreateBuilder(args);
 
 // ================= CẤU HÌNH DB =================
@@ -38,23 +46,32 @@ ConfigureAuthentication(builder.Services, builder.Configuration);
 //    - Lý do: Đảm bảo nhất quán trong request, an toàn với nhiều request đồng thời
 
 
-//// 📌 Repository Layer (Scoped)
-//builder.Services.AddScoped(typeof(GenericRepository<>));
-//builder.Services.AddScoped<UserRepository>();
-//builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-//builder.Services.AddScoped<IUserSocialProviderRepository,UserSocialProviderRepository>();
+// ================= ĐĂNG KÝ REPOSITORY & SERVICE =================
+// 📌 Repository Layer (Scoped)
+builder.Services.AddScoped(typeof(GenericRepository<>));
+builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IUserSocialProviderRepository, UserSocialProviderRepository>();
 
 // 📌 Service Layer (Scoped)
-//builder.Services.AddScoped<IAuthService, AuthService>();
-//builder.Services.AddScoped<ILoginService, LoginService>();
-//builder.Services.AddScoped<IRegisterService, RegisterService>();
-//builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IQuestionsService, QuestionsService>();
+builder.Services.AddScoped<ISemesterService, SemesterService>();
+builder.Services.AddScoped<IUserSocialProviderService, UserSocialProviderService>();
+builder.Services.AddScoped<IChapterService, ChapterService>();
+builder.Services.AddScoped<IGradeService, GradeService>();
+builder.Services.AddScoped<ISolutionLinkService, SolutionLinkService>();
+builder.Services.AddScoped<ISolutionReportService, SolutionReportService>();
+builder.Services.AddScoped<ISubscriptionTypeService, SubscriptionTypeService>();
+builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<IServiceProviders, ServiceProviders>();
+
 // 📌 Utility & Helper Services
 builder.Services.AddTransient<IEmailService, EmailService>(); // Email service (Transient)
 builder.Services.AddSingleton<IPasswordEncryptionService, PasswordEncryptionService>(); // Encryption (Singleton)
-
-
+builder.Services.AddSingleton<IIdObfuscator, IdObfuscator>();
 
 // 2. Singleton: Một instance duy nhất cho cả ứng dụng, dùng cho dịch vụ không trạng thái
 //    - Ví dụ: Cấu hình, logger toàn cục

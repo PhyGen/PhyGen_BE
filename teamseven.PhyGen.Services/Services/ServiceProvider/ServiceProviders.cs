@@ -1,5 +1,4 @@
-﻿using System;
-using teamseven.PhyGen.Services.Interfaces;
+﻿using teamseven.PhyGen.Services.Interfaces;
 using teamseven.PhyGen.Services.Services.ChapterService;
 using teamseven.PhyGen.Services.Services.GradeService;
 using teamseven.PhyGen.Services.Services.QuestionsService;
@@ -25,33 +24,36 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         private readonly ISolutionLinkService _solutionLinkService;
         private readonly ISolutionReportService _solutionReportService;
         private readonly ISubscriptionTypeService _subscriptionTypeService;
+        private readonly IRegisterService _registerService;
 
-        //public ServiceProviders(
-        //    IAuthService authService,
-        //    ILoginService loginService,
-        //    IUserService userService,
-        //    IQuestionsService questionsService,
-        //    ISemesterService semesterService,
-        //    IUserSocialProviderService userSocialProviderService,
-        //    IChapterService chapterService,
-        //    IGradeService gradeService,
-        //    ISolutionLinkService solutionLinkService,
-        //    ISolutionReportService solutionReportService,
-        //    ISubscriptionTypeService subscriptionTypeService)
-        //{
-        //    _authService = authService ?? throw new ArgumentNullException(nameof(authService));
-        //    _loginService = loginService ?? throw new ArgumentNullException(nameof(loginService));
-        //    _userService = userService ?? throw new ArgumentNullException(nameof(userService));
-        //    _questionsService = questionsService ?? throw new ArgumentNullException(nameof(questionsService));
-        //    _semesterService = semesterService ?? throw new ArgumentNullException(nameof(semesterService));
-        //    _userSocialProviderService = userSocialProviderService ?? throw new ArgumentNullException(nameof(userSocialProviderService));
-        //    _chapterService = chapterService ?? throw new ArgumentNullException(nameof(chapterService));
-        //    _gradeService = gradeService ?? throw new ArgumentNullException(nameof(gradeService));
-        //    _solutionLinkService = solutionLinkService ?? throw new ArgumentNullException(nameof(solutionLinkService));
-        //    _solutionReportService = solutionReportService ?? throw new ArgumentNullException(nameof(solutionReportService));
-        //    _subscriptionTypeService = subscriptionTypeService ?? throw new ArgumentNullException(nameof(subscriptionTypeService));
-        //}
-        public ServiceProviders() { }
+        public ServiceProviders(
+            IAuthService authService,
+            ILoginService loginService,
+            IUserService userService,
+            IQuestionsService questionsService,
+            ISemesterService semesterService,
+            IUserSocialProviderService userSocialProviderService,
+            IChapterService chapterService,
+            IGradeService gradeService,
+            ISolutionLinkService solutionLinkService,
+            ISolutionReportService solutionReportService,
+            ISubscriptionTypeService subscriptionTypeService,
+            IRegisterService registerService)
+        {
+            _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+            _loginService = loginService ?? throw new ArgumentNullException(nameof(loginService));
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            _questionsService = questionsService ?? throw new ArgumentNullException(nameof(questionsService));
+            _semesterService = semesterService ?? throw new ArgumentNullException(nameof(semesterService));
+            _userSocialProviderService = userSocialProviderService ?? throw new ArgumentNullException(nameof(userSocialProviderService));
+            _chapterService = chapterService ?? throw new ArgumentNullException(nameof(chapterService));
+            _gradeService = gradeService ?? throw new ArgumentNullException(nameof(gradeService));
+            _solutionLinkService = solutionLinkService ?? throw new ArgumentNullException(nameof(solutionLinkService));
+            _solutionReportService = solutionReportService ?? throw new ArgumentNullException(nameof(solutionReportService));
+            _subscriptionTypeService = subscriptionTypeService ?? throw new ArgumentNullException(nameof(subscriptionTypeService));
+            _registerService = registerService ?? throw new ArgumentNullException(nameof(registerService));
+        }
+
         public IAuthService AuthService => _authService;
         public ILoginService LoginService => _loginService;
         public IUserService UserService => _userService;
@@ -63,5 +65,6 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         public ISolutionLinkService SolutionLinkService => _solutionLinkService;
         public ISolutionReportService SolutionReportService => _solutionReportService;
         public ISubscriptionTypeService SubscriptionTypeService => _subscriptionTypeService;
+        public IRegisterService RegisterService => _registerService;
     }
 }

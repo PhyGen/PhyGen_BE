@@ -25,5 +25,7 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         ISolutionLinkService SolutionLinkService { get; }
         ISolutionReportService SolutionReportService { get; }
         ISubscriptionTypeService SubscriptionTypeService { get; }
+
+        IRegisterService RegisterService { get; }
     }
 }
