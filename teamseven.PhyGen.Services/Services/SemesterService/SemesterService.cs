@@ -8,6 +8,7 @@ using teamseven.PhyGen.Repository.Models;
 using teamseven.PhyGen.Repository;
 using teamseven.PhyGen.Services.Extensions;
 using teamseven.PhyGen.Services.Object.Requests;
+using teamseven.PhyGen.Services.Object.Responses;
 
 namespace teamseven.PhyGen.Services.Services.SemesterService
 {
@@ -20,6 +21,35 @@ namespace teamseven.PhyGen.Services.Services.SemesterService
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public async Task<IEnumerable<SemesterDataResponse>> GetAllSemesterAsync()
+        {
+            var semesters = await _unitOfWork.SemesterRepository.GetAllAsync();
+            return semesters.Select(s => new SemesterDataResponse
+            {
+                Id = s.Id,
+                Name = s.Name,
+                GradeId = s.GradeId,
+                CreatedAt = s.CreatedAt,
+                UpdatedAt = s.UpdatedAt
+            });
+        }
+
+        public async Task<SemesterDataResponse> GetSemesterByIdAsync(int id)
+        {
+            var semester = await _unitOfWork.SemesterRepository.GetByIdAsync(id);
+            if (semester == null)
+                throw new NotFoundException($"Semester with ID {id} not found.");
+
+            return new SemesterDataResponse
+            {
+                Id = semester.Id,
+                Name = semester.Name,
+                GradeId = semester.GradeId,
+                CreatedAt = semester.CreatedAt,
+                UpdatedAt = semester.UpdatedAt
+            };
         }
 
         public async Task CreateSemesterAsync(CreateSemesterRequest request)
@@ -49,6 +79,21 @@ namespace teamseven.PhyGen.Services.Services.SemesterService
                 _logger.LogError(ex, "Error occurred while creating semester.");
                 throw new ApplicationException("An error occurred while creating the semester.", ex);
             }
+        }
+
+        public async Task UpdateSemesterAsync(SemesterDataRequest request)
+        {
+            var semester = await _unitOfWork.SemesterRepository.GetByIdAsync(request.Id);
+            if (semester == null)
+                throw new NotFoundException("Semester not found");
+
+            semester.Name = request.Name;
+            semester.UpdatedAt = DateTime.UtcNow;
+
+            await _unitOfWork.SemesterRepository.UpdateAsync(semester);
+            await _unitOfWork.SaveChangesWithTransactionAsync();
+
+            _logger.LogInformation("Updated semester with ID {Id}.", semester.Id);
         }
 
         public async Task DeleteSemesterAsync(int id)

@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using teamseven.PhyGen.Services.Interfaces;
 using teamseven.PhyGen.Services.Services.ChapterService;
 using teamseven.PhyGen.Services.Services.GradeService;
+using teamseven.PhyGen.Services.Services.LessonService;
 using teamseven.PhyGen.Services.Services.QuestionsService;
 using teamseven.PhyGen.Services.Services.SemesterService;
 using teamseven.PhyGen.Services.Services.SolutionLinkService;
@@ -27,5 +28,6 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         ISubscriptionTypeService SubscriptionTypeService { get; }
 
         IRegisterService RegisterService { get; }
+        ILessonService LessonService { get; }
     }
 }

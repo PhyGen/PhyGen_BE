@@ -1,6 +1,7 @@
-﻿using teamseven.PhyGen.Services.Interfaces;
+using teamseven.PhyGen.Services.Interfaces;
 using teamseven.PhyGen.Services.Services.ChapterService;
 using teamseven.PhyGen.Services.Services.GradeService;
+using teamseven.PhyGen.Services.Services.LessonService;
 using teamseven.PhyGen.Services.Services.QuestionsService;
 using teamseven.PhyGen.Services.Services.SemesterService;
 using teamseven.PhyGen.Services.Services.SolutionLinkService;
@@ -25,7 +26,7 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         private readonly ISolutionReportService _solutionReportService;
         private readonly ISubscriptionTypeService _subscriptionTypeService;
         private readonly IRegisterService _registerService;
-
+          private readonly ILessonService _lessonService;
         public ServiceProviders(
             IAuthService authService,
             ILoginService loginService,
@@ -53,6 +54,7 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
             _subscriptionTypeService = subscriptionTypeService ?? throw new ArgumentNullException(nameof(subscriptionTypeService));
             _registerService = registerService ?? throw new ArgumentNullException(nameof(registerService));
         }
+      
 
         public IAuthService AuthService => _authService;
         public ILoginService LoginService => _loginService;
@@ -66,5 +68,6 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         public ISolutionReportService SolutionReportService => _solutionReportService;
         public ISubscriptionTypeService SubscriptionTypeService => _subscriptionTypeService;
         public IRegisterService RegisterService => _registerService;
+        public ILessonService LessonService => _lessonService;
     }
 }
