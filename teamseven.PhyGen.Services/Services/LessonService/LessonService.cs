@@ -35,7 +35,40 @@ namespace teamseven.PhyGen.Services.Services.LessonService
                 UpdatedAt = l.UpdatedAt
             });
         }
+        public async Task<PagedResponse<LessonDataResponse>> GetLessonsAsync(int? pageNumber = null, int? pageSize = null)
+        {
+            try
+            {
+                List<Lesson> lessons;
+                int totalItems;
 
+                if (pageNumber.HasValue && pageSize.HasValue && pageNumber > 0 && pageSize > 0)
+                {
+                    (lessons, totalItems) = await _unitOfWork.LessonRepository.GetPagedAsync(pageNumber.Value, pageSize.Value);
+                }
+                else
+                {
+                    lessons = await _unitOfWork.LessonRepository.GetAllAsync() ?? new List<Lesson>();
+                    totalItems = lessons.Count;
+                }
+
+                var lessonResponses = lessons.Select(l => new LessonDataResponse
+                {
+                    Id = l.Id,
+                    Name = l.Name,
+                    ChapterId = l.ChapterId,
+                    CreatedAt = l.CreatedAt,
+                    UpdatedAt = l.UpdatedAt
+                }).ToList();
+
+                return new PagedResponse<LessonDataResponse>(lessonResponses, pageNumber ?? 1, pageSize ?? totalItems, totalItems);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving lessons: {Message}", ex.Message);
+                throw new ApplicationException("An error occurred while retrieving lessons.", ex);
+            }
+        }
         public async Task<LessonDataResponse> GetLessonByIdAsync(int id)
         {
             var lesson = await _unitOfWork.LessonRepository.GetByIdAsync(id);

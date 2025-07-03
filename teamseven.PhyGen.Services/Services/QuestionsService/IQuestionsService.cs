@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using teamseven.PhyGen.Repository.Dtos;
 using teamseven.PhyGen.Services.Object.Requests;
+using teamseven.PhyGen.Services.Object.Responses;
 
 namespace teamseven.PhyGen.Services.Services.QuestionsService
 {
@@ -17,6 +18,7 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
         public Task ModifyQuestionAsync(QuestionDataRequest questionDataRequest);
 
         public Task DeleteQuestionAsync(int id);
- 
+
+        Task<PagedResponse<QuestionDataResponse>> GetQuestionsAsync(int? pageNumber = null, int? pageSize = null);
     }
 }

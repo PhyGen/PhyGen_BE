@@ -9,6 +9,7 @@ using teamseven.PhyGen.Repository;
 using teamseven.PhyGen.Repository.Dtos;
 using teamseven.PhyGen.Repository.Models;
 using teamseven.PhyGen.Services.Extensions;
+using teamseven.PhyGen.Services.Object.Responses;
 
 namespace teamseven.PhyGen.Services.Services.QuestionsService
 {
@@ -112,6 +113,52 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
         public Task ModifyQuestionAsync(QuestionDataRequest questionDataRequest)
         {
             throw new NotImplementedException();
+        }
+
+ 
+        public async Task<PagedResponse<QuestionDataResponse>> GetQuestionsAsync(int? pageNumber = null, int? pageSize = null)
+        {
+            try
+            {
+                List<Question> questions;
+                int totalItems;
+
+                if (pageNumber.HasValue && pageSize.HasValue && pageNumber > 0 && pageSize > 0)
+                {
+                    // Phân trang
+                    (questions, totalItems) = await _unitOfWork.QuestionRepository.GetPagedAsync(pageNumber.Value, pageSize.Value);
+                }
+                else
+                {
+                    // Lấy toàn bộ
+                    questions = await _unitOfWork.QuestionRepository.GetAllAsync() ?? new List<Question>();
+                    totalItems = questions.Count;
+                }
+
+                var questionResponses = questions.Select(q => new QuestionDataResponse
+                {
+                    Id = q.Id,
+                    Content = q.Content,
+                    QuestionSource = q.QuestionSource,
+                    DifficultyLevel = q.DifficultyLevel,
+                    LessonId = q.LessonId,
+                    CreatedByUserId = q.CreatedByUserId,
+                    CreatedAt = q.CreatedAt,
+                    UpdatedAt = q.UpdatedAt
+                }).ToList();
+
+                return new PagedResponse<QuestionDataResponse>(
+                    questionResponses,
+                    pageNumber ?? 1,
+                    pageSize ?? totalItems,
+                    totalItems
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while getting question: {Message}", ex.Message);
+                throw new ApplicationException("Error while getting question.", ex);
+            }
         }
     }
 }
