@@ -227,6 +227,6 @@ void ConfigureAuthentication(IServiceCollection services, IConfiguration config)
     services.AddAuthorization(options =>
     {
         options.AddPolicy("DeliveringStaffPolicy", policy => policy.RequireClaim("roleId", "2"));
-        options.AddPolicy("SaleStaffPolicy", policy => policy.RequireClaim(ClaimTypes.Role, "3"));
+        options.AddPolicy("SaleStaffPolicy", policy => policy.RequireClaim("roleId", "3"));
     });
 }
