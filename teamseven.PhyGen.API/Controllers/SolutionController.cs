@@ -12,7 +12,7 @@ using teamseven.PhyGen.Services.Object.Responses;
 namespace teamseven.PhyGen.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/solutions")]
     [Produces("application/json")]
     public class SolutionController : ControllerBase
     {

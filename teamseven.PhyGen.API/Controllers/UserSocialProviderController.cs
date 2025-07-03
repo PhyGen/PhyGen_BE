@@ -10,7 +10,7 @@ using teamseven.PhyGen.Services.Services.ServiceProvider;
 namespace teamseven.PhyGen.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/user-social-providers")]
     [Produces("application/json")]
     public class UserSocialProviderController : ControllerBase
     {
