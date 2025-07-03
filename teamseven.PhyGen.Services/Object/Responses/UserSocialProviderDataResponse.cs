@@ -1,27 +1,14 @@
-﻿using System;
-
-namespace teamseven.PhyGen.Repository.Dtos
+﻿namespace teamseven.PhyGen.Services.Object.Responses
 {
-    public class UserSocialProviderResponse
+    public class UserSocialProviderDataResponse
     {
         public int Id { get; set; }
-
         public int UserId { get; set; }
-
         public string ProviderName { get; set; }
-
         public string ProviderId { get; set; }
-
         public string Email { get; set; }
-
         public string ProfileUrl { get; set; }
-
         public DateTime CreatedAt { get; set; }
-
         public DateTime? UpdatedAt { get; set; }
-
-        // related info
-        public string UserFullName { get; set; }
-        public string UserEmail { get; set; }
     }
 }

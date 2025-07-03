@@ -7,7 +7,7 @@ using teamseven.PhyGen.Services.Services.ServiceProvider;
 
 namespace teamseven.PhyGen.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     public class AccountController : ControllerBase
     {

@@ -2,57 +2,56 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using teamseven.PhyGen.Repository.Basic;
 using teamseven.PhyGen.Repository.Models;
-using teamseven.PhyGen.Repository.Repository.Interfaces;
 
 namespace teamseven.PhyGen.Repository.Repository
 {
-    public class UserSocialProviderRepository : IUserSocialProviderRepository
+    public class UserSocialProviderRepository : GenericRepository<UserSocialProvider>
     {
         private readonly teamsevenphygendbContext _context;
 
-        public UserSocialProviderRepository(teamsevenphygendbContext context)
+        public UserSocialProviderRepository(teamsevenphygendbContext context) : base(context)
         {
             _context = context;
         }
 
-        public async Task<UserSocialProvider> GetByProviderAsync(string providerName, string providerId)
+        public async Task<List<UserSocialProvider>?> GetAllAsync()
+        {
+            return await base.GetAllAsync();
+        }
+
+        public async Task<UserSocialProvider?> GetByIdAsync(int id)
+        {
+            return await base.GetByIdAsync(id);
+        }
+
+        public async Task<UserSocialProvider?> GetByProviderAsync(string providerName, string providerId)
         {
             return await _context.UserSocialProviders
-                .FirstOrDefaultAsync(usp => usp.ProviderName == providerName && usp.ProviderId == providerId)
-                ?? new UserSocialProvider();
+                .FirstOrDefaultAsync(usp => usp.ProviderName == providerName && usp.ProviderId == providerId);
         }
 
-        public async Task<UserSocialProvider> GetByIdAsync(int id)
-        {
-            return await _context.UserSocialProviders.FindAsync(id);
-        }
-
-        public async Task<List<UserSocialProvider>> GetByUserIdAsync(int userId)
+        public async Task<List<UserSocialProvider>?> GetByUserIdAsync(int userId)
         {
             return await _context.UserSocialProviders
                 .Where(usp => usp.UserId == userId)
                 .ToListAsync();
         }
 
-        public async Task AddAsync(UserSocialProvider userSocialProvider)
+        public async Task<int> AddAsync(UserSocialProvider entity)
         {
-            await _context.UserSocialProviders.AddAsync(userSocialProvider);
+            return await base.CreateAsync(entity);
         }
 
-        public Task UpdateAsync(UserSocialProvider userSocialProvider)
+        public async Task<int> UpdateEntityAsync(UserSocialProvider entity)
         {
-            _context.UserSocialProviders.Update(userSocialProvider);
-            return Task.CompletedTask;
+            return await base.UpdateAsync(entity);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<bool> DeleteEntityAsync(UserSocialProvider entity)
         {
-            var entity = await GetByIdAsync(id);
-            if (entity != null)
-            {
-                _context.UserSocialProviders.Remove(entity);
-            }
+            return await base.RemoveAsync(entity);
         }
     }
 }

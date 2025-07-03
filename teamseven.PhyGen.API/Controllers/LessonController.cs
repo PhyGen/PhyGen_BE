@@ -14,7 +14,7 @@ using teamseven.PhyGen.Services.Services.ServiceProvider;
 namespace teamseven.PhyGen.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/lessons")]
     [Produces("application/json")]
     public class LessonController : ControllerBase
     {
