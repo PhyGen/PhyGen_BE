@@ -9,7 +9,7 @@ using IServiceProviders = teamseven.PhyGen.Services.Services.ServiceProvider.ISe
 
 namespace teamseven.PhyGen.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/login")]
     [ApiController]
     public class LoginController : ControllerBase
     {
