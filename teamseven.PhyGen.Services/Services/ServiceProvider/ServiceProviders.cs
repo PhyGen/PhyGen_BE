@@ -6,9 +6,11 @@ using teamseven.PhyGen.Services.Services.QuestionsService;
 using teamseven.PhyGen.Services.Services.SemesterService;
 using teamseven.PhyGen.Services.Services.SolutionLinkService;
 using teamseven.PhyGen.Services.Services.SolutionReportService;
+using teamseven.PhyGen.Services.Services.SolutionService;
 using teamseven.PhyGen.Services.Services.SubscriptionTypeService;
 using teamseven.PhyGen.Services.Services.UserService;
 using teamseven.PhyGen.Services.Services.UserSocialProviderService;
+using teamseven.PhyGen.Services.Services.UserSubscriptionService;
 
 namespace teamseven.PhyGen.Services.Services.ServiceProvider
 {
@@ -26,7 +28,9 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         private readonly ISolutionReportService _solutionReportService;
         private readonly ISubscriptionTypeService _subscriptionTypeService;
         private readonly IRegisterService _registerService;
-          private readonly ILessonService _lessonService;
+        private readonly ILessonService _lessonService;
+        private readonly ISolutionService _solutionService;
+        private readonly IUserSubscriptionService _userSubscriptionService;
         public ServiceProviders(
             IAuthService authService,
             ILoginService loginService,
@@ -40,7 +44,9 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
             ISolutionReportService solutionReportService,
             ISubscriptionTypeService subscriptionTypeService,
             IRegisterService registerService,
-            ILessonService lessonService)
+            ILessonService lessonService,
+            ISolutionService solutionService,
+            IUserSubscriptionService userSubscriptionService)
         {
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
             _loginService = loginService ?? throw new ArgumentNullException(nameof(loginService));
@@ -55,6 +61,8 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
             _subscriptionTypeService = subscriptionTypeService ?? throw new ArgumentNullException(nameof(subscriptionTypeService));
             _registerService = registerService ?? throw new ArgumentNullException(nameof(registerService));
             _lessonService = lessonService ?? throw new ArgumentNullException(nameof(_lessonService));
+            _solutionService = solutionService ?? throw new ArgumentNullException(nameof(solutionService));
+            _userSubscriptionService = userSubscriptionService ?? throw new ArgumentException(nameof(userSubscriptionService));
         }
       
 
@@ -71,5 +79,7 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         public ISubscriptionTypeService SubscriptionTypeService => _subscriptionTypeService;
         public IRegisterService RegisterService => _registerService;
         public ILessonService LessonService => _lessonService;
+        public ISolutionService SolutionService => _solutionService;
+        public IUserSubscriptionService UserSubscriptionService => _userSubscriptionService;
     }
 }

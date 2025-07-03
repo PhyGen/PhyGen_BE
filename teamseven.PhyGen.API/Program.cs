@@ -24,9 +24,11 @@ using teamseven.PhyGen.Services.Services.SemesterService;
 using teamseven.PhyGen.Services.Services.ServiceProvider;
 using teamseven.PhyGen.Services.Services.SolutionLinkService;
 using teamseven.PhyGen.Services.Services.SolutionReportService;
+using teamseven.PhyGen.Services.Services.SolutionService;
 using teamseven.PhyGen.Services.Services.SubscriptionTypeService;
 using teamseven.PhyGen.Services.Services.UserService;
 using teamseven.PhyGen.Services.Services.UserSocialProviderService;
+using teamseven.PhyGen.Services.Services.UserSubscriptionService;
 var builder = WebApplication.CreateBuilder(args);
 
 // ================= CẤU HÌNH DB =================
@@ -52,9 +54,10 @@ ConfigureAuthentication(builder.Services, builder.Configuration);
 builder.Services.AddScoped(typeof(GenericRepository<>));
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IUserSocialProviderRepository, UserSocialProviderRepository>();
-
 // 📌 Service Layer (Scoped)
+
+builder.Services.AddScoped<IUserSubscriptionService, UserSubscriptionService>();
+builder.Services.AddScoped<ISolutionService, SolutionService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
