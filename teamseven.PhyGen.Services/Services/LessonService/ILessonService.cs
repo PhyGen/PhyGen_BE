@@ -11,6 +11,9 @@ namespace teamseven.PhyGen.Services.Services.LessonService
     public interface ILessonService
     {
         Task<IEnumerable<LessonDataResponse>> GetAllLessonAsync();
+
+        Task<PagedResponse<LessonDataResponse>> GetLessonsAsync(int? pageNumber = null, int? pageSize = null);
+
         Task<LessonDataResponse> GetLessonByIdAsync(int id);
         Task CreateLessonAsync(CreateLessonRequest request);
         Task UpdateLessonAsync(LessonDataRequest request);

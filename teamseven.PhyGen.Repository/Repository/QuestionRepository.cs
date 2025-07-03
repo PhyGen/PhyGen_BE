@@ -54,5 +54,16 @@ namespace teamseven.PhyGen.Repository.Repository
         {
             return await RemoveAsync(question);
         }
+
+        public async Task<(List<Question>, int)> GetPagedAsync(int pageNumber, int pageSize)
+        {
+            var query = _context.Questions.AsQueryable();
+            var totalItems = await query.CountAsync();
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+            return (items, totalItems);
+        }
     }
 }

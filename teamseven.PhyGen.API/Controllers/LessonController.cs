@@ -4,15 +4,17 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Threading.Tasks;
-using teamseven.PhyGen.Services.Object.Requests;
-using teamseven.PhyGen.Services.Services.ServiceProvider;
+using teamseven.PhyGen.Repository.Dtos;
+using teamseven.PhyGen.Services;
 using teamseven.PhyGen.Services.Extensions;
+using teamseven.PhyGen.Services.Object.Requests;
 using teamseven.PhyGen.Services.Object.Responses;
+using teamseven.PhyGen.Services.Services.ServiceProvider;
 
 namespace teamseven.PhyGen.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/lessons")]
     [Produces("application/json")]
     public class LessonController : ControllerBase
     {
@@ -27,39 +29,64 @@ namespace teamseven.PhyGen.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [SwaggerOperation(Summary = "Get all lessons", Description = "Retrieves a list of all lessons.")]
-        [SwaggerResponse(200, "List of lessons returned successfully.", typeof(IEnumerable<LessonDataResponse>))]
-        public async Task<IActionResult> GetAllLessons()
+        [SwaggerOperation(
+            Summary = "Get lessons",
+            Description = "Retrieves a list of lessons. Use pageNumber and pageSize (default 10) query parameters for pagination, or omit them to get all lessons."
+        )]
+        [SwaggerResponse(200, "Lessons retrieved successfully.", typeof(PagedResponse<LessonDataResponse>))]
+        [SwaggerResponse(400, "Invalid pagination parameters.", typeof(ProblemDetails))]
+        [SwaggerResponse(500, "Internal server error.", typeof(ProblemDetails))]
+        public async Task<IActionResult> GetLessons([FromQuery] int? pageNumber = null, [FromQuery] int? pageSize = null)
         {
-            var result = await _serviceProvider.LessonService.GetAllLessonAsync();
-            return Ok(result);
+            try
+            {
+                if (pageNumber.HasValue && pageNumber < 1 || pageSize.HasValue && pageSize < 1)
+                {
+                    _logger.LogWarning("Invalid pagination parameters: pageNumber={PageNumber}, pageSize={PageSize}.", pageNumber, pageSize);
+                    return BadRequest(new { Message = "pageNumber and pageSize must be greater than 0." });
+                }
+
+                var pagedLessons = await _serviceProvider.LessonService.GetLessonsAsync(pageNumber, pageSize);
+                _logger.LogInformation("Retrieved {Count} lessons for page {PageNumber}.", pagedLessons.Items.Count, pagedLessons.PageNumber);
+                return Ok(pagedLessons);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving lessons: {Message}", ex.Message);
+                return StatusCode(500, new { Message = "An error occurred while retrieving lessons." });
+            }
         }
 
         [HttpGet("{id}")]
         [AllowAnonymous]
         [SwaggerOperation(Summary = "Get lesson by ID", Description = "Retrieves a lesson by its ID.")]
-        [SwaggerResponse(200, "Lesson found.", typeof(LessonDataResponse))]
+        [SwaggerResponse(200, "Lesson retrieved successfully.", typeof(LessonDataResponse))]
         [SwaggerResponse(404, "Lesson not found.", typeof(ProblemDetails))]
+        [SwaggerResponse(500, "Internal server error.", typeof(ProblemDetails))]
         public async Task<IActionResult> GetLessonById(int id)
         {
             try
             {
                 var result = await _serviceProvider.LessonService.GetLessonByIdAsync(id);
+                _logger.LogInformation("Lesson with ID {LessonId} retrieved successfully.", id);
                 return Ok(result);
             }
             catch (NotFoundException ex)
             {
+                _logger.LogWarning(ex, "Not found: {Message}", ex.Message);
                 return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving lesson with ID {LessonId}: {Message}", id, ex.Message);
+                return StatusCode(500, new { Message = "An error occurred while retrieving lesson." });
             }
         }
 
-        /// <summary>
-        /// Creates a new lesson.
-        /// </summary>
         [HttpPost]
         [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Create a new lesson", Description = "Creates a new lesson under the specified chapter.")]
-        [SwaggerResponse(201, "Lesson created successfully.")]
+        [SwaggerResponse(201, "Lesson created successfully.", typeof(LessonDataResponse))]
         [SwaggerResponse(400, "Invalid request data.", typeof(ProblemDetails))]
         [SwaggerResponse(404, "Chapter not found.", typeof(ProblemDetails))]
         [SwaggerResponse(500, "Internal server error.", typeof(ProblemDetails))]
@@ -67,7 +94,7 @@ namespace teamseven.PhyGen.Controllers
         {
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("Invalid model state for CreateLessonRequest.");
+                _logger.LogWarning("Invalid request data for creating lesson.");
                 return BadRequest(ModelState);
             }
 
@@ -79,48 +106,49 @@ namespace teamseven.PhyGen.Controllers
             }
             catch (NotFoundException ex)
             {
-                _logger.LogWarning(ex, "Chapter not found: {Message}", ex.Message);
+                _logger.LogWarning(ex, "Not found: {Message}", ex.Message);
                 return NotFound(new { Message = ex.Message });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while creating lesson.");
-                return StatusCode(500, new { Message = "An error occurred while creating the lesson." });
+                _logger.LogError(ex, "Error creating lesson: {Message}", ex.Message);
+                return StatusCode(500, new { Message = "An error occurred while creating lesson." });
             }
         }
 
         [HttpPut("{id}")]
         [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Update a lesson", Description = "Updates a lesson by ID.")]
-        [SwaggerResponse(200, "Lesson updated successfully.")]
+        [SwaggerResponse(200, "Lesson updated successfully.", typeof(LessonDataResponse))]
         [SwaggerResponse(400, "Invalid input.", typeof(ProblemDetails))]
         [SwaggerResponse(404, "Lesson not found.", typeof(ProblemDetails))]
         [SwaggerResponse(500, "Internal server error.", typeof(ProblemDetails))]
         public async Task<IActionResult> UpdateLesson(int id, [FromBody] LessonDataRequest request)
         {
             if (!ModelState.IsValid || id != request.Id)
-                return BadRequest(ModelState);
+            {
+                _logger.LogWarning("Invalid request data or ID mismatch for updating lesson with ID {LessonId}.", id);
+                return BadRequest(new { Message = "Invalid input or ID mismatch." });
+            }
 
             try
             {
                 await _serviceProvider.LessonService.UpdateLessonAsync(request);
+                _logger.LogInformation("Lesson with ID {LessonId} updated successfully.", id);
                 return Ok(new { Message = "Lesson updated successfully." });
             }
             catch (NotFoundException ex)
             {
-                _logger.LogWarning(ex.Message);
+                _logger.LogWarning(ex, "Not found: {Message}", ex.Message);
                 return NotFound(new { Message = ex.Message });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while updating lesson.");
-                return StatusCode(500, new { Message = "Internal server error." });
+                _logger.LogError(ex, "Error updating lesson with ID {LessonId}: {Message}", id, ex.Message);
+                return StatusCode(500, new { Message = "An error occurred while updating lesson." });
             }
         }
 
-        /// <summary>
-        /// Deletes a lesson by ID.
-        /// </summary>
         [HttpDelete("{id}")]
         [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Delete a lesson", Description = "Deletes a lesson by its ID.")]
@@ -132,18 +160,18 @@ namespace teamseven.PhyGen.Controllers
             try
             {
                 await _serviceProvider.LessonService.DeleteLessonAsync(id);
-                _logger.LogInformation("Lesson with ID {Id} deleted.", id);
+                _logger.LogInformation("Lesson with ID {LessonId} deleted successfully.", id);
                 return NoContent();
             }
             catch (NotFoundException ex)
             {
-                _logger.LogWarning(ex, "Lesson not found: {Message}", ex.Message);
+                _logger.LogWarning(ex, "Not found: {Message}", ex.Message);
                 return NotFound(new { Message = ex.Message });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting lesson with ID {Id}: {Message}", id, ex.Message);
-                return StatusCode(500, new { Message = "An error occurred while deleting the lesson." });
+                _logger.LogError(ex, "Error deleting lesson with ID {LessonId}: {Message}", id, ex.Message);
+                return StatusCode(500, new { Message = "An error occurred while deleting lesson." });
             }
         }
     }

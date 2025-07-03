@@ -13,7 +13,7 @@ using teamseven.PhyGen.Services.Object.Responses;
 namespace teamseven.PhyGen.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/grades")]
     [Produces("application/json")]
     public class GradeController : ControllerBase
     {
