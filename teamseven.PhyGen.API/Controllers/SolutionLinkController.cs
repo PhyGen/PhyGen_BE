@@ -7,7 +7,7 @@ using teamseven.PhyGen.Services.Services.SolutionLinkService;
 namespace teamseven.PhyGen.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/solution-links")]
     public class SolutionLinkController : ControllerBase
     {
         private readonly ISolutionLinkService _service;

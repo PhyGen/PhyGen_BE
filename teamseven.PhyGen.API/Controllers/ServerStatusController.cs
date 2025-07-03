@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 namespace teamseven.PhyGen.API.Controllers
 {
     [ApiController] // Chỉ ra rằng đây là một API Controller
-    [Route("api/[controller]")] // Định nghĩa route cơ bản cho Controller này. Ví dụ: /api/testserver
+    [Route("api/server-status")] // Định nghĩa route cơ bản cho Controller này. Ví dụ: /api/testserver
     public class ServerStatusController : ControllerBase // Kế thừa từ ControllerBase cho các API Controller
     {
         private readonly ILogger<ServerStatusController> _logger;

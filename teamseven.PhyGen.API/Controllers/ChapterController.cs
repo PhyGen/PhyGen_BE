@@ -13,7 +13,7 @@ using teamseven.PhyGen.Services.Services.ServiceProvider;
 namespace teamseven.PhyGen.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/chapters")]
     [Produces("application/json")]
     public class ChapterController : ControllerBase
     {
