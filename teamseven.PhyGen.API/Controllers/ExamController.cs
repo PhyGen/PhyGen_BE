@@ -55,7 +55,7 @@ namespace teamseven.PhyGen.Controllers
         // =================== CREATE EXAM ===================
 
         [HttpPost]
-        [Authorize(Policy = "SaleStaffPolicy")]
+        [Authorize(Policy = "DeliveringStaffPolicy")]
         [SwaggerOperation(Summary = "Create exam", Description = "Creates a new exam")]
         public async Task<IActionResult> CreateExam([FromBody] ExamRequest request)
         {
