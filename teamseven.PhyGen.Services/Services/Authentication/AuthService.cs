@@ -24,6 +24,11 @@ namespace teamseven.PhyGen.Services.Services.Authentication
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
+
+        public AuthService()
+        {
+        }
+
         private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

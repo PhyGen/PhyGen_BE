@@ -4,6 +4,7 @@ using teamseven.PhyGen.Repository.Dtos;
 using teamseven.PhyGen.Repository.Models;
 using teamseven.PhyGen.Services.Extensions;
 using teamseven.PhyGen.Services.Object.Requests;
+using teamseven.PhyGen.Services.Object.Responses;
 
 namespace teamseven.PhyGen.Services.Services.GradeService
 {
@@ -16,6 +17,33 @@ namespace teamseven.PhyGen.Services.Services.GradeService
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
+        }
+
+        public async Task<IEnumerable<GradeDataResponse>> GetAllGradesAsync()
+        {
+            var grades = await _unitOfWork.GradeRepository.GetAllAsync();
+            return grades.Select(g => new GradeDataResponse
+            {
+                Id = g.Id,
+                Name = g.Name,
+                CreatedAt = g.CreatedAt,
+                UpdatedAt = g.UpdatedAt
+            });
+        }
+
+        public async Task<GradeDataResponse> GetGradeByIdAsync(int id)
+        {
+            var grade = await _unitOfWork.GradeRepository.GetByIdAsync(id);
+            if (grade == null)
+                throw new NotFoundException($"Grade with ID {id} not found.");
+
+            return new GradeDataResponse
+            {
+                Id = grade.Id,
+                Name = grade.Name,
+                CreatedAt = grade.CreatedAt,
+                UpdatedAt = grade.UpdatedAt
+            };
         }
 
         public async Task CreateGradeAsync(CreateGradeRequest request)
@@ -46,6 +74,18 @@ namespace teamseven.PhyGen.Services.Services.GradeService
             }
         }
 
+        public async Task UpdateGradeAsync(GradeDataRequest request)
+        {
+            var grade = await _unitOfWork.GradeRepository.GetByIdAsync(request.Id);
+            if (grade == null)
+                throw new NotFoundException("Grade not found");
+
+            grade.Name = request.Name;
+            grade.UpdatedAt = DateTime.UtcNow;
+
+            await _unitOfWork.GradeRepository.UpdateAsync(grade);
+            await _unitOfWork.SaveChangesWithTransactionAsync();
+        }
 
 
         public async Task DeleteGradeAsync(int id)

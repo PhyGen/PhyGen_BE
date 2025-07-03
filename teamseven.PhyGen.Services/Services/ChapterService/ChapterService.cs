@@ -8,6 +8,7 @@ using teamseven.PhyGen.Repository.Models;
 using teamseven.PhyGen.Repository;
 using teamseven.PhyGen.Services.Extensions;
 using teamseven.PhyGen.Services.Object.Requests;
+using teamseven.PhyGen.Services.Object.Responses;
 
 namespace teamseven.PhyGen.Services.Services.ChapterService
 {
@@ -20,6 +21,35 @@ namespace teamseven.PhyGen.Services.Services.ChapterService
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public async Task<IEnumerable<ChapterDataResponse>> GetAllChaptersAsync()
+        {
+            var chapters = await _unitOfWork.ChapterRepository.GetAllAsync();
+            return chapters.Select(c => new ChapterDataResponse
+            {
+                Id = c.Id,
+                Name = c.Name,
+                SemesterId = c.SemesterId,
+                CreatedAt = c.CreatedAt,
+                UpdatedAt = c.UpdatedAt
+            });
+        }
+
+        public async Task<ChapterDataResponse> GetChapterByIdAsync(int id)
+        {
+            var chapter = await _unitOfWork.ChapterRepository.GetByIdAsync(id);
+            if (chapter == null)
+                throw new NotFoundException($"Chapter with ID {id} not found.");
+
+            return new ChapterDataResponse
+            {
+                Id = chapter.Id,
+                Name = chapter.Name,
+                SemesterId = chapter.SemesterId,
+                CreatedAt = chapter.CreatedAt,
+                UpdatedAt = chapter.UpdatedAt
+            };
         }
 
         public async Task CreateChapterAsync(CreateChapterRequest request)
@@ -49,6 +79,21 @@ namespace teamseven.PhyGen.Services.Services.ChapterService
                 _logger.LogError(ex, "Error occurred while creating chapter.");
                 throw new ApplicationException("An error occurred while creating the chapter.", ex);
             }
+        }
+
+        public async Task UpdateChapterAsync(ChapterDataRequest request)
+        {
+            var chapter = await _unitOfWork.ChapterRepository.GetByIdAsync(request.Id);
+            if (chapter == null)
+                throw new NotFoundException("Chapter not found");
+
+            chapter.Name = request.Name;
+            chapter.UpdatedAt = DateTime.UtcNow;
+
+            await _unitOfWork.ChapterRepository.UpdateAsync(chapter);
+            await _unitOfWork.SaveChangesWithTransactionAsync();
+
+            _logger.LogInformation("Updated chapter with ID {Id}.", chapter.Id);
         }
 
         public async Task DeleteChapterAsync(int id)

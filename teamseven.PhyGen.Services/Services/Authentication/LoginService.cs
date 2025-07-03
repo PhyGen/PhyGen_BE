@@ -11,6 +11,10 @@ namespace teamseven.PhyGen.Services.Services.Authentication
         private readonly IPasswordEncryptionService _passwordEncryptionService;
         private readonly IAuthService _authService;
 
+        public LoginService()
+        {
+        }
+
         public LoginService(
             UserRepository userRepository,
             IPasswordEncryptionService passwordEncryptionService,

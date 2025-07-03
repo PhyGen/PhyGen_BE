@@ -72,6 +72,31 @@ namespace teamseven.PhyGen.Repository.Basic
             _context.Add(entity);
             return await _context.SaveChangesAsync();
         }
+
+
+        public async Task<int> CreateAsyncWithCheckExist(T entity)
+        {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+
+            // Get the primary key property
+            var keyProperty = _context.Entry(entity).Metadata.FindPrimaryKey()?.Properties[0];
+            if (keyProperty == null)
+                throw new InvalidOperationException($"Entity {typeof(T).Name} does not have a primary key defined.");
+
+            // Get the key value
+            var keyValue = _context.Entry(entity).Property(keyProperty.Name).CurrentValue;
+
+            // Check if entity already exists
+            var existingEntity = await _context.Set<T>().FindAsync(keyValue);
+            if (existingEntity != null)
+                throw new InvalidOperationException($"Entity {typeof(T).Name} with key {keyValue} already exists.");
+
+            await _context.Set<T>().AddAsync(entity);
+            return await _context.SaveChangesAsync();
+        }
+
+
         public void Update(T entity)
         {
             //// Turning off Tracking for UpdateAsync in Entity Framework

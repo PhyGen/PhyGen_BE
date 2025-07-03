@@ -3,7 +3,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 
 namespace teamseven.PhyGen.Repository.Models;
 
@@ -19,69 +18,48 @@ public partial class teamsevenphygendbContext : DbContext
     }
 
     public virtual DbSet<Chapter> Chapters { get; set; }
-
     public virtual DbSet<Exam> Exams { get; set; }
-
     public virtual DbSet<ExamHistory> ExamHistories { get; set; }
-
     public virtual DbSet<ExamQuestion> ExamQuestions { get; set; }
-
     public virtual DbSet<ExamType> ExamTypes { get; set; }
-
     public virtual DbSet<Grade> Grades { get; set; }
-
     public virtual DbSet<Lesson> Lessons { get; set; }
-
     public virtual DbSet<Question> Questions { get; set; }
-
     public virtual DbSet<Role> Roles { get; set; }
-
     public virtual DbSet<Semester> Semesters { get; set; }
-
     public virtual DbSet<Solution> Solutions { get; set; }
-
     public virtual DbSet<SolutionReport> SolutionReports { get; set; }
-
     public virtual DbSet<SolutionsLink> SolutionsLinks { get; set; }
-
     public virtual DbSet<SubscriptionType> SubscriptionTypes { get; set; }
-
     public virtual DbSet<User> Users { get; set; }
-
     public virtual DbSet<UserSocialProvider> UserSocialProviders { get; set; }
-
     public virtual DbSet<UserSubscription> UserSubscriptions { get; set; }
 
     public static string GetConnectionString(string connectionStringName)
     {
         var config = new ConfigurationBuilder()
             .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-            .AddJsonFile("appsettings.json")
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .Build();
 
         string connectionString = config.GetConnectionString(connectionStringName);
-        return connectionString;
+        return connectionString ?? throw new InvalidOperationException("Connection string not found.");
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer(GetConnectionString("DefaultConnection")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-
+        => optionsBuilder.UseSqlServer(GetConnectionString("DefaultConnection"),
+            options => options.EnableRetryOnFailure().CommandTimeout(60))
+                         .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Chapter>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Chapter__3214EC0750862B44");
-
-            entity.ToTable("Chapter");
-
+            entity.ToTable("Chapters");
             entity.HasIndex(e => e.SemesterId, "IX_Chapter_SemesterId");
-
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(100);
-
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.HasOne(d => d.Semester).WithMany(p => p.Chapters)
                 .HasForeignKey(d => d.SemesterId)
                 .HasConstraintName("FK__Chapter__Semeste__2645B050");
@@ -90,32 +68,21 @@ public partial class teamsevenphygendbContext : DbContext
         modelBuilder.Entity<Exam>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Exam__3214EC07BBB96DEC");
-
-            entity.ToTable("Exam");
-
+            entity.ToTable("Exams");
             entity.HasIndex(e => e.CreatedByUserId, "IX_Exam_CreatedByUserId");
-
             entity.HasIndex(e => e.ExamTypeId, "IX_Exam_ExamTypeId");
-
             entity.HasIndex(e => e.IsDeleted, "IX_Exam_IsDeleted");
-
             entity.HasIndex(e => e.LessonId, "IX_Exam_LessonId");
-
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(100);
-
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.HasOne(d => d.CreatedByUser).WithMany(p => p.Exams)
                 .HasForeignKey(d => d.CreatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Exam__CreatedByU__3493CFA7");
-
             entity.HasOne(d => d.ExamType).WithMany(p => p.Exams)
                 .HasForeignKey(d => d.ExamTypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Exam__ExamTypeId__339FAB6E");
-
             entity.HasOne(d => d.Lesson).WithMany(p => p.Exams)
                 .HasForeignKey(d => d.LessonId)
                 .HasConstraintName("FK__Exam__LessonId__32AB8735");
@@ -124,24 +91,16 @@ public partial class teamsevenphygendbContext : DbContext
         modelBuilder.Entity<ExamHistory>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__ExamHist__3214EC07112EFF0E");
-
-            entity.ToTable("ExamHistory");
-
+            entity.ToTable("ExamHistories");
             entity.HasIndex(e => e.ExamId, "IX_ExamHistory_ExamId");
-
             entity.HasIndex(e => e.ActionByUserId, "IX_IX_ExamHistory_ActionByUserId");
-
-            entity.Property(e => e.Action)
-                .IsRequired()
-                .HasMaxLength(50);
+            entity.Property(e => e.Action).IsRequired().HasMaxLength(50);
             entity.Property(e => e.ActionDate).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.Description).HasMaxLength(500);
-
             entity.HasOne(d => d.ActionByUser).WithMany(p => p.ExamHistories)
                 .HasForeignKey(d => d.ActionByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__ExamHisto__Actio__395884C4");
-
             entity.HasOne(d => d.Exam).WithMany(p => p.ExamHistories)
                 .HasForeignKey(d => d.ExamId)
                 .HasConstraintName("FK__ExamHisto__ExamI__3864608B");
@@ -149,75 +108,46 @@ public partial class teamsevenphygendbContext : DbContext
 
         modelBuilder.Entity<ExamQuestion>(entity =>
         {
-            // Set ExamId as the sole primary key
-            entity.HasKey(e => e.ExamId)
-                  .HasName("PK__ExamQuestion__ExamId");
-
-            // Map to ExamQuestion table
-            entity.ToTable("ExamQuestion");
-
-            // Index on QuestionId for query performance
+            entity.HasKey(e => e.Id).HasName("PK__ExamQuestion__Id");
+            entity.ToTable("ExamQuestions");
+            entity.HasIndex(e => e.ExamId, "IX_ExamQuestion_ExamId");
             entity.HasIndex(e => e.QuestionId, "IX_ExamQuestion_QuestionId");
-
-            // Set default value for CreatedAt
-            entity.Property(e => e.CreatedAt)
-                  .HasDefaultValueSql("(getdate())");
-
-            // One-to-one relationship with Exam
-            entity.HasOne(d => d.Exam)
-                  .WithOne() // No navigation property on Exam side, or specify if needed
-                  .HasForeignKey<ExamQuestion>(d => d.ExamId)
-                  .HasConstraintName("FK__ExamQuest__ExamI__47A6A41B");
-
-            // One-to-many relationship with Question
-            entity.HasOne(d => d.Question)
-                  .WithMany(p => p.ExamQuestions)
-                  .HasForeignKey(d => d.QuestionId)
-                  .OnDelete(DeleteBehavior.ClientSetNull)
-                  .HasConstraintName("FK__ExamQuest__Quest__489AC854");
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.Order).IsRequired();
+            entity.HasOne(d => d.Exam).WithMany(e => e.ExamQuestions)
+                .HasForeignKey(d => d.ExamId)
+                .HasConstraintName("FK__ExamQuest__ExamI__47A6A41B");
+            entity.HasOne(d => d.Question).WithMany()
+                .HasForeignKey(d => d.QuestionId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ExamQuest__Quest__489AC854");
         });
 
         modelBuilder.Entity<ExamType>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__ExamType__3214EC0759F4F1AF");
-
-            entity.ToTable("ExamType");
-
+            entity.ToTable("ExamTypes");
             entity.HasIndex(e => e.Name, "UQ__ExamType__737584F619DE264A").IsUnique();
-
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(50);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
         });
 
         modelBuilder.Entity<Grade>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Grade__3214EC07726422EF");
-
-            entity.ToTable("Grade");
-
+            entity.ToTable("Grades");
             entity.HasIndex(e => e.Name, "UQ__Grade__737584F6EABA19DB").IsUnique();
-
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(50);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
         });
 
         modelBuilder.Entity<Lesson>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Lesson__3214EC07A753DB40");
-
-            entity.ToTable("Lesson");
-
+            entity.ToTable("Lessons");
             entity.HasIndex(e => e.ChapterId, "IX_Lesson_ChapterId");
-
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(100);
-
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.HasOne(d => d.Chapter).WithMany(p => p.Lessons)
                 .HasForeignKey(d => d.ChapterId)
                 .HasConstraintName("FK__Lesson__ChapterI__2A164134");
@@ -226,25 +156,17 @@ public partial class teamsevenphygendbContext : DbContext
         modelBuilder.Entity<Question>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Question__3214EC07E85416E6");
-
-            entity.ToTable("Question");
-
+            entity.ToTable("Questions");
             entity.HasIndex(e => e.CreatedByUserId, "IX_Question_CreatedByUserId");
-
             entity.HasIndex(e => e.LessonId, "IX_Question_LessonId");
-
             entity.Property(e => e.Content).IsRequired();
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.DifficultyLevel).HasMaxLength(20);
-            entity.Property(e => e.QuestionSource)
-                .IsRequired()
-                .HasMaxLength(50);
-
+            entity.Property(e => e.QuestionSource).IsRequired().HasMaxLength(50);
             entity.HasOne(d => d.CreatedByUser).WithMany(p => p.Questions)
                 .HasForeignKey(d => d.CreatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Question__Create__3E1D39E1");
-
             entity.HasOne(d => d.Lesson).WithMany(p => p.Questions)
                 .HasForeignKey(d => d.LessonId)
                 .HasConstraintName("FK__Question__Lesson__3D2915A8");
@@ -253,28 +175,19 @@ public partial class teamsevenphygendbContext : DbContext
         modelBuilder.Entity<Role>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Roles__3214EC0736E8263A");
-
+            entity.ToTable("Roles");
             entity.HasIndex(e => e.RoleName, "UQ__Roles__8A2B616076721B42").IsUnique();
-
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.RoleName)
-                .IsRequired()
-                .HasMaxLength(255);
+            entity.Property(e => e.RoleName).IsRequired().HasMaxLength(255);
         });
 
         modelBuilder.Entity<Semester>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Semester__3214EC073D10267A");
-
-            entity.ToTable("Semester");
-
+            entity.ToTable("Semesters");
             entity.HasIndex(e => e.GradeId, "IX_Semester_GradeId");
-
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(10);
-
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(10);
             entity.HasOne(d => d.Grade).WithMany(p => p.Semesters)
                 .HasForeignKey(d => d.GradeId)
                 .HasConstraintName("FK__Semester__GradeI__22751F6C");
@@ -283,26 +196,19 @@ public partial class teamsevenphygendbContext : DbContext
         modelBuilder.Entity<Solution>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Solution__3214EC0789D85D64");
-
-            entity.ToTable("Solution");
-
+            entity.ToTable("Solutions");
             entity.HasIndex(e => e.CreatedByUserId, "IX_Solution_CreatedByUserId");
-
             entity.HasIndex(e => e.IsApproved, "IX_Solution_IsApproved");
-
             entity.HasIndex(e => e.IsDeleted, "IX_Solution_IsDeleted");
-
             entity.HasIndex(e => e.QuestionId, "IX_Solution_QuestionId");
-
             entity.Property(e => e.Content).IsRequired();
+            entity.Property(e => e.Explanation);
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.IsApproved).HasDefaultValue(true);
-
             entity.HasOne(d => d.CreatedByUser).WithMany(p => p.Solutions)
                 .HasForeignKey(d => d.CreatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Solution__Create__4F47C5E3");
-
             entity.HasOne(d => d.Question).WithMany(p => p.Solutions)
                 .HasForeignKey(d => d.QuestionId)
                 .HasConstraintName("FK__Solution__Questi__4E53A1AA");
@@ -311,27 +217,16 @@ public partial class teamsevenphygendbContext : DbContext
         modelBuilder.Entity<SolutionReport>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Solution__3214EC07C9C74095");
-
-            entity.ToTable("SolutionReport");
-
+            entity.ToTable("SolutionReports");
             entity.HasIndex(e => e.ReportedByUserId, "IX_SolutionReport_ReportedByUserId");
-
             entity.HasIndex(e => e.SolutionId, "IX_SolutionReport_SolutionId");
-
-            entity.Property(e => e.Reason)
-                .IsRequired()
-                .HasMaxLength(500);
+            entity.Property(e => e.Reason).IsRequired().HasMaxLength(500);
             entity.Property(e => e.ReportDate).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.Status)
-                .IsRequired()
-                .HasMaxLength(20)
-                .HasDefaultValue("Pending");
-
+            entity.Property(e => e.Status).IsRequired().HasMaxLength(20).HasDefaultValue("Pending");
             entity.HasOne(d => d.ReportedByUser).WithMany(p => p.SolutionReports)
                 .HasForeignKey(d => d.ReportedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__SolutionR__Repor__55009F39");
-
             entity.HasOne(d => d.Solution).WithMany(p => p.SolutionReports)
                 .HasForeignKey(d => d.SolutionId)
                 .HasConstraintName("FK__SolutionR__Solut__540C7B00");
@@ -340,15 +235,11 @@ public partial class teamsevenphygendbContext : DbContext
         modelBuilder.Entity<SolutionsLink>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Solution__3214EC0737663E7D");
-
-            entity.ToTable("SolutionsLink");
-
+            entity.ToTable("SolutionsLinks");
             entity.HasIndex(e => e.SolutionId, "IX_SolutionsLink_SolutionId");
-
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.GeneratedBy).HasMaxLength(50);
             entity.Property(e => e.Link).HasMaxLength(500);
-
             entity.HasOne(d => d.Solution).WithMany(p => p.SolutionsLinks)
                 .HasForeignKey(d => d.SolutionId)
                 .HasConstraintName("FK__Solutions__Solut__58D1301D");
@@ -357,25 +248,15 @@ public partial class teamsevenphygendbContext : DbContext
         modelBuilder.Entity<SubscriptionType>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Subscrip__3214EC07C6E713D8");
-
-            entity.ToTable("SubscriptionType");
-
+            entity.ToTable("SubscriptionTypes");
             entity.HasIndex(e => e.SubscriptionCode, "IX_SubscriptionType_SubscriptionCode");
-
             entity.HasIndex(e => e.UpdatedBy, "IX_SubscriptionType_UpdatedBy");
-
             entity.HasIndex(e => e.SubscriptionCode, "UQ__Subscrip__A940962CCEF18247").IsUnique();
-
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.Description).HasMaxLength(500);
-            entity.Property(e => e.SubscriptionCode)
-                .IsRequired()
-                .HasMaxLength(50);
-            entity.Property(e => e.SubscriptionName)
-                .IsRequired()
-                .HasMaxLength(255);
-            entity.Property(e => e.SubscriptionPrice).HasColumnType("decimal(18, 2)");
-
+            entity.Property(e => e.SubscriptionCode).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.SubscriptionName).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.SubscriptionPrice).HasColumnType("decimal(18, 2)"); // Added precision
             entity.HasOne(d => d.UpdatedByNavigation).WithMany(p => p.SubscriptionTypes)
                 .HasForeignKey(d => d.UpdatedBy)
                 .OnDelete(DeleteBehavior.SetNull)
@@ -385,34 +266,24 @@ public partial class teamsevenphygendbContext : DbContext
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Users__3214EC0751B15CB7");
-
+            entity.ToTable("Users");
             entity.HasIndex(e => e.Email, "IX_Users_Email");
-
             entity.HasIndex(e => e.IsActive, "IX_Users_IsActive");
-
             entity.HasIndex(e => e.LastLoginAt, "IX_Users_LastLoginAt");
-
             entity.HasIndex(e => e.RoleId, "IX_Users_RoleId");
-
             entity.HasIndex(e => e.UpdatedBy, "IX_Users_UpdatedBy");
-
             entity.HasIndex(e => e.Email, "UQ__Users__A9D105349FB12D7F").IsUnique();
-
             entity.Property(e => e.AvatarUrl).HasMaxLength(1024);
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.Email)
-                .IsRequired()
-                .HasMaxLength(255);
+            entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
             entity.Property(e => e.FullName).HasMaxLength(255);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.PasswordHash).HasMaxLength(255);
             entity.Property(e => e.PhoneNumber).HasMaxLength(20);
-
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Users__RoleId__09A971A2");
-
             entity.HasOne(d => d.UpdatedByNavigation).WithMany(p => p.InverseUpdatedByNavigation)
                 .HasForeignKey(d => d.UpdatedBy)
                 .HasConstraintName("FK__Users__UpdatedBy__0A9D95DB");
@@ -421,21 +292,14 @@ public partial class teamsevenphygendbContext : DbContext
         modelBuilder.Entity<UserSocialProvider>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__UserSoci__3214EC07C47A8C4E");
-
+            entity.ToTable("UserSocialProviders");
             entity.HasIndex(e => e.UserId, "IX_UserSocialProviders_UserId");
-
             entity.HasIndex(e => new { e.ProviderName, e.ProviderId }, "UQ_UserSocialProviders_Provider").IsUnique();
-
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.Email).HasMaxLength(255);
             entity.Property(e => e.ProfileUrl).HasMaxLength(2048);
-            entity.Property(e => e.ProviderId)
-                .IsRequired()
-                .HasMaxLength(255);
-            entity.Property(e => e.ProviderName)
-                .IsRequired()
-                .HasMaxLength(50);
-
+            entity.Property(e => e.ProviderId).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.ProviderName).IsRequired().HasMaxLength(50);
             entity.HasOne(d => d.User).WithMany(p => p.UserSocialProviders)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK__UserSocia__UserI__14270015");
@@ -444,29 +308,21 @@ public partial class teamsevenphygendbContext : DbContext
         modelBuilder.Entity<UserSubscription>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__UserSubs__3214EC07715BEBD0");
-
+            entity.ToTable("UserSubscriptions");
             entity.HasIndex(e => e.IsActive, "IX_UserSubscriptions_IsActive");
-
             entity.HasIndex(e => e.PaymentStatus, "IX_UserSubscriptions_PaymentStatus");
-
             entity.HasIndex(e => e.SubscriptionTypeId, "IX_UserSubscriptions_SubscriptionTypeId");
-
             entity.HasIndex(e => e.UserId, "IX_UserSubscriptions_UserId");
-
-            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)"); // Added precision
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.PaymentGatewayTransactionId).HasMaxLength(255);
-            entity.Property(e => e.PaymentStatus)
-                .IsRequired()
-                .HasMaxLength(50);
+            entity.Property(e => e.PaymentStatus).IsRequired().HasMaxLength(50);
             entity.Property(e => e.StartDate).HasDefaultValueSql("(getdate())");
-
             entity.HasOne(d => d.SubscriptionType).WithMany(p => p.UserSubscriptions)
                 .HasForeignKey(d => d.SubscriptionTypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__UserSubsc__Subsc__1AD3FDA4");
-
             entity.HasOne(d => d.User).WithMany(p => p.UserSubscriptions)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK__UserSubsc__UserI__19DFD96B");

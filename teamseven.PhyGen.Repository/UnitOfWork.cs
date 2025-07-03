@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using teamseven.PhyGen.Repository.Models;
 using teamseven.PhyGen.Repository.Repository;
 
@@ -27,7 +28,6 @@ namespace teamseven.PhyGen.Repository
         int SaveChangesWithTransaction();
         Task<int> SaveChangesWithTransactionAsync();
     }
-
 
     public class UnitOfWork : IUnitOfWork
     {
@@ -76,34 +76,44 @@ namespace teamseven.PhyGen.Repository
 
         public int SaveChangesWithTransaction()
         {
-            using var transaction = _context.Database.BeginTransaction();
-            try
+            var strategy = _context.Database.CreateExecutionStrategy();
+            int result = 0;
+            strategy.Execute(() =>
             {
-                int result = _context.SaveChanges();
-                transaction.Commit();
-                return result;
-            }
-            catch
-            {
-                transaction.Rollback();
-                throw;
-            }
+                using var transaction = _context.Database.BeginTransaction();
+                try
+                {
+                    result = _context.SaveChanges();
+                    transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            });
+            return result;
         }
 
         public async Task<int> SaveChangesWithTransactionAsync()
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-            try
+            var strategy = _context.Database.CreateExecutionStrategy();
+            int result = 0;
+            await strategy.ExecuteAsync(async () =>
             {
-                int result = await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-                return result;
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
+                using var transaction = await _context.Database.BeginTransactionAsync();
+                try
+                {
+                    result = await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
+            return result;
         }
 
         public void Dispose()
@@ -129,5 +139,4 @@ namespace teamseven.PhyGen.Repository
             Dispose(false);
         }
     }
-
 }
