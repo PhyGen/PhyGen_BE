@@ -107,7 +107,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Update semester")]
         [SwaggerResponse(200, "Semester updated.")]
         [SwaggerResponse(400, "Invalid request.")]

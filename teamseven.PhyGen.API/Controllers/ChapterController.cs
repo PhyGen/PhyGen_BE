@@ -57,7 +57,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Create a new chapter", Description = "Creates a new chapter with the provided details.")]
         [SwaggerResponse(201, "Chapter created successfully.")]
         [SwaggerResponse(400, "Invalid request data.", typeof(ProblemDetails))]
@@ -89,7 +89,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Update chapter")]
         [SwaggerResponse(200, "Chapter updated.")]
         [SwaggerResponse(400, "Invalid request.")]
@@ -117,7 +117,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Delete a chapter", Description = "Deletes a chapter by its ID.")]
         [SwaggerResponse(204, "Chapter deleted successfully.")]
         [SwaggerResponse(404, "Chapter not found.", typeof(ProblemDetails))]

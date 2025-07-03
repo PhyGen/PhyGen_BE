@@ -57,7 +57,7 @@ namespace teamseven.PhyGen.Controllers
         /// Creates a new lesson.
         /// </summary>
         [HttpPost]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Create a new lesson", Description = "Creates a new lesson under the specified chapter.")]
         [SwaggerResponse(201, "Lesson created successfully.")]
         [SwaggerResponse(400, "Invalid request data.", typeof(ProblemDetails))]
@@ -90,7 +90,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Update a lesson", Description = "Updates a lesson by ID.")]
         [SwaggerResponse(200, "Lesson updated successfully.")]
         [SwaggerResponse(400, "Invalid input.", typeof(ProblemDetails))]
@@ -122,7 +122,7 @@ namespace teamseven.PhyGen.Controllers
         /// Deletes a lesson by ID.
         /// </summary>
         [HttpDelete("{id}")]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Delete a lesson", Description = "Deletes a lesson by its ID.")]
         [SwaggerResponse(204, "Lesson deleted successfully.")]
         [SwaggerResponse(404, "Lesson not found.", typeof(ProblemDetails))]

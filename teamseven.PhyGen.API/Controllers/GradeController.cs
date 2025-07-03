@@ -60,7 +60,7 @@ namespace teamseven.PhyGen.Controllers
         /// Creates a new grade.
         /// </summary>
         [HttpPost]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Create a new grade", Description = "Creates a new grade with the provided details.")]
         [SwaggerResponse(201, "Grade created successfully.")]
         [SwaggerResponse(400, "Invalid request data.", typeof(ProblemDetails))]
@@ -87,7 +87,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Update a grade", Description = "Updates a grade by ID.")]
         [SwaggerResponse(200, "Grade updated successfully.")]
         [SwaggerResponse(400, "Invalid request.")]
@@ -122,7 +122,7 @@ namespace teamseven.PhyGen.Controllers
         /// Deletes a grade by ID.
         /// </summary>
         [HttpDelete("{id}")]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Delete a grade", Description = "Deletes a grade by its ID.")]
         [SwaggerResponse(204, "Grade deleted successfully.")]
         [SwaggerResponse(404, "Grade not found.", typeof(ProblemDetails))]
