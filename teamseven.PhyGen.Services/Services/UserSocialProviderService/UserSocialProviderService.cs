@@ -1,10 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using teamseven.PhyGen.Repository;
-using teamseven.PhyGen.Repository.Dtos;
 using teamseven.PhyGen.Repository.Models;
 using teamseven.PhyGen.Services.Extensions;
 using teamseven.PhyGen.Services.Object.Requests;
@@ -19,23 +14,47 @@ namespace teamseven.PhyGen.Services.Services.UserSocialProviderService
 
         public UserSocialProviderService(IUnitOfWork unitOfWork, ILogger<UserSocialProviderService> logger)
         {
-            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
-        public async Task AddAsync(UserSocialProviderRequest request)
+        public async Task<IEnumerable<UserSocialProviderDataResponse>> GetAllAsync()
         {
-            if (request == null)
+            var items = await _unitOfWork.UserSocialProviderRepository.GetAllAsync();
+            return items.Select(x => new UserSocialProviderDataResponse
             {
-                _logger.LogWarning("UserSocialProviderRequest is null.");
-                throw new ArgumentNullException(nameof(request));
-            }
+                Id = x.Id,
+                UserId = x.UserId,
+                ProviderName = x.ProviderName,
+                ProviderId = x.ProviderId,
+                Email = x.Email,
+                ProfileUrl = x.ProfileUrl,
+                CreatedAt = x.CreatedAt,
+                UpdatedAt = x.UpdatedAt
+            });
+        }
 
-            if (await _unitOfWork.UserRepository.GetByIdAsync(request.UserId) == null)
+        public async Task<UserSocialProviderDataResponse> GetByIdAsync(int id)
+        {
+            var item = await _unitOfWork.UserSocialProviderRepository.GetByIdAsync(id);
+            if (item == null)
+                throw new NotFoundException($"UserSocialProvider with ID {id} not found.");
+
+            return new UserSocialProviderDataResponse
             {
-                throw new NotFoundException($"User with ID {request.UserId} not found.");
-            }
+                Id = item.Id,
+                UserId = item.UserId,
+                ProviderName = item.ProviderName,
+                ProviderId = item.ProviderId,
+                Email = item.Email,
+                ProfileUrl = item.ProfileUrl,
+                CreatedAt = item.CreatedAt,
+                UpdatedAt = item.UpdatedAt
+            };
+        }
 
+        public async Task CreateAsync(CreateUserSocialProviderRequest request)
+        {
             var entity = new UserSocialProvider
             {
                 UserId = request.UserId,
@@ -46,66 +65,16 @@ namespace teamseven.PhyGen.Services.Services.UserSocialProviderService
                 CreatedAt = DateTime.UtcNow
             };
 
-            try
-            {
-                await _unitOfWork.UserSocialProviderRepository.AddAsync(entity);
-                await _unitOfWork.SaveChangesWithTransactionAsync();
-                _logger.LogInformation("UserSocialProvider added with ID {Id}", entity.Id);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error adding UserSocialProvider");
-                throw new ApplicationException("An error occurred while adding the user social provider.", ex);
-            }
+            await _unitOfWork.UserSocialProviderRepository.CreateAsync(entity);
+            await _unitOfWork.SaveChangesWithTransactionAsync();
         }
 
-        public async Task<UserSocialProviderResponse> GetByIdAsync(int id)
-        {
-            var entity = await _unitOfWork.UserSocialProviderRepository.GetByIdAsync(id);
-            if (entity == null)
-            {
-                throw new NotFoundException($"UserSocialProvider with ID {id} not found.");
-            }
-
-            return new UserSocialProviderResponse
-            {
-                Id = entity.Id,
-                UserId = entity.UserId,
-                ProviderName = entity.ProviderName,
-                ProviderId = entity.ProviderId,
-                Email = entity.Email,
-                ProfileUrl = entity.ProfileUrl,
-                CreatedAt = entity.CreatedAt,
-                UpdatedAt = entity.UpdatedAt
-            };
-        }
-
-        public async Task<List<UserSocialProviderResponse>> GetByUserIdAsync(int userId)
-        {
-            var list = await _unitOfWork.UserSocialProviderRepository.GetByUserIdAsync(userId);
-            return list?.Select(entity => new UserSocialProviderResponse
-            {
-                Id = entity.Id,
-                UserId = entity.UserId,
-                ProviderName = entity.ProviderName,
-                ProviderId = entity.ProviderId,
-                Email = entity.Email,
-                ProfileUrl = entity.ProfileUrl,
-                CreatedAt = entity.CreatedAt,
-                UpdatedAt = entity.UpdatedAt
-            }).ToList() ?? new List<UserSocialProviderResponse>();
-        }
-
-        public async Task UpdateAsync(UserSocialProviderRequest request)
+        public async Task UpdateAsync(UserSocialProviderDataRequest request)
         {
             var entity = await _unitOfWork.UserSocialProviderRepository.GetByIdAsync(request.Id);
             if (entity == null)
-            {
-                throw new NotFoundException($"UserSocialProvider with ID {request.Id} not found.");
-            }
+                throw new NotFoundException("UserSocialProvider not found.");
 
-            entity.ProviderName = request.ProviderName;
-            entity.ProviderId = request.ProviderId;
             entity.Email = request.Email;
             entity.ProfileUrl = request.ProfileUrl;
             entity.UpdatedAt = DateTime.UtcNow;
@@ -118,11 +87,9 @@ namespace teamseven.PhyGen.Services.Services.UserSocialProviderService
         {
             var entity = await _unitOfWork.UserSocialProviderRepository.GetByIdAsync(id);
             if (entity == null)
-            {
-                throw new NotFoundException($"UserSocialProvider with ID {id} not found.");
-            }
+                throw new NotFoundException("UserSocialProvider not found.");
 
-            await _unitOfWork.UserSocialProviderRepository.DeleteAsync(id);
+            await _unitOfWork.UserSocialProviderRepository.RemoveAsync(entity);
             await _unitOfWork.SaveChangesWithTransactionAsync();
         }
     }
