@@ -55,6 +55,26 @@ namespace teamseven.PhyGen.Controllers
             }
         }
 
+        [HttpGet("by-grade/{gradeId}")]
+        [AllowAnonymous]
+        [SwaggerOperation(Summary = "Get semesters by grade ID", Description = "Returns all semesters for a given grade ID.")]
+        [SwaggerResponse(200, "Semesters found.", typeof(IEnumerable<SemesterDataResponse>))]
+        [SwaggerResponse(404, "Grade not found.")]
+        public async Task<IActionResult> GetSemestersByGradeId(int gradeId)
+        {
+            try
+            {
+                var result = await _serviceProvider.SemesterService.GetSemesterByGradeIdAsync(gradeId);
+                return Ok(result);
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogWarning(ex, ex.Message);
+                return NotFound(new { Message = ex.Message });
+            }
+        }
+
+
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new semester", Description = "Creates a new semester with the provided details.")]
         [SwaggerResponse(201, "Semester created successfully.")]

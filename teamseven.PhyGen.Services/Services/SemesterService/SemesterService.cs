@@ -52,6 +52,29 @@ namespace teamseven.PhyGen.Services.Services.SemesterService
             };
         }
 
+        public async Task<IEnumerable<SemesterDataResponse>> GetSemesterByGradeIdAsync(int gradeId)
+        {
+            var grade = await _unitOfWork.GradeRepository.GetByIdAsync(gradeId);
+            if (grade == null)
+            {
+                _logger.LogWarning("Grade with ID {GradeId} not found.", gradeId);
+                throw new NotFoundException($"Grade with ID {gradeId} not found.");
+            }
+
+            var semesters = await _unitOfWork.SemesterRepository.GetAllAsync();
+
+            return semesters
+                .Where(s => s.GradeId == gradeId)
+                .Select(s => new SemesterDataResponse
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    GradeId = s.GradeId,
+                    CreatedAt = s.CreatedAt,
+                    UpdatedAt = s.UpdatedAt
+                });
+        }
+
         public async Task CreateSemesterAsync(CreateSemesterRequest request)
         {
             var grade = await _unitOfWork.GradeRepository.GetByIdAsync(request.GradeId);

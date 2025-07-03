@@ -12,6 +12,7 @@ namespace teamseven.PhyGen.Services.Services.SemesterService
     {
         Task<IEnumerable<SemesterDataResponse>> GetAllSemesterAsync();
         Task<SemesterDataResponse> GetSemesterByIdAsync(int id);
+        Task<IEnumerable<SemesterDataResponse>> GetSemesterByGradeIdAsync(int gradeId);
         Task CreateSemesterAsync(CreateSemesterRequest request);
         Task UpdateSemesterAsync(SemesterDataRequest request);
         Task DeleteSemesterAsync(int id);
