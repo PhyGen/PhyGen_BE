@@ -12,6 +12,7 @@ using teamseven.PhyGen.Services.Services.UserService;
 using teamseven.PhyGen.Services.Services.UserSocialProviderService;
 using teamseven.PhyGen.Services.Services.SolutionService;
 using teamseven.PhyGen.Services.Services.UserSubscriptionService;
+using teamseven.PhyGen.Services.Services.ExamService;
 
 namespace teamseven.PhyGen.Services.Services.ServiceProvider
 {
@@ -34,5 +35,7 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         ISolutionService SolutionService { get; }
 
         IUserSubscriptionService UserSubscriptionService { get; }
+
+        IExamService ExamService { get; }
     }
 }

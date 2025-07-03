@@ -1,5 +1,6 @@
 using teamseven.PhyGen.Services.Interfaces;
 using teamseven.PhyGen.Services.Services.ChapterService;
+using teamseven.PhyGen.Services.Services.ExamService;
 using teamseven.PhyGen.Services.Services.GradeService;
 using teamseven.PhyGen.Services.Services.LessonService;
 using teamseven.PhyGen.Services.Services.QuestionsService;
@@ -31,6 +32,7 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         private readonly ILessonService _lessonService;
         private readonly ISolutionService _solutionService;
         private readonly IUserSubscriptionService _userSubscriptionService;
+        private readonly IExamService _examService;
         public ServiceProviders(
             IAuthService authService,
             ILoginService loginService,
@@ -46,7 +48,8 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
             IRegisterService registerService,
             ILessonService lessonService,
             ISolutionService solutionService,
-            IUserSubscriptionService userSubscriptionService)
+            IUserSubscriptionService userSubscriptionService,
+            IExamService examService)
         {
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
             _loginService = loginService ?? throw new ArgumentNullException(nameof(loginService));
@@ -63,6 +66,7 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
             _lessonService = lessonService ?? throw new ArgumentNullException(nameof(_lessonService));
             _solutionService = solutionService ?? throw new ArgumentNullException(nameof(solutionService));
             _userSubscriptionService = userSubscriptionService ?? throw new ArgumentException(nameof(userSubscriptionService));
+            _examService = examService ?? throw new ArgumentNullException(nameof(examService));
         }
       
 
@@ -81,5 +85,6 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         public ILessonService LessonService => _lessonService;
         public ISolutionService SolutionService => _solutionService;
         public IUserSubscriptionService UserSubscriptionService => _userSubscriptionService;
+        public IExamService ExamService => _examService;
     }
 }

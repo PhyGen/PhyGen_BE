@@ -17,6 +17,7 @@ using teamseven.PhyGen.Services.Interfaces;
 using teamseven.PhyGen.Services.Services;
 using teamseven.PhyGen.Services.Services.Authentication;
 using teamseven.PhyGen.Services.Services.ChapterService;
+using teamseven.PhyGen.Services.Services.ExamService;
 using teamseven.PhyGen.Services.Services.GradeService;
 using teamseven.PhyGen.Services.Services.LessonService;
 using teamseven.PhyGen.Services.Services.QuestionsService;
@@ -55,7 +56,7 @@ builder.Services.AddScoped(typeof(GenericRepository<>));
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // 📌 Service Layer (Scoped)
-
+builder.Services.AddScoped<IExamService, ExamService>();
 builder.Services.AddScoped<IUserSubscriptionService, UserSubscriptionService>();
 builder.Services.AddScoped<ISolutionService, SolutionService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
