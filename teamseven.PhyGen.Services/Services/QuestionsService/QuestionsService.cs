@@ -1,23 +1,21 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using teamseven.PhyGen.Repository;
 using teamseven.PhyGen.Repository.Dtos;
 using teamseven.PhyGen.Repository.Models;
 using teamseven.PhyGen.Services.Extensions;
+using teamseven.PhyGen.Services.Object.Requests;
 using teamseven.PhyGen.Services.Object.Responses;
 
 namespace teamseven.PhyGen.Services.Services.QuestionsService
 {
     public class QuestionsService : IQuestionsService
     {
-
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger _logger;
+        private readonly ILogger<QuestionsService> _logger;
 
         public QuestionsService(IUnitOfWork unitOfWork, ILogger<QuestionsService> logger)
         {
@@ -25,31 +23,26 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-
         public async Task AddQuestionAsync(QuestionDataRequest questionDataRequest)
         {
-            // check request exist
             if (questionDataRequest == null)
             {
                 _logger.LogWarning("QuestionDataRequest is null.");
                 throw new ArgumentNullException(nameof(questionDataRequest), "Question data request cannot be null.");
             }
 
-            // check exist Lession
             if (await _unitOfWork.LessonRepository.GetByIdAsync(questionDataRequest.LessonId) == null)
             {
                 _logger.LogWarning("Lesson with ID {LessonId} not found.", questionDataRequest.LessonId);
                 throw new NotFoundException($"Lesson with ID {questionDataRequest.LessonId} not found.");
             }
 
-            // check user exist
             if (await _unitOfWork.UserRepository.GetByIdAsync(questionDataRequest.CreatedByUserId) == null)
             {
                 _logger.LogWarning("User with ID {UserId} not found.", questionDataRequest.CreatedByUserId);
                 throw new NotFoundException($"User with ID {questionDataRequest.CreatedByUserId} not found.");
             }
 
-            // mapping to entity
             var question = new Question
             {
                 Content = questionDataRequest.Content,
@@ -57,32 +50,14 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
                 DifficultyLevel = questionDataRequest.DifficultyLevel,
                 LessonId = questionDataRequest.LessonId,
                 CreatedByUserId = questionDataRequest.CreatedByUserId,
-                CreatedAt = DateTime.UtcNow 
+                CreatedAt = DateTime.UtcNow
             };
+
             try
             {
-              
                 await _unitOfWork.QuestionRepository.CreateAsync(question);
-
-                // save with transactions
                 await _unitOfWork.SaveChangesWithTransactionAsync();
-
                 _logger.LogInformation("Question with ID {QuestionId} created successfully.", question.Id);
-
-                //// mapping to Respone
-                //return new QuestionDataResponse
-                //{
-                //    Id = question.Id,
-                //    Content = question.Content,
-                //    QuestionSource = question.QuestionSource,
-                //    DifficultyLevel = question.DifficultyLevel,
-                //    LessonId = question.LessonId,
-                //    CreatedByUserId = question.CreatedByUserId,
-                //    CreatedAt = question.CreatedAt,
-                //    UpdatedAt = question.UpdatedAt,
-                //    //CreatedByUserName = question.Crea
-                //    //LessonName = lesson.Name 
-                //};
             }
             catch (Exception ex)
             {
@@ -90,19 +65,19 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
                 throw new ApplicationException("An error occurred while creating the question.", ex);
             }
         }
-   
 
         public async Task DeleteQuestionAsync(int id)
         {
-           //check id exsit
-           var target = await _unitOfWork.QuestionRepository.GetByIdAsync(id);
-            if (target == null) { throw new NotFoundException($"Not found id {id} in database"); }
-            else
+            var target = await _unitOfWork.QuestionRepository.GetByIdAsync(id);
+            if (target == null)
             {
-                await _unitOfWork.QuestionRepository.RemoveAsync(target);
-
-                await _unitOfWork.SaveChangesWithTransactionAsync();
+                _logger.LogWarning("Question with ID {QuestionId} not found.", id);
+                throw new NotFoundException($"Question with ID {id} not found.");
             }
+
+            await _unitOfWork.QuestionRepository.RemoveAsync(target);
+            await _unitOfWork.SaveChangesWithTransactionAsync();
+            _logger.LogInformation("Question with ID {QuestionId} deleted successfully.", id);
         }
 
         public Task<QuestionDataResponse> GetQuestionById(int id)
@@ -115,8 +90,15 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
             throw new NotImplementedException();
         }
 
- 
-        public async Task<PagedResponse<QuestionDataResponse>> GetQuestionsAsync(int? pageNumber = null, int? pageSize = null)
+        public async Task<PagedResponse<QuestionDataResponse>> GetQuestionsAsync(
+            int? pageNumber = null,
+            int? pageSize = null,
+            string? search = null,
+            string? sort = null,
+            int? lessonId = null,
+            string? difficultyLevel = null,
+            int? chapterId = null,
+            int isSort = 0) // Default isSort = 0 (No)
         {
             try
             {
@@ -125,13 +107,58 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
 
                 if (pageNumber.HasValue && pageSize.HasValue && pageNumber > 0 && pageSize > 0)
                 {
-                    // Phân trang
-                    (questions, totalItems) = await _unitOfWork.QuestionRepository.GetPagedAsync(pageNumber.Value, pageSize.Value);
+                    (questions, totalItems) = await _unitOfWork.QuestionRepository.GetPagedAsync(
+                        pageNumber.Value,
+                        pageSize.Value,
+                        search,
+                        sort,
+                        lessonId,
+                        difficultyLevel,
+                        chapterId,
+                        isSort);
                 }
                 else
                 {
-                    // Lấy toàn bộ
                     questions = await _unitOfWork.QuestionRepository.GetAllAsync() ?? new List<Question>();
+                    if (!string.IsNullOrEmpty(search))
+                    {
+                        var searchNormalized = search.RemoveDiacritics().ToLower();
+                        questions = questions.Where(q => q.Content.RemoveDiacritics().ToLower().Contains(searchNormalized) ||
+                                                       q.QuestionSource.RemoveDiacritics().ToLower().Contains(searchNormalized)).ToList();
+                    }
+                    if (lessonId.HasValue)
+                    {
+                        questions = questions.Where(q => q.LessonId == lessonId.Value).ToList();
+                    }
+                    if (!string.IsNullOrEmpty(difficultyLevel))
+                    {
+                        questions = questions.Where(q => q.DifficultyLevel == difficultyLevel).ToList();
+                    }
+                    if (chapterId.HasValue)
+                    {
+                        var lessonIds = await _unitOfWork.LessonRepository.GetAllAsync();
+                        lessonIds = lessonIds.Where(l => l.ChapterId == chapterId.Value).ToList();
+                        questions = questions.Where(q => lessonIds.Any(l => l.Id == q.LessonId)).ToList();
+                    }
+                    if (isSort == 1)
+                    {
+                        questions = sort?.ToLower() switch
+                        {
+                            "content:asc" => questions.OrderBy(q => q.Content).ToList(),
+                            "content:desc" => questions.OrderByDescending(q => q.Content).ToList(),
+                            "difficultylevel:asc" => questions.OrderBy(q => q.DifficultyLevel).ToList(),
+                            "difficultylevel:desc" => questions.OrderByDescending(q => q.DifficultyLevel).ToList(),
+                            "createdat:asc" => questions.OrderBy(q => q.CreatedAt).ToList(),
+                            "createdat:desc" => questions.OrderByDescending(q => q.CreatedAt).ToList(),
+                            "updatedat:asc" => questions.OrderBy(q => q.UpdatedAt).ToList(),
+                            "updatedat:desc" => questions.OrderByDescending(q => q.UpdatedAt).ToList(),
+                            _ => questions.OrderByDescending(q => q.CreatedAt).ToList()
+                        };
+                    }
+                    else
+                    {
+                        questions = questions.OrderBy(q => q.Id).ToList();
+                    }
                     totalItems = questions.Count;
                 }
 
@@ -151,13 +178,12 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
                     questionResponses,
                     pageNumber ?? 1,
                     pageSize ?? totalItems,
-                    totalItems
-                );
+                    totalItems);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while getting question: {Message}", ex.Message);
-                throw new ApplicationException("Error while getting question.", ex);
+                _logger.LogError(ex, "Error retrieving questions: {Message}", ex.Message);
+                throw new ApplicationException("Error retrieving questions.", ex);
             }
         }
     }

@@ -12,7 +12,13 @@ namespace teamseven.PhyGen.Services.Services.LessonService
     {
         Task<IEnumerable<LessonDataResponse>> GetAllLessonAsync();
 
-        Task<PagedResponse<LessonDataResponse>> GetLessonsAsync(int? pageNumber = null, int? pageSize = null);
+        Task<PagedResponse<LessonDataResponse>> GetLessonsAsync(
+            int? pageNumber = null,
+               int? pageSize = null,
+               string? search = null,
+               string? sort = null,
+               int? chapterId = null,
+               int isSort = 0);
 
         Task<LessonDataResponse> GetLessonByIdAsync(int id);
         Task CreateLessonAsync(CreateLessonRequest request);
