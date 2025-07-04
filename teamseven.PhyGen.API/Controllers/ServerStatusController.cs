@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 namespace teamseven.PhyGen.API.Controllers
 {
     [ApiController] // Chỉ ra rằng đây là một API Controller
-    [Route("api/server-status")] // Định nghĩa route cơ bản cho Controller này. Ví dụ: /api/testserver
+    //[Route("api/status")] // Định nghĩa route cơ bản cho Controller này. Ví dụ: /api/testserver
     public class ServerStatusController : ControllerBase // Kế thừa từ ControllerBase cho các API Controller
     {
         private readonly ILogger<ServerStatusController> _logger;
@@ -31,7 +31,7 @@ namespace teamseven.PhyGen.API.Controllers
         /// </summary>
         /// <param name="name">Tên bạn muốn gửi lời chào.</param>
         /// <returns>Trả về một thông báo chào mừng.</returns>
-        [HttpGet("hello/{name}")] // Định nghĩa HTTP GET request với tham số trong route: /api/testserver/hello/John
+        [HttpGet("status/{name}")] // Định nghĩa HTTP GET request với tham số trong route: /api/testserver/hello/John
         public IActionResult SayHello(string name)
         {
             _logger.LogInformation($"GET request to /api/testserver/hello/{name} received.");
