@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Threading.Tasks;
-using teamseven.PhyGen.Repository.Dtos;
 using teamseven.PhyGen.Services;
 using teamseven.PhyGen.Services.Extensions;
 using teamseven.PhyGen.Services.Object.Requests;
@@ -26,27 +25,54 @@ namespace teamseven.PhyGen.Controllers
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-
         [HttpGet]
         [AllowAnonymous]
         [SwaggerOperation(
-            Summary = "Get lessons",
-            Description = "Retrieves a list of lessons. Use pageNumber and pageSize (default 10) query parameters for pagination, or omit them to get all lessons."
-        )]
+                   Summary = "Get lessons",
+                   Description = "Retrieves a list of lessons with optional search, sort, filter, and pagination. Use 'search' to filter by name (e.g., 'chuyển động'), 'chapterId' to filter by chapter, 'isSort' (0 = no sort, 1 = sort), 'sort' (e.g., 'name:asc', 'createdAt:desc'), and 'pageNumber'/'pageSize' for pagination. If 'isSort' is 0 or not provided, lessons are sorted by 'Id' (ascending). If 'isSort' is 1, 'sort' parameter is used, defaulting to 'createdAt:desc' if 'sort' is invalid or not provided."
+               )]
         [SwaggerResponse(200, "Lessons retrieved successfully.", typeof(PagedResponse<LessonDataResponse>))]
-        [SwaggerResponse(400, "Invalid pagination parameters.", typeof(ProblemDetails))]
+        [SwaggerResponse(400, "Invalid parameters.", typeof(ProblemDetails))]
         [SwaggerResponse(500, "Internal server error.", typeof(ProblemDetails))]
-        public async Task<IActionResult> GetLessons([FromQuery] int? pageNumber = null, [FromQuery] int? pageSize = null)
+        public async Task<IActionResult> GetLessons(
+                   [FromQuery] string? search = null,
+                   [FromQuery] string? sort = null,
+                   [FromQuery] int? chapterId = null,
+                   [FromQuery] int? pageNumber = null,
+                   [FromQuery] int? pageSize = null,
+                   [FromQuery] int isSort = 0)
         {
             try
             {
+                // Validate pagination parameters
                 if (pageNumber.HasValue && pageNumber < 1 || pageSize.HasValue && pageSize < 1)
                 {
                     _logger.LogWarning("Invalid pagination parameters: pageNumber={PageNumber}, pageSize={PageSize}.", pageNumber, pageSize);
                     return BadRequest(new { Message = "pageNumber and pageSize must be greater than 0." });
                 }
 
-                var pagedLessons = await _serviceProvider.LessonService.GetLessonsAsync(pageNumber, pageSize);
+                // Validate isSort
+                if (isSort != 0 && isSort != 1)
+                {
+                    _logger.LogWarning("Invalid isSort parameter: {IsSort}.", isSort);
+                    return BadRequest(new { Message = "isSort must be 0 or 1." });
+                }
+
+                // Validate sort parameter when isSort=1
+                if (isSort == 1 && !string.IsNullOrEmpty(sort) && !IsValidSortParameter(sort))
+                {
+                    _logger.LogWarning("Invalid sort parameter: {Sort}.", sort);
+                    return BadRequest(new { Message = "Invalid sort parameter. Use format 'field:asc' or 'field:desc' with valid fields (name, createdAt, updatedAt)." });
+                }
+
+                var pagedLessons = await _serviceProvider.LessonService.GetLessonsAsync(
+                    pageNumber,
+                    pageSize,
+                    search,
+                    sort,
+                    chapterId,
+                    isSort);
+
                 _logger.LogInformation("Retrieved {Count} lessons for page {PageNumber}.", pagedLessons.Items.Count, pagedLessons.PageNumber);
                 return Ok(pagedLessons);
             }
@@ -55,6 +81,15 @@ namespace teamseven.PhyGen.Controllers
                 _logger.LogError(ex, "Error retrieving lessons: {Message}", ex.Message);
                 return StatusCode(500, new { Message = "An error occurred while retrieving lessons." });
             }
+        }
+
+
+        private bool IsValidSortParameter(string sort)
+        {
+            var validFields = new[] { "name", "createdat", "updatedat" };
+            var validOrders = new[] { "asc", "desc" };
+            var parts = sort.ToLower().Split(':');
+            return parts.Length == 2 && validFields.Contains(parts[0]) && validOrders.Contains(parts[1]);
         }
 
         [HttpGet("{id}")]
