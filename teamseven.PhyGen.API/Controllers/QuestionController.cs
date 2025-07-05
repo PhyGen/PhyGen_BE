@@ -95,7 +95,7 @@ namespace teamseven.PhyGen.Controllers
 
 
         [HttpPost]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Create a new question", Description = "Creates a new question with the provided details.")]
         [SwaggerResponse(201, "Question created successfully.", typeof(QuestionDataResponse))]
         [SwaggerResponse(400, "Invalid request data.", typeof(ProblemDetails))]
@@ -128,7 +128,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Delete a question", Description = "Deletes a question by its ID.")]
         [SwaggerResponse(204, "Question deleted successfully.")]
         [SwaggerResponse(404, "Question not found.", typeof(ProblemDetails))]

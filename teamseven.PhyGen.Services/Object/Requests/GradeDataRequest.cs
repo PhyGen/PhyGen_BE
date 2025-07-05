@@ -4,15 +4,18 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using teamseven.PhyGen.Services.Helpers;
 
 namespace teamseven.PhyGen.Services.Object.Requests
 {
     public class GradeDataRequest
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [Required(ErrorMessage = "Name is required.")]
         [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
         public string Name { get; set; }
+
+        public int GetDecodedId() => IdHelper.DecodeId(Id);
     }
 }
