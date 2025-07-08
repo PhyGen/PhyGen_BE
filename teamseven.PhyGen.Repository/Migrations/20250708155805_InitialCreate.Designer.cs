@@ -2,9 +2,9 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using teamseven.PhyGen.Repository.Models;
 
 #nullable disable
@@ -12,8 +12,8 @@ using teamseven.PhyGen.Repository.Models;
 namespace teamseven.PhyGen.Repository.Migrations
 {
     [DbContext(typeof(teamsevenphygendbContext))]
-    [Migration("20250702141235_MinusChangesSolution")]
-    partial class MinusChangesSolution
+    [Migration("20250708155805_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,717 +21,717 @@ namespace teamseven.PhyGen.Repository.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.Chapter", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("SemesterId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id")
-                        .HasName("PK__Chapter__3214EC0750862B44");
+                        .HasName("pk_chapters");
 
-                    b.HasIndex(new[] { "SemesterId" }, "IX_Chapter_SemesterId");
+                    b.HasIndex(new[] { "SemesterId" }, "ix_chapters_semester_id");
 
-                    b.ToTable("Chapters", (string)null);
+                    b.ToTable("chapters", "public");
                 });
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.Exam", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ExamTypeId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<int>("LessonId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id")
-                        .HasName("PK__Exam__3214EC07BBB96DEC");
+                        .HasName("pk_exams");
 
-                    b.HasIndex(new[] { "CreatedByUserId" }, "IX_Exam_CreatedByUserId");
+                    b.HasIndex(new[] { "CreatedByUserId" }, "ix_exams_created_by_user_id");
 
-                    b.HasIndex(new[] { "ExamTypeId" }, "IX_Exam_ExamTypeId");
+                    b.HasIndex(new[] { "ExamTypeId" }, "ix_exams_exam_type_id");
 
-                    b.HasIndex(new[] { "IsDeleted" }, "IX_Exam_IsDeleted");
+                    b.HasIndex(new[] { "IsDeleted" }, "ix_exams_is_deleted");
 
-                    b.HasIndex(new[] { "LessonId" }, "IX_Exam_LessonId");
+                    b.HasIndex(new[] { "LessonId" }, "ix_exams_lesson_id");
 
-                    b.ToTable("Exams", (string)null);
+                    b.ToTable("exams", "public");
                 });
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.ExamHistory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Action")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<int>("ActionByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("ActionDate")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<int>("ExamId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id")
-                        .HasName("PK__ExamHist__3214EC07112EFF0E");
+                        .HasName("pk_exam_histories");
 
-                    b.HasIndex(new[] { "ExamId" }, "IX_ExamHistory_ExamId");
+                    b.HasIndex(new[] { "ActionByUserId" }, "ix_exam_histories_action_by_user_id");
 
-                    b.HasIndex(new[] { "ActionByUserId" }, "IX_IX_ExamHistory_ActionByUserId");
+                    b.HasIndex(new[] { "ExamId" }, "ix_exam_histories_exam_id");
 
-                    b.ToTable("ExamHistories", (string)null);
+                    b.ToTable("exam_histories", "public");
                 });
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.ExamQuestion", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("ExamId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Order")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("QuestionId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id")
-                        .HasName("PK__ExamQuestion__Id");
+                        .HasName("pk_exam_questions");
 
-                    b.HasIndex(new[] { "ExamId" }, "IX_ExamQuestion_ExamId");
+                    b.HasIndex(new[] { "ExamId" }, "ix_exam_questions_exam_id");
 
-                    b.HasIndex(new[] { "QuestionId" }, "IX_ExamQuestion_QuestionId");
+                    b.HasIndex(new[] { "QuestionId" }, "ix_exam_questions_question_id");
 
-                    b.ToTable("ExamQuestions", (string)null);
+                    b.ToTable("exam_questions", "public");
                 });
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.ExamType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id")
-                        .HasName("PK__ExamType__3214EC0759F4F1AF");
+                        .HasName("pk_exam_types");
 
-                    b.HasIndex(new[] { "Name" }, "UQ__ExamType__737584F619DE264A")
+                    b.HasIndex(new[] { "Name" }, "uq_exam_types_name")
                         .IsUnique();
 
-                    b.ToTable("ExamTypes", (string)null);
+                    b.ToTable("exam_types", "public");
                 });
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.Grade", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id")
-                        .HasName("PK__Grade__3214EC07726422EF");
+                        .HasName("pk_grades");
 
-                    b.HasIndex(new[] { "Name" }, "UQ__Grade__737584F6EABA19DB")
+                    b.HasIndex(new[] { "Name" }, "uq_grades_name")
                         .IsUnique();
 
-                    b.ToTable("Grades", (string)null);
+                    b.ToTable("grades", "public");
                 });
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.Lesson", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ChapterId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id")
-                        .HasName("PK__Lesson__3214EC07A753DB40");
+                        .HasName("pk_lessons");
 
-                    b.HasIndex(new[] { "ChapterId" }, "IX_Lesson_ChapterId");
+                    b.HasIndex(new[] { "ChapterId" }, "ix_lessons_chapter_id");
 
-                    b.ToTable("Lessons", (string)null);
+                    b.ToTable("lessons", "public");
                 });
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.Question", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("DifficultyLevel")
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<int>("LessonId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("QuestionSource")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id")
-                        .HasName("PK__Question__3214EC07E85416E6");
+                        .HasName("pk_questions");
 
-                    b.HasIndex(new[] { "CreatedByUserId" }, "IX_Question_CreatedByUserId");
+                    b.HasIndex(new[] { "CreatedByUserId" }, "ix_questions_created_by_user_id");
 
-                    b.HasIndex(new[] { "LessonId" }, "IX_Question_LessonId");
+                    b.HasIndex(new[] { "LessonId" }, "ix_questions_lesson_id");
 
-                    b.ToTable("Questions", (string)null);
+                    b.ToTable("questions", "public");
                 });
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("RoleName")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id")
-                        .HasName("PK__Roles__3214EC0736E8263A");
+                        .HasName("pk_roles");
 
-                    b.HasIndex(new[] { "RoleName" }, "UQ__Roles__8A2B616076721B42")
+                    b.HasIndex(new[] { "RoleName" }, "uq_roles_role_name")
                         .IsUnique();
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("roles", "public");
                 });
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.Semester", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("GradeId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("character varying(10)");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id")
-                        .HasName("PK__Semester__3214EC073D10267A");
+                        .HasName("pk_semesters");
 
-                    b.HasIndex(new[] { "GradeId" }, "IX_Semester_GradeId");
+                    b.HasIndex(new[] { "GradeId" }, "ix_semesters_grade_id");
 
-                    b.ToTable("Semesters", (string)null);
+                    b.ToTable("semesters", "public");
                 });
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.Solution", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Explanation")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsApproved")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<int>("QuestionId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id")
-                        .HasName("PK__Solution__3214EC0789D85D64");
+                        .HasName("pk_solutions");
 
-                    b.HasIndex(new[] { "CreatedByUserId" }, "IX_Solution_CreatedByUserId");
+                    b.HasIndex(new[] { "CreatedByUserId" }, "ix_solutions_created_by_user_id");
 
-                    b.HasIndex(new[] { "IsApproved" }, "IX_Solution_IsApproved");
+                    b.HasIndex(new[] { "IsApproved" }, "ix_solutions_is_approved");
 
-                    b.HasIndex(new[] { "IsDeleted" }, "IX_Solution_IsDeleted");
+                    b.HasIndex(new[] { "IsDeleted" }, "ix_solutions_is_deleted");
 
-                    b.HasIndex(new[] { "QuestionId" }, "IX_Solution_QuestionId");
+                    b.HasIndex(new[] { "QuestionId" }, "ix_solutions_question_id");
 
-                    b.ToTable("Solutions", (string)null);
+                    b.ToTable("solutions", "public");
                 });
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.SolutionReport", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Reason")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime>("ReportDate")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("ReportedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("SolutionId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
+                        .HasColumnType("character varying(20)")
                         .HasDefaultValue("Pending");
 
                     b.HasKey("Id")
-                        .HasName("PK__Solution__3214EC07C9C74095");
+                        .HasName("pk_solution_reports");
 
-                    b.HasIndex(new[] { "ReportedByUserId" }, "IX_SolutionReport_ReportedByUserId");
+                    b.HasIndex(new[] { "ReportedByUserId" }, "ix_solution_reports_reported_by_user_id");
 
-                    b.HasIndex(new[] { "SolutionId" }, "IX_SolutionReport_SolutionId");
+                    b.HasIndex(new[] { "SolutionId" }, "ix_solution_reports_solution_id");
 
-                    b.ToTable("SolutionReports", (string)null);
+                    b.ToTable("solution_reports", "public");
                 });
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.SolutionsLink", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("GeneratedBy")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Link")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<int>("SolutionId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id")
-                        .HasName("PK__Solution__3214EC0737663E7D");
+                        .HasName("pk_solutions_links");
 
-                    b.HasIndex(new[] { "SolutionId" }, "IX_SolutionsLink_SolutionId");
+                    b.HasIndex(new[] { "SolutionId" }, "ix_solutions_links_solution_id");
 
-                    b.ToTable("SolutionsLinks", (string)null);
+                    b.ToTable("solutions_links", "public");
                 });
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.SubscriptionType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<int?>("DurationInDays")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("SubscriptionCode")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("SubscriptionName")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<decimal>("SubscriptionPrice")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id")
-                        .HasName("PK__Subscrip__3214EC07C6E713D8");
+                        .HasName("pk_subscription_types");
 
-                    b.HasIndex(new[] { "SubscriptionCode" }, "IX_SubscriptionType_SubscriptionCode");
+                    b.HasIndex(new[] { "SubscriptionCode" }, "ix_subscription_types_subscription_code");
 
-                    b.HasIndex(new[] { "UpdatedBy" }, "IX_SubscriptionType_UpdatedBy");
+                    b.HasIndex(new[] { "UpdatedBy" }, "ix_subscription_types_updated_by");
 
-                    b.HasIndex(new[] { "SubscriptionCode" }, "UQ__Subscrip__A940962CCEF18247")
+                    b.HasIndex(new[] { "SubscriptionCode" }, "uq_subscription_types_subscription_code")
                         .IsUnique();
 
-                    b.ToTable("SubscriptionTypes", (string)null);
+                    b.ToTable("subscription_types", "public");
                 });
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AvatarUrl")
                         .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<DateTime?>("EmailVerifiedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FullName")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<bool?>("IsActive")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasDefaultValue(true);
 
                     b.Property<DateTime?>("LastLoginAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PasswordHash")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id")
-                        .HasName("PK__Users__3214EC0751B15CB7");
+                        .HasName("pk_users");
 
-                    b.HasIndex(new[] { "Email" }, "IX_Users_Email");
+                    b.HasIndex(new[] { "Email" }, "ix_users_email");
 
-                    b.HasIndex(new[] { "IsActive" }, "IX_Users_IsActive");
+                    b.HasIndex(new[] { "IsActive" }, "ix_users_is_active");
 
-                    b.HasIndex(new[] { "LastLoginAt" }, "IX_Users_LastLoginAt");
+                    b.HasIndex(new[] { "LastLoginAt" }, "ix_users_last_login_at");
 
-                    b.HasIndex(new[] { "RoleId" }, "IX_Users_RoleId");
+                    b.HasIndex(new[] { "RoleId" }, "ix_users_role_id");
 
-                    b.HasIndex(new[] { "UpdatedBy" }, "IX_Users_UpdatedBy");
+                    b.HasIndex(new[] { "UpdatedBy" }, "ix_users_updated_by");
 
-                    b.HasIndex(new[] { "Email" }, "UQ__Users__A9D105349FB12D7F")
+                    b.HasIndex(new[] { "Email" }, "uq_users_email")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("users", "public");
                 });
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.UserSocialProvider", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Email")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("ProfileUrl")
                         .HasMaxLength(2048)
-                        .HasColumnType("nvarchar(2048)");
+                        .HasColumnType("character varying(2048)");
 
                     b.Property<string>("ProviderId")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("ProviderName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id")
-                        .HasName("PK__UserSoci__3214EC07C47A8C4E");
+                        .HasName("pk_user_social_providers");
 
-                    b.HasIndex(new[] { "UserId" }, "IX_UserSocialProviders_UserId");
+                    b.HasIndex(new[] { "UserId" }, "ix_user_social_providers_user_id");
 
-                    b.HasIndex(new[] { "ProviderName", "ProviderId" }, "UQ_UserSocialProviders_Provider")
+                    b.HasIndex(new[] { "ProviderName", "ProviderId" }, "uq_user_social_providers_provider")
                         .IsUnique();
 
-                    b.ToTable("UserSocialProviders", (string)null);
+                    b.ToTable("user_social_providers", "public");
                 });
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.UserSubscription", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<decimal?>("Amount")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasDefaultValue(true);
 
                     b.Property<string>("PaymentGatewayTransactionId")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("PaymentStatus")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime>("StartDate")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("SubscriptionTypeId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id")
-                        .HasName("PK__UserSubs__3214EC07715BEBD0");
+                        .HasName("pk_user_subscriptions");
 
-                    b.HasIndex(new[] { "IsActive" }, "IX_UserSubscriptions_IsActive");
+                    b.HasIndex(new[] { "IsActive" }, "ix_user_subscriptions_is_active");
 
-                    b.HasIndex(new[] { "PaymentStatus" }, "IX_UserSubscriptions_PaymentStatus");
+                    b.HasIndex(new[] { "PaymentStatus" }, "ix_user_subscriptions_payment_status");
 
-                    b.HasIndex(new[] { "SubscriptionTypeId" }, "IX_UserSubscriptions_SubscriptionTypeId");
+                    b.HasIndex(new[] { "SubscriptionTypeId" }, "ix_user_subscriptions_subscription_type_id");
 
-                    b.HasIndex(new[] { "UserId" }, "IX_UserSubscriptions_UserId");
+                    b.HasIndex(new[] { "UserId" }, "ix_user_subscriptions_user_id");
 
-                    b.ToTable("UserSubscriptions", (string)null);
+                    b.ToTable("user_subscriptions", "public");
                 });
 
             modelBuilder.Entity("teamseven.PhyGen.Repository.Models.Chapter", b =>
@@ -741,7 +741,7 @@ namespace teamseven.PhyGen.Repository.Migrations
                         .HasForeignKey("SemesterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK__Chapter__Semeste__2645B050");
+                        .HasConstraintName("fk_chapters_semester_id");
 
                     b.Navigation("Semester");
                 });
@@ -752,20 +752,20 @@ namespace teamseven.PhyGen.Repository.Migrations
                         .WithMany("Exams")
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
-                        .HasConstraintName("FK__Exam__CreatedByU__3493CFA7");
+                        .HasConstraintName("fk_exams_created_by_user_id");
 
                     b.HasOne("teamseven.PhyGen.Repository.Models.ExamType", "ExamType")
                         .WithMany("Exams")
                         .HasForeignKey("ExamTypeId")
                         .IsRequired()
-                        .HasConstraintName("FK__Exam__ExamTypeId__339FAB6E");
+                        .HasConstraintName("fk_exams_exam_type_id");
 
                     b.HasOne("teamseven.PhyGen.Repository.Models.Lesson", "Lesson")
                         .WithMany("Exams")
                         .HasForeignKey("LessonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK__Exam__LessonId__32AB8735");
+                        .HasConstraintName("fk_exams_lesson_id");
 
                     b.Navigation("CreatedByUser");
 
@@ -780,14 +780,14 @@ namespace teamseven.PhyGen.Repository.Migrations
                         .WithMany("ExamHistories")
                         .HasForeignKey("ActionByUserId")
                         .IsRequired()
-                        .HasConstraintName("FK__ExamHisto__Actio__395884C4");
+                        .HasConstraintName("fk_exam_histories_action_by_user_id");
 
                     b.HasOne("teamseven.PhyGen.Repository.Models.Exam", "Exam")
                         .WithMany("ExamHistories")
                         .HasForeignKey("ExamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK__ExamHisto__ExamI__3864608B");
+                        .HasConstraintName("fk_exam_histories_exam_id");
 
                     b.Navigation("ActionByUser");
 
@@ -801,13 +801,13 @@ namespace teamseven.PhyGen.Repository.Migrations
                         .HasForeignKey("ExamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK__ExamQuest__ExamI__47A6A41B");
+                        .HasConstraintName("fk_exam_questions_exam_id");
 
                     b.HasOne("teamseven.PhyGen.Repository.Models.Question", "Question")
                         .WithMany()
                         .HasForeignKey("QuestionId")
                         .IsRequired()
-                        .HasConstraintName("FK__ExamQuest__Quest__489AC854");
+                        .HasConstraintName("fk_exam_questions_question_id");
 
                     b.Navigation("Exam");
 
@@ -821,7 +821,7 @@ namespace teamseven.PhyGen.Repository.Migrations
                         .HasForeignKey("ChapterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK__Lesson__ChapterI__2A164134");
+                        .HasConstraintName("fk_lessons_chapter_id");
 
                     b.Navigation("Chapter");
                 });
@@ -832,14 +832,14 @@ namespace teamseven.PhyGen.Repository.Migrations
                         .WithMany("Questions")
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
-                        .HasConstraintName("FK__Question__Create__3E1D39E1");
+                        .HasConstraintName("fk_questions_created_by_user_id");
 
                     b.HasOne("teamseven.PhyGen.Repository.Models.Lesson", "Lesson")
                         .WithMany("Questions")
                         .HasForeignKey("LessonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK__Question__Lesson__3D2915A8");
+                        .HasConstraintName("fk_questions_lesson_id");
 
                     b.Navigation("CreatedByUser");
 
@@ -853,7 +853,7 @@ namespace teamseven.PhyGen.Repository.Migrations
                         .HasForeignKey("GradeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK__Semester__GradeI__22751F6C");
+                        .HasConstraintName("fk_semesters_grade_id");
 
                     b.Navigation("Grade");
                 });
@@ -864,14 +864,14 @@ namespace teamseven.PhyGen.Repository.Migrations
                         .WithMany("Solutions")
                         .HasForeignKey("CreatedByUserId")
                         .IsRequired()
-                        .HasConstraintName("FK__Solution__Create__4F47C5E3");
+                        .HasConstraintName("fk_solutions_created_by_user_id");
 
                     b.HasOne("teamseven.PhyGen.Repository.Models.Question", "Question")
                         .WithMany("Solutions")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK__Solution__Questi__4E53A1AA");
+                        .HasConstraintName("fk_solutions_question_id");
 
                     b.Navigation("CreatedByUser");
 
@@ -884,14 +884,14 @@ namespace teamseven.PhyGen.Repository.Migrations
                         .WithMany("SolutionReports")
                         .HasForeignKey("ReportedByUserId")
                         .IsRequired()
-                        .HasConstraintName("FK__SolutionR__Repor__55009F39");
+                        .HasConstraintName("fk_solution_reports_reported_by_user_id");
 
                     b.HasOne("teamseven.PhyGen.Repository.Models.Solution", "Solution")
                         .WithMany("SolutionReports")
                         .HasForeignKey("SolutionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK__SolutionR__Solut__540C7B00");
+                        .HasConstraintName("fk_solution_reports_solution_id");
 
                     b.Navigation("ReportedByUser");
 
@@ -905,7 +905,7 @@ namespace teamseven.PhyGen.Repository.Migrations
                         .HasForeignKey("SolutionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK__Solutions__Solut__58D1301D");
+                        .HasConstraintName("fk_solutions_links_solution_id");
 
                     b.Navigation("Solution");
                 });
@@ -916,7 +916,7 @@ namespace teamseven.PhyGen.Repository.Migrations
                         .WithMany("SubscriptionTypes")
                         .HasForeignKey("UpdatedBy")
                         .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("FK__Subscript__Updat__0F624AF8");
+                        .HasConstraintName("fk_subscription_types_updated_by");
 
                     b.Navigation("UpdatedByNavigation");
                 });
@@ -927,12 +927,12 @@ namespace teamseven.PhyGen.Repository.Migrations
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .IsRequired()
-                        .HasConstraintName("FK__Users__RoleId__09A971A2");
+                        .HasConstraintName("fk_users_role_id");
 
                     b.HasOne("teamseven.PhyGen.Repository.Models.User", "UpdatedByNavigation")
                         .WithMany("InverseUpdatedByNavigation")
                         .HasForeignKey("UpdatedBy")
-                        .HasConstraintName("FK__Users__UpdatedBy__0A9D95DB");
+                        .HasConstraintName("fk_users_updated_by");
 
                     b.Navigation("Role");
 
@@ -946,7 +946,7 @@ namespace teamseven.PhyGen.Repository.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK__UserSocia__UserI__14270015");
+                        .HasConstraintName("fk_user_social_providers_user_id");
 
                     b.Navigation("User");
                 });
@@ -957,14 +957,14 @@ namespace teamseven.PhyGen.Repository.Migrations
                         .WithMany("UserSubscriptions")
                         .HasForeignKey("SubscriptionTypeId")
                         .IsRequired()
-                        .HasConstraintName("FK__UserSubsc__Subsc__1AD3FDA4");
+                        .HasConstraintName("fk_user_subscriptions_subscription_type_id");
 
                     b.HasOne("teamseven.PhyGen.Repository.Models.User", "User")
                         .WithMany("UserSubscriptions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK__UserSubsc__UserI__19DFD96B");
+                        .HasConstraintName("fk_user_subscriptions_user_id");
 
                     b.Navigation("SubscriptionType");
 

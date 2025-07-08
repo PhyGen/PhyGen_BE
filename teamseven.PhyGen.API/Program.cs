@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
@@ -33,8 +34,18 @@ using teamseven.PhyGen.Services.Services.UserSubscriptionService;
 var builder = WebApplication.CreateBuilder(args);
 
 // ================= CẤU HÌNH DB =================
+//builder.Services.AddDbContext<teamsevenphygendbContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<teamsevenphygendbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), npgsqlOptions =>
+    {
+        npgsqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorCodesToAdd: null);
+        npgsqlOptions.CommandTimeout(60);
+    }));
+
 // ================= CẤU HÌNH AUTHENTICATION =================
 ConfigureAuthentication(builder.Services, builder.Configuration);
 
