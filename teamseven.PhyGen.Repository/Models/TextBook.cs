@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace teamseven.PhyGen.Repository.Models
 {
-    public partial class Textbook
+    public partial class TextBook
     {
         public int Id { get; set; }
 

@@ -37,7 +37,7 @@ public partial class Question
 
     public virtual Lesson Lesson { get; set; }
 
-    public virtual Textbook Textbook { get; set; }
+    public virtual TextBook Textbook { get; set; }
 
     public virtual Question TemplateQuestion { get; set; } // navigate to template question if cloned
     public virtual ICollection<Solution> Solutions { get; set; } = new List<Solution>();

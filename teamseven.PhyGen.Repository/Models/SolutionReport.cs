@@ -19,6 +19,8 @@ public partial class SolutionReport
 
     public DateTime ReportDate { get; set; }
 
+    public string Status { get; set; }
+
     public virtual User ReportedByUser { get; set; }
 
     public virtual Solution Solution { get; set; }

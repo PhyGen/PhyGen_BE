@@ -29,7 +29,7 @@ public partial class teamsevenphygendbContext : DbContext
     public virtual DbSet<Solution> Solutions { get; set; }
     public virtual DbSet<SolutionReport> SolutionReports { get; set; }
     public virtual DbSet<SubscriptionType> SubscriptionTypes { get; set; }
-    public virtual DbSet<Textbook> Textbooks { get; set; }
+    public virtual DbSet<TextBook> TextBooks { get; set; }
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<UserSocialProvider> UserSocialProviders { get; set; }
     public virtual DbSet<UserSubscription> UserSubscriptions { get; set; }
@@ -192,6 +192,8 @@ public partial class teamsevenphygendbContext : DbContext
             entity.HasOne(d => d.Question).WithMany(p => p.QuestionReports)
                 .HasForeignKey(d => d.QuestionId)
                 .HasConstraintName("fk_question_reports_question_id");
+            entity.Property(e => e.IsHandled)
+                .HasDefaultValue(false);
             entity.HasOne(d => d.ReportedByUser).WithMany()
                 .HasForeignKey(d => d.ReportedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -257,6 +259,10 @@ public partial class teamsevenphygendbContext : DbContext
             entity.HasIndex(e => e.SolutionId, "ix_solution_reports_solution_id");
             entity.Property(e => e.Reason).IsRequired().HasMaxLength(1000);
             entity.Property(e => e.ReportDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.Status)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasDefaultValue("Pending");
             entity.HasOne(d => d.ReportedByUser).WithMany(p => p.SolutionReports)
                 .HasForeignKey(d => d.ReportedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -284,7 +290,7 @@ public partial class teamsevenphygendbContext : DbContext
                 .HasConstraintName("fk_subscription_types_updated_by");
         });
 
-        modelBuilder.Entity<Textbook>(entity =>
+        modelBuilder.Entity<TextBook>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("pk_textbooks");
             entity.ToTable("textbooks", "public");
@@ -292,7 +298,7 @@ public partial class teamsevenphygendbContext : DbContext
             entity.HasIndex(e => e.GradeId, "ix_textbooks_grade_id");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
-            entity.HasOne(d => d.Grade).WithMany(p => p.Textbooks)
+            entity.HasOne(d => d.Grade).WithMany(p => p.TextBooks)
                 .HasForeignKey(d => d.GradeId)
                 .HasConstraintName("fk_textbooks_grade_id");
         });

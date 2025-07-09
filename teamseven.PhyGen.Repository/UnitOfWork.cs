@@ -19,11 +19,12 @@ namespace teamseven.PhyGen.Repository
         SemesterRepository SemesterRepository { get; }
         SolutionReportRepository SolutionReportRepository { get; }
         SolutionRepository SolutionRepository { get; }
-        SolutionsLinkRepository SolutionsLinkRepository { get; }
         SubscriptionTypeRepository SubscriptionTypeRepository { get; }
         UserRepository UserRepository { get; }
         UserSubscriptionRepository UserSubscriptionRepository { get; }
         UserSocialProviderRepository UserSocialProviderRepository { get; }
+        QuestionReportRepository QuestionReportRepository { get; }
+        TextBookRepository TextBookRepository { get; }
 
         int SaveChangesWithTransaction();
         Task<int> SaveChangesWithTransactionAsync();
@@ -44,11 +45,12 @@ namespace teamseven.PhyGen.Repository
         private SemesterRepository _semesterRepository;
         private SolutionReportRepository _solutionReportRepository;
         private SolutionRepository _solutionRepository;
-        private SolutionsLinkRepository _solutionsLinkRepository;
         private SubscriptionTypeRepository _subscriptionTypeRepository;
         private UserRepository _userRepository;
         private UserSubscriptionRepository _userSubscriptionRepository;
         private UserSocialProviderRepository _userSocialProvider;
+        private QuestionReportRepository _questionReportRepository;
+        private TextBookRepository _textBookRepository;
 
         private bool _disposed = false;
 
@@ -68,11 +70,12 @@ namespace teamseven.PhyGen.Repository
         public SemesterRepository SemesterRepository => _semesterRepository ??= new SemesterRepository(_context);
         public SolutionReportRepository SolutionReportRepository => _solutionReportRepository ??= new SolutionReportRepository(_context);
         public SolutionRepository SolutionRepository => _solutionRepository ??= new SolutionRepository(_context);
-        public SolutionsLinkRepository SolutionsLinkRepository => _solutionsLinkRepository ??= new SolutionsLinkRepository(_context);
         public SubscriptionTypeRepository SubscriptionTypeRepository => _subscriptionTypeRepository ??= new SubscriptionTypeRepository(_context);
         public UserRepository UserRepository => _userRepository ??= new UserRepository(_context);
         public UserSubscriptionRepository UserSubscriptionRepository => _userSubscriptionRepository ??= new UserSubscriptionRepository(_context);
         public UserSocialProviderRepository UserSocialProviderRepository => _userSocialProvider ??= new UserSocialProviderRepository(_context);
+        public QuestionReportRepository QuestionReportRepository => _questionReportRepository ??= new QuestionReportRepository(_context);
+        public TextBookRepository TextBookRepository => _textBookRepository ??= new TextBookRepository(_context);
 
         public int SaveChangesWithTransaction()
         {
