@@ -49,7 +49,7 @@ namespace teamseven.PhyGen.API.Controllers
         /// <summary>
         /// Change user role.
         /// </summary>
-        [HttpPost("change-role")]
+        [HttpPost("role")]
         [SwaggerOperation(
             Summary = "Change user role",
             Description = "Changes the role of a user if the correct secret key is provided."

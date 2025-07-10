@@ -2,20 +2,45 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace teamseven.PhyGen.Repository.Models;
 
 public partial class Question
 {
     public int Id { get; set; }
-    public string Content { get; set; }
-    public string QuestionSource { get; set; }
-    public string DifficultyLevel { get; set; }
+
+    [Required, MaxLength(5000)]
+    public string Content { get; set; } // question content
+
+    [MaxLength(500)]
+    public string QuestionSource { get; set; } // clone or bank or AI or etc
+
+    [MaxLength(50)]
+    public string DifficultyLevel { get; set; } 
+
+    public bool IsCloned { get; set; } 
+
+    public int? TemplateQuestionId { get; set; } // if cloned 
+
+    public int TextbookId { get; set; } 
+
     public int LessonId { get; set; }
-    public int CreatedByUserId { get; set; }
+
+    public int CreatedByUserId { get; set; } 
+
     public DateTime CreatedAt { get; set; }
+
     public DateTime? UpdatedAt { get; set; }
+
     public virtual User CreatedByUser { get; set; }
+
     public virtual Lesson Lesson { get; set; }
+
+    public virtual TextBook Textbook { get; set; }
+
+    public virtual Question TemplateQuestion { get; set; } // navigate to template question if cloned
     public virtual ICollection<Solution> Solutions { get; set; } = new List<Solution>();
+
+    public virtual ICollection<QuestionReport> QuestionReports { get; set; } = new List<QuestionReport>();
 }

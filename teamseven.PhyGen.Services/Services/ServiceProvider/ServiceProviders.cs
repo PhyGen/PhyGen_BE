@@ -3,12 +3,13 @@ using teamseven.PhyGen.Services.Services.ChapterService;
 using teamseven.PhyGen.Services.Services.ExamService;
 using teamseven.PhyGen.Services.Services.GradeService;
 using teamseven.PhyGen.Services.Services.LessonService;
+using teamseven.PhyGen.Services.Services.QuestionReportService;
 using teamseven.PhyGen.Services.Services.QuestionsService;
 using teamseven.PhyGen.Services.Services.SemesterService;
-using teamseven.PhyGen.Services.Services.SolutionLinkService;
 using teamseven.PhyGen.Services.Services.SolutionReportService;
 using teamseven.PhyGen.Services.Services.SolutionService;
 using teamseven.PhyGen.Services.Services.SubscriptionTypeService;
+using teamseven.PhyGen.Services.Services.TextBookService;
 using teamseven.PhyGen.Services.Services.UserService;
 using teamseven.PhyGen.Services.Services.UserSocialProviderService;
 using teamseven.PhyGen.Services.Services.UserSubscriptionService;
@@ -25,7 +26,6 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         private readonly IUserSocialProviderService _userSocialProviderService;
         private readonly IChapterService _chapterService;
         private readonly IGradeService _gradeService;
-        private readonly ISolutionLinkService _solutionLinkService;
         private readonly ISolutionReportService _solutionReportService;
         private readonly ISubscriptionTypeService _subscriptionTypeService;
         private readonly IRegisterService _registerService;
@@ -33,6 +33,8 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         private readonly ISolutionService _solutionService;
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IExamService _examService;
+        private readonly IQuestionReportService _questionReportService;
+        private readonly ITextBookService _textBookService;
         public ServiceProviders(
             IAuthService authService,
             ILoginService loginService,
@@ -42,14 +44,15 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
             IUserSocialProviderService userSocialProviderService,
             IChapterService chapterService,
             IGradeService gradeService,
-            ISolutionLinkService solutionLinkService,
             ISolutionReportService solutionReportService,
             ISubscriptionTypeService subscriptionTypeService,
             IRegisterService registerService,
             ILessonService lessonService,
             ISolutionService solutionService,
             IUserSubscriptionService userSubscriptionService,
-            IExamService examService)
+            IExamService examService,
+            IQuestionReportService questionReportService,
+            ITextBookService textBookService)
         {
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
             _loginService = loginService ?? throw new ArgumentNullException(nameof(loginService));
@@ -59,7 +62,6 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
             _userSocialProviderService = userSocialProviderService ?? throw new ArgumentNullException(nameof(userSocialProviderService));
             _chapterService = chapterService ?? throw new ArgumentNullException(nameof(chapterService));
             _gradeService = gradeService ?? throw new ArgumentNullException(nameof(gradeService));
-            _solutionLinkService = solutionLinkService ?? throw new ArgumentNullException(nameof(solutionLinkService));
             _solutionReportService = solutionReportService ?? throw new ArgumentNullException(nameof(solutionReportService));
             _subscriptionTypeService = subscriptionTypeService ?? throw new ArgumentNullException(nameof(subscriptionTypeService));
             _registerService = registerService ?? throw new ArgumentNullException(nameof(registerService));
@@ -67,6 +69,8 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
             _solutionService = solutionService ?? throw new ArgumentNullException(nameof(solutionService));
             _userSubscriptionService = userSubscriptionService ?? throw new ArgumentException(nameof(userSubscriptionService));
             _examService = examService ?? throw new ArgumentNullException(nameof(examService));
+            _questionReportService = questionReportService ?? throw new ArgumentNullException(nameof(questionReportService));
+            _textBookService = textBookService ?? throw new ArgumentNullException(nameof(textBookService));
         }
       
 
@@ -78,7 +82,6 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         public IUserSocialProviderService UserSocialProviderService => _userSocialProviderService;
         public IChapterService ChapterService => _chapterService;
         public IGradeService GradeService => _gradeService;
-        public ISolutionLinkService SolutionLinkService => _solutionLinkService;
         public ISolutionReportService SolutionReportService => _solutionReportService;
         public ISubscriptionTypeService SubscriptionTypeService => _subscriptionTypeService;
         public IRegisterService RegisterService => _registerService;
@@ -86,5 +89,9 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         public ISolutionService SolutionService => _solutionService;
         public IUserSubscriptionService UserSubscriptionService => _userSubscriptionService;
         public IExamService ExamService => _examService;
+
+        public IQuestionReportService QuestionReportService => _questionReportService;
+
+        public ITextBookService TextBookService => _textBookService;
     }
 }

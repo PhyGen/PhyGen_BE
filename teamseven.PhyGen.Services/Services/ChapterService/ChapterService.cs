@@ -88,6 +88,7 @@ namespace teamseven.PhyGen.Services.Services.ChapterService
                 throw new NotFoundException("Chapter not found");
 
             chapter.Name = request.Name;
+            //chapter.SemesterId = request.SemesterId;
             chapter.UpdatedAt = DateTime.UtcNow;
 
             await _unitOfWork.ChapterRepository.UpdateAsync(chapter);

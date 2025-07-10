@@ -2,6 +2,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace teamseven.PhyGen.Repository.Models;
 
@@ -11,9 +12,23 @@ public partial class Solution
 
     public int QuestionId { get; set; }
 
+    [Required, MaxLength(5000)]
     public string Content { get; set; }
 
-    public string Explanation { get; set; }
+    [MaxLength(10000)]
+    public string Explanation { get; set; } // from gemini flash
+
+    [MaxLength(10000)]
+    public string PythonScript { get; set; } // Script Python from DeepSeek R1
+
+    [MaxLength(1000)]
+    public string Mp4Url { get; set; } // URL MP4 from Genesis
+
+    public bool IsMp4Generated { get; set; } // to scanned
+
+    public bool IsMp4Reused { get; set; } // if reused
+
+    public int? OriginalSolutionId { get; set; } // naviated to solution if reused
 
     public int CreatedByUserId { get; set; }
 
@@ -29,7 +44,7 @@ public partial class Solution
 
     public virtual Question Question { get; set; }
 
-    public virtual ICollection<SolutionReport> SolutionReports { get; set; } = new List<SolutionReport>();
+    public virtual Solution OriginalSolution { get; set; } 
 
-    public virtual ICollection<SolutionsLink> SolutionsLinks { get; set; } = new List<SolutionsLink>();
+    public virtual ICollection<SolutionReport> SolutionReports { get; set; } = new List<SolutionReport>();
 }

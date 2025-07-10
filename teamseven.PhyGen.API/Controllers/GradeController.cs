@@ -9,6 +9,7 @@ using teamseven.PhyGen.Services.Extensions;
 using teamseven.PhyGen.Services.Object.Requests;
 using Microsoft.AspNetCore.Authorization;
 using teamseven.PhyGen.Services.Object.Responses;
+using teamseven.PhyGen.Services.Helpers;
 
 namespace teamseven.PhyGen.Controllers
 {
@@ -36,15 +37,16 @@ namespace teamseven.PhyGen.Controllers
             return Ok(grades);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{encodedId}")]
         [AllowAnonymous]
-        [SwaggerOperation(Summary = "Get grade by ID", Description = "Retrieves a grade by its ID.")]
+        [SwaggerOperation(Summary = "Get grade by ID", Description = "Retrieves a grade by its encoded ID.")]
         [SwaggerResponse(200, "Grade found.", typeof(GradeDataResponse))]
         [SwaggerResponse(404, "Grade not found.")]
-        public async Task<IActionResult> GetGradeById(int id)
+        public async Task<IActionResult> GetGradeById(string encodedId)
         {
             try
             {
+                int id = IdHelper.DecodeId(encodedId);
                 var grade = await _serviceProvider.GradeService.GetGradeByIdAsync(id);
                 return Ok(grade);
             }
@@ -52,6 +54,11 @@ namespace teamseven.PhyGen.Controllers
             {
                 _logger.LogWarning(ex.Message);
                 return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error decoding or fetching grade.");
+                return BadRequest(new { Message = "Invalid grade ID." });
             }
         }
 
@@ -86,22 +93,24 @@ namespace teamseven.PhyGen.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{encodedId}")]
         [Authorize(Policy = "SaleStaffPolicy")]
-        [SwaggerOperation(Summary = "Update a grade", Description = "Updates a grade by ID.")]
+        [SwaggerOperation(Summary = "Update a grade", Description = "Updates a grade by encoded ID.")]
         [SwaggerResponse(200, "Grade updated successfully.")]
         [SwaggerResponse(400, "Invalid request.")]
         [SwaggerResponse(404, "Grade not found.")]
-        public async Task<IActionResult> UpdateGrade(int id, [FromBody] GradeDataRequest request)
+        public async Task<IActionResult> UpdateGrade(string encodedId, [FromBody] GradeDataRequest request)
         {
-            if (!ModelState.IsValid || id != request.Id)
-            {
-                _logger.LogWarning("Invalid update request.");
-                return BadRequest(new { Message = "Invalid data or ID mismatch." });
-            }
-
             try
             {
+                int decodedId = IdHelper.DecodeId(encodedId);
+
+                if (!ModelState.IsValid || decodedId != request.GetDecodedId())
+                {
+                    _logger.LogWarning("Invalid update request.");
+                    return BadRequest(new { Message = "Invalid data or ID mismatch." });
+                }
+
                 await _serviceProvider.GradeService.UpdateGradeAsync(request);
                 return Ok(new { Message = "Grade updated successfully." });
             }
@@ -118,19 +127,17 @@ namespace teamseven.PhyGen.Controllers
         }
 
 
-        /// <summary>
-        /// Deletes a grade by ID.
-        /// </summary>
-        [HttpDelete("{id}")]
+        [HttpDelete("{encodedId}")]
         [Authorize(Policy = "SaleStaffPolicy")]
-        [SwaggerOperation(Summary = "Delete a grade", Description = "Deletes a grade by its ID.")]
+        [SwaggerOperation(Summary = "Delete a grade", Description = "Deletes a grade by its encoded ID.")]
         [SwaggerResponse(204, "Grade deleted successfully.")]
         [SwaggerResponse(404, "Grade not found.", typeof(ProblemDetails))]
         [SwaggerResponse(500, "Internal server error.", typeof(ProblemDetails))]
-        public async Task<IActionResult> DeleteGrade(int id)
+        public async Task<IActionResult> DeleteGrade(string encodedId)
         {
             try
             {
+                int id = IdHelper.DecodeId(encodedId);
                 await _serviceProvider.GradeService.DeleteGradeAsync(id);
                 _logger.LogInformation("Grade with ID {Id} deleted.", id);
                 return NoContent();
@@ -142,7 +149,7 @@ namespace teamseven.PhyGen.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting grade with ID {Id}: {Message}", id, ex.Message);
+                _logger.LogError(ex, "Error deleting grade with ID {Id}: {Message}", encodedId, ex.Message);
                 return StatusCode(500, new { Message = "An error occurred while deleting the grade." });
             }
         }

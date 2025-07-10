@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
@@ -20,21 +21,32 @@ using teamseven.PhyGen.Services.Services.ChapterService;
 using teamseven.PhyGen.Services.Services.ExamService;
 using teamseven.PhyGen.Services.Services.GradeService;
 using teamseven.PhyGen.Services.Services.LessonService;
+using teamseven.PhyGen.Services.Services.QuestionReportService;
 using teamseven.PhyGen.Services.Services.QuestionsService;
 using teamseven.PhyGen.Services.Services.SemesterService;
 using teamseven.PhyGen.Services.Services.ServiceProvider;
-using teamseven.PhyGen.Services.Services.SolutionLinkService;
 using teamseven.PhyGen.Services.Services.SolutionReportService;
 using teamseven.PhyGen.Services.Services.SolutionService;
 using teamseven.PhyGen.Services.Services.SubscriptionTypeService;
+using teamseven.PhyGen.Services.Services.TextBookService;
 using teamseven.PhyGen.Services.Services.UserService;
 using teamseven.PhyGen.Services.Services.UserSocialProviderService;
 using teamseven.PhyGen.Services.Services.UserSubscriptionService;
 var builder = WebApplication.CreateBuilder(args);
 
 // ================= CẤU HÌNH DB =================
+//builder.Services.AddDbContext<teamsevenphygendbContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<teamsevenphygendbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), npgsqlOptions =>
+    {
+        npgsqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorCodesToAdd: null);
+        npgsqlOptions.CommandTimeout(60);
+    }));
+
 // ================= CẤU HÌNH AUTHENTICATION =================
 ConfigureAuthentication(builder.Services, builder.Configuration);
 
@@ -63,15 +75,16 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IQuestionsService, QuestionsService>();
+builder.Services.AddScoped<IQuestionReportService, QuestionReportService>();
 builder.Services.AddScoped<ISemesterService, SemesterService>();
 builder.Services.AddScoped<IUserSocialProviderService, UserSocialProviderService>();
 builder.Services.AddScoped<IChapterService, ChapterService>();
 builder.Services.AddScoped<IGradeService, GradeService>();
-builder.Services.AddScoped<ISolutionLinkService, SolutionLinkService>();
 builder.Services.AddScoped<ISolutionReportService, SolutionReportService>();
 builder.Services.AddScoped<ISubscriptionTypeService, SubscriptionTypeService>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<ILessonService, LessonService>();
+builder.Services.AddScoped<ITextBookService, TextBookService>();
 builder.Services.AddScoped<IServiceProviders, ServiceProviders>();
 
 // 📌 Utility & Helper Services

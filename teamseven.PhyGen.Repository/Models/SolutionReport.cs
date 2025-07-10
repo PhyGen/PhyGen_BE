@@ -2,6 +2,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace teamseven.PhyGen.Repository.Models;
 
@@ -13,11 +14,12 @@ public partial class SolutionReport
 
     public int ReportedByUserId { get; set; }
 
-    public string Reason { get; set; }
-
-    public string Status { get; set; }
+    [Required, MaxLength(1000)]
+    public string Reason { get; set; } 
 
     public DateTime ReportDate { get; set; }
+
+    public string Status { get; set; }
 
     public virtual User ReportedByUser { get; set; }
 

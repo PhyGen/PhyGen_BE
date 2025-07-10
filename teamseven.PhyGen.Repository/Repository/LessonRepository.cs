@@ -48,9 +48,70 @@ namespace teamseven.PhyGen.Repository.Repository
             return await RemoveAsync(lesson);
         }
 
-        public async Task<(List<Lesson>, int)> GetPagedAsync(int pageNumber, int pageSize)
+        public async Task<(List<Lesson>, int)> GetPagedAsync(
+             int pageNumber,
+             int pageSize,
+             string? search = null,
+             string? sort = null,
+             int? chapterId = null,
+             int isSort = 0) // Default isSort = 0 (No)
         {
             var query = _context.Lessons.AsQueryable();
+
+            // Search (accent-insensitive)
+            if (!string.IsNullOrEmpty(search))
+            {
+                var searchNormalized = search.RemoveDiacritics().ToLower();
+                query = query.Where(l => l.Name.RemoveDiacritics().ToLower().Contains(searchNormalized));
+            }
+
+            // Filter by ChapterId
+            if (chapterId.HasValue)
+            {
+                query = query.Where(l => l.ChapterId == chapterId.Value);
+            }
+
+            // Sort
+            if (isSort == 1)
+            {
+                if (!string.IsNullOrEmpty(sort))
+                {
+                    switch (sort.ToLower())
+                    {
+                        case "name:asc":
+                            query = query.OrderBy(l => l.Name);
+                            break;
+                        case "name:desc":
+                            query = query.OrderByDescending(l => l.Name);
+                            break;
+                        case "createdat:asc":
+                            query = query.OrderBy(l => l.CreatedAt);
+                            break;
+                        case "createdat:desc":
+                            query = query.OrderByDescending(l => l.CreatedAt);
+                            break;
+                        case "updatedat:asc":
+                            query = query.OrderBy(l => l.UpdatedAt);
+                            break;
+                        case "updatedat:desc":
+                            query = query.OrderByDescending(l => l.UpdatedAt);
+                            break;
+                        default:
+                            query = query.OrderByDescending(l => l.CreatedAt); // Default when sort invalid
+                            break;
+                    }
+                }
+                else
+                {
+                    query = query.OrderByDescending(l => l.CreatedAt); // Default when isSort=1, no sort param
+                }
+            }
+            else
+            {
+                query = query.OrderBy(l => l.Id); // Default when isSort=0 (No)
+            }
+
+            // Pagination
             var totalItems = await query.CountAsync();
             var items = await query
                 .Skip((pageNumber - 1) * pageSize)

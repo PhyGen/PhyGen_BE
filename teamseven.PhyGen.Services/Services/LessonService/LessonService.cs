@@ -2,10 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using teamseven.PhyGen.Repository.Models;
 using teamseven.PhyGen.Repository;
+using teamseven.PhyGen.Repository.Models;
 using teamseven.PhyGen.Services.Extensions;
 using teamseven.PhyGen.Services.Object.Requests;
 using teamseven.PhyGen.Services.Object.Responses;
@@ -35,7 +34,14 @@ namespace teamseven.PhyGen.Services.Services.LessonService
                 UpdatedAt = l.UpdatedAt
             });
         }
-        public async Task<PagedResponse<LessonDataResponse>> GetLessonsAsync(int? pageNumber = null, int? pageSize = null)
+
+        public async Task<PagedResponse<LessonDataResponse>> GetLessonsAsync(
+             int? pageNumber = null,
+             int? pageSize = null,
+             string? search = null,
+             string? sort = null,
+             int? chapterId = null,
+             int isSort = 0) // Default isSort = 0 (No)
         {
             try
             {
@@ -44,11 +50,43 @@ namespace teamseven.PhyGen.Services.Services.LessonService
 
                 if (pageNumber.HasValue && pageSize.HasValue && pageNumber > 0 && pageSize > 0)
                 {
-                    (lessons, totalItems) = await _unitOfWork.LessonRepository.GetPagedAsync(pageNumber.Value, pageSize.Value);
+                    (lessons, totalItems) = await _unitOfWork.LessonRepository.GetPagedAsync(
+                        pageNumber.Value,
+                        pageSize.Value,
+                        search,
+                        sort,
+                        chapterId,
+                        isSort);
                 }
                 else
                 {
                     lessons = await _unitOfWork.LessonRepository.GetAllAsync() ?? new List<Lesson>();
+                    if (!string.IsNullOrEmpty(search))
+                    {
+                        var searchNormalized = search.RemoveDiacritics().ToLower();
+                        lessons = lessons.Where(l => l.Name.RemoveDiacritics().ToLower().Contains(searchNormalized)).ToList();
+                    }
+                    if (chapterId.HasValue)
+                    {
+                        lessons = lessons.Where(l => l.ChapterId == chapterId.Value).ToList();
+                    }
+                    if (isSort == 1)
+                    {
+                        lessons = sort?.ToLower() switch
+                        {
+                            "name:asc" => lessons.OrderBy(l => l.Name).ToList(),
+                            "name:desc" => lessons.OrderByDescending(l => l.Name).ToList(),
+                            "createdat:asc" => lessons.OrderBy(l => l.CreatedAt).ToList(),
+                            "createdat:desc" => lessons.OrderByDescending(l => l.CreatedAt).ToList(),
+                            "updatedat:asc" => lessons.OrderBy(l => l.UpdatedAt).ToList(),
+                            "updatedat:desc" => lessons.OrderByDescending(l => l.UpdatedAt).ToList(),
+                            _ => lessons.OrderByDescending(l => l.CreatedAt).ToList() // Default when isSort=1
+                        };
+                    }
+                    else
+                    {
+                        lessons = lessons.OrderBy(l => l.Id).ToList(); // Default when isSort=0
+                    }
                     totalItems = lessons.Count;
                 }
 
@@ -61,7 +99,11 @@ namespace teamseven.PhyGen.Services.Services.LessonService
                     UpdatedAt = l.UpdatedAt
                 }).ToList();
 
-                return new PagedResponse<LessonDataResponse>(lessonResponses, pageNumber ?? 1, pageSize ?? totalItems, totalItems);
+                return new PagedResponse<LessonDataResponse>(
+                    lessonResponses,
+                    pageNumber ?? 1,
+                    pageSize ?? totalItems,
+                    totalItems);
             }
             catch (Exception ex)
             {
@@ -69,6 +111,8 @@ namespace teamseven.PhyGen.Services.Services.LessonService
                 throw new ApplicationException("An error occurred while retrieving lessons.", ex);
             }
         }
+
+
         public async Task<LessonDataResponse> GetLessonByIdAsync(int id)
         {
             var lesson = await _unitOfWork.LessonRepository.GetByIdAsync(id);
@@ -108,8 +152,6 @@ namespace teamseven.PhyGen.Services.Services.LessonService
             await _unitOfWork.SaveChangesWithTransactionAsync();
 
             _logger.LogInformation("Created lesson with ID {Id}.", lesson.Id);
-
-            
         }
 
         public async Task UpdateLessonAsync(LessonDataRequest request)

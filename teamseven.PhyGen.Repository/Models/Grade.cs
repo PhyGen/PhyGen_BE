@@ -16,4 +16,6 @@ public partial class Grade
     public DateTime? UpdatedAt { get; set; }
 
     public virtual ICollection<Semester> Semesters { get; set; } = new List<Semester>();
+    public virtual ICollection<TextBook> TextBooks { get; set; } = new List<TextBook>();
+
 }
