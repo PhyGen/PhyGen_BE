@@ -50,6 +50,7 @@ namespace teamseven.PhyGen.Services.Services.Authentication
                 UpdatedAt = null,
                 UpdatedBy = null
             };
+            Console.WriteLine($"[DEBUG] Assigned RoleId = {user.RoleId}");
 
             // Lưu vào database
             await _userRepository.AddUserAsync(user);
