@@ -162,6 +162,7 @@ builder.Services.AddSwaggerGen(c =>
 
 // ================= CẤU HÌNH CONTROLLERS =================
 builder.Services.AddControllers();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
