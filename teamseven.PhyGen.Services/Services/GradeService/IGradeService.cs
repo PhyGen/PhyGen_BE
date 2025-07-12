@@ -10,6 +10,6 @@ namespace teamseven.PhyGen.Services.Services.GradeService
         Task<GradeDataResponse> GetGradeByIdAsync(int id);
         Task CreateGradeAsync(CreateGradeRequest request);
         Task UpdateGradeAsync(GradeDataRequest request);
-        Task DeleteGradeAsync(int id);
+        Task DeleteGradeAsync(string encodedId);
     }
 }
