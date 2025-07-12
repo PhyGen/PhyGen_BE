@@ -3,6 +3,7 @@ using teamseven.PhyGen.Repository;
 using teamseven.PhyGen.Repository.Dtos;
 using teamseven.PhyGen.Repository.Models;
 using teamseven.PhyGen.Services.Extensions;
+using teamseven.PhyGen.Services.Helpers;
 using teamseven.PhyGen.Services.Object.Requests;
 using teamseven.PhyGen.Services.Object.Responses;
 
@@ -76,7 +77,9 @@ namespace teamseven.PhyGen.Services.Services.GradeService
 
         public async Task UpdateGradeAsync(GradeDataRequest request)
         {
-            var grade = await _unitOfWork.GradeRepository.GetByIdAsync(request.Id);
+            int decodedId = request.GetDecodedId();   
+
+            var grade = await _unitOfWork.GradeRepository.GetByIdAsync(decodedId);
             if (grade == null)
                 throw new NotFoundException("Grade not found");
 
@@ -88,8 +91,9 @@ namespace teamseven.PhyGen.Services.Services.GradeService
         }
 
 
-        public async Task DeleteGradeAsync(int id)
+        public async Task DeleteGradeAsync(string encodedId)
         {
+            int id = IdHelper.DecodeId(encodedId);
             var grade = await _unitOfWork.GradeRepository.GetByIdAsync(id);
             if (grade == null)
                 throw new NotFoundException($"Grade with ID {id} not found.");

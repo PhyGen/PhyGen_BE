@@ -137,9 +137,9 @@ namespace teamseven.PhyGen.Controllers
         {
             try
             {
-                int id = IdHelper.DecodeId(encodedId);
-                await _serviceProvider.GradeService.DeleteGradeAsync(id);
-                _logger.LogInformation("Grade with ID {Id} deleted.", id);
+                await _serviceProvider.GradeService.DeleteGradeAsync(encodedId);
+
+                _logger.LogInformation("Deleted grade with EncodedId {EncodedId}.", encodedId);
                 return NoContent();
             }
             catch (NotFoundException ex)
@@ -149,9 +149,10 @@ namespace teamseven.PhyGen.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting grade with ID {Id}: {Message}", encodedId, ex.Message);
+                _logger.LogError(ex, "Error deleting grade {EncodedId}: {Message}", encodedId, ex.Message);
                 return StatusCode(500, new { Message = "An error occurred while deleting the grade." });
             }
         }
+
     }
 }
