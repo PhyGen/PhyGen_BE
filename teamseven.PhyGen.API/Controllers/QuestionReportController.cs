@@ -56,7 +56,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "SaleStaffPolicy")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Create a new question report")]
         [SwaggerResponse(201, "Report created successfully")]
         [SwaggerResponse(400, "Invalid request")]
@@ -78,7 +78,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "SaleStaffPolicy")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Update a question report")]
         [SwaggerResponse(200, "Report updated successfully")]
         [SwaggerResponse(400, "Invalid request")]
