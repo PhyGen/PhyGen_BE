@@ -23,7 +23,7 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task AddQuestionAsync(QuestionDataRequest questionDataRequest)
+        public async Task<QuestionDataResponse> AddQuestionAsync(QuestionDataRequest questionDataRequest)
         {
             if (questionDataRequest == null)
             {
@@ -58,7 +58,21 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
                 await _unitOfWork.QuestionRepository.CreateAsync(question);
                 await _unitOfWork.SaveChangesWithTransactionAsync();
                 _logger.LogInformation("Question with ID {QuestionId} created successfully.", question.Id);
+                var response = new QuestionDataResponse
+                {
+                    Id = question.Id,
+                    Content = question.Content,
+                    QuestionSource = question.QuestionSource,
+                    DifficultyLevel = question.DifficultyLevel,
+                    LessonId = question.LessonId,
+                    CreatedByUserId = question.CreatedByUserId,
+                    CreatedAt = question.CreatedAt,
+                    UpdatedAt = question.UpdatedAt
+                };
+
+                return response;
             }
+
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating question: {Message}", ex.Message);
