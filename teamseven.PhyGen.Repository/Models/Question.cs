@@ -23,7 +23,7 @@ public partial class Question
 
     public int? TemplateQuestionId { get; set; } // if cloned 
 
-    public int TextbookId { get; set; } 
+    public int? TextbookId { get; set; } 
 
     public int LessonId { get; set; }
 

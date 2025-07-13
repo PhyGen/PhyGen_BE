@@ -111,9 +111,25 @@ namespace teamseven.PhyGen.Controllers
 
             try
             {
-                await _serviceProvider.QuestionsService.AddQuestionAsync(questionDataRequest);
-                _logger.LogInformation("Question created successfully.");
-                return StatusCode(201, new { Message = "Question created successfully." });
+                var questionResponse = await _serviceProvider.QuestionsService.AddQuestionAsync(questionDataRequest);
+                _logger.LogInformation("Question created successfully with ID {QuestionId}.", questionResponse.Id);
+                var result = new
+                {
+                    question = new
+                    {
+                        id = questionResponse.Id,
+                        content = questionResponse.Content,
+                        questionSource = questionResponse.QuestionSource,
+                        difficultyLevel = questionResponse.DifficultyLevel,
+                        lessonId = questionResponse.LessonId,
+                        createdByUserId = questionResponse.CreatedByUserId,
+                        createdAt = questionResponse.CreatedAt,
+                        updatedAt = questionResponse.UpdatedAt
+                    },
+                    message = "Question created successfully."
+                };
+
+                return StatusCode(201, result);
             }
             catch (NotFoundException ex)
             {

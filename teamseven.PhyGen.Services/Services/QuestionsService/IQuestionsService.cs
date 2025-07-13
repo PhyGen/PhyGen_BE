@@ -8,7 +8,7 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
 {
     public interface IQuestionsService
     {
-        Task AddQuestionAsync(QuestionDataRequest questionDataRequest);
+        Task<QuestionDataResponse> AddQuestionAsync(QuestionDataRequest questionDataRequest);
         Task DeleteQuestionAsync(int id);
         Task<QuestionDataResponse> GetQuestionById(int id);
         Task ModifyQuestionAsync(QuestionDataRequest questionDataRequest);
