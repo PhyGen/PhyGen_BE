@@ -14,6 +14,8 @@ namespace teamseven.PhyGen.Services.Object.Responses
 
         public int GradeId { get; set; }
 
+        public string GradeName { get; set; }
+
         public DateTime CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
