@@ -53,7 +53,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Create a new solution", Description = "Creates a new solution.")]
         public async Task<IActionResult> Create([FromBody] CreateSolutionRequest request)
         {
