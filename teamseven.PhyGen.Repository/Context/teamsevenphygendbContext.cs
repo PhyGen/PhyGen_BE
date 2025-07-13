@@ -61,6 +61,7 @@ public partial class teamsevenphygendbContext : DbContext
             entity.Property(e => e.Name).HasColumnName("Name").IsRequired().HasMaxLength(100);
             entity.Property(e => e.SemesterId).HasColumnName("SemesterId");
             entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.HasOne(d => d.Semester).WithMany(p => p.Chapters)
                 .HasForeignKey(d => d.SemesterId)
                 .HasConstraintName("fk_chapters_semester_id");
@@ -81,6 +82,7 @@ public partial class teamsevenphygendbContext : DbContext
             entity.Property(e => e.CreatedByUserId).HasColumnName("CreatedByUserId");
             entity.Property(e => e.IsDeleted).HasColumnName("IsDeleted");
             entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.HasOne(d => d.CreatedByUser).WithMany(p => p.Exams)
                 .HasForeignKey(d => d.CreatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -143,6 +145,7 @@ public partial class teamsevenphygendbContext : DbContext
             entity.Property(e => e.Id).HasColumnName("Id");
             entity.Property(e => e.Name).HasColumnName("Name").IsRequired().HasMaxLength(50);
             entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
 
         modelBuilder.Entity<Grade>(entity =>
@@ -165,6 +168,7 @@ public partial class teamsevenphygendbContext : DbContext
             entity.Property(e => e.Name).HasColumnName("Name").IsRequired().HasMaxLength(100);
             entity.Property(e => e.ChapterId).HasColumnName("ChapterId");
             entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.HasOne(d => d.Chapter).WithMany(p => p.Lessons)
                 .HasForeignKey(d => d.ChapterId)
                 .HasConstraintName("fk_lessons_chapter_id");
@@ -188,6 +192,7 @@ public partial class teamsevenphygendbContext : DbContext
             entity.Property(e => e.TemplateQuestionId).HasColumnName("TemplateQuestionId");
             entity.Property(e => e.IsCloned).HasColumnName("IsCloned").HasDefaultValue(false);
             entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.HasOne(d => d.CreatedByUser).WithMany(p => p.Questions)
                 .HasForeignKey(d => d.CreatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -233,6 +238,7 @@ public partial class teamsevenphygendbContext : DbContext
             entity.Property(e => e.Id).HasColumnName("Id");
             entity.Property(e => e.RoleName).HasColumnName("RoleName").IsRequired().HasMaxLength(255);
             entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
 
         modelBuilder.Entity<Semester>(entity =>
@@ -244,6 +250,7 @@ public partial class teamsevenphygendbContext : DbContext
             entity.Property(e => e.Name).HasColumnName("Name").IsRequired().HasMaxLength(10);
             entity.Property(e => e.GradeId).HasColumnName("GradeId");
             entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.HasOne(d => d.Grade).WithMany(p => p.Semesters)
                 .HasForeignKey(d => d.GradeId)
                 .HasConstraintName("fk_semesters_grade_id");
@@ -271,6 +278,7 @@ public partial class teamsevenphygendbContext : DbContext
             entity.Property(e => e.IsMp4Reused).HasColumnName("IsMp4Reused").HasDefaultValue(false);
             entity.Property(e => e.OriginalSolutionId).HasColumnName("OriginalSolutionId");
             entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.HasOne(d => d.CreatedByUser).WithMany(p => p.Solutions)
                 .HasForeignKey(d => d.CreatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -318,6 +326,7 @@ public partial class teamsevenphygendbContext : DbContext
             entity.Property(e => e.SubscriptionPrice).HasColumnName("SubscriptionPrice").HasColumnType("numeric(18,2)");
             entity.Property(e => e.Description).HasColumnName("Description").HasMaxLength(500);
             entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.UpdatedBy).HasColumnName("UpdatedBy");
             entity.HasOne(d => d.UpdatedByNavigation).WithMany(p => p.SubscriptionTypes)
                 .HasForeignKey(d => d.UpdatedBy)
@@ -335,6 +344,7 @@ public partial class teamsevenphygendbContext : DbContext
             entity.Property(e => e.Name).HasColumnName("Name").IsRequired().HasMaxLength(100);
             entity.Property(e => e.GradeId).HasColumnName("GradeId");
             entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.HasOne(d => d.Grade).WithMany(p => p.TextBooks)
                 .HasForeignKey(d => d.GradeId)
                 .HasConstraintName("fk_textbooks_grade_id");
@@ -385,6 +395,7 @@ public partial class teamsevenphygendbContext : DbContext
             entity.Property(e => e.Email).HasColumnName("Email").HasMaxLength(255);
             entity.Property(e => e.ProfileUrl).HasColumnName("ProfileUrl").HasMaxLength(2048);
             entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.HasOne(d => d.User).WithMany(p => p.UserSocialProviders)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("fk_user_social_providers_user_id");
@@ -408,6 +419,7 @@ public partial class teamsevenphygendbContext : DbContext
             entity.Property(e => e.EndDate).HasColumnName("EndDate");
             entity.Property(e => e.IsActive).HasColumnName("IsActive").HasDefaultValue(true);
             entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.HasOne(d => d.SubscriptionType).WithMany(p => p.UserSubscriptions)
                 .HasForeignKey(d => d.SubscriptionTypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
