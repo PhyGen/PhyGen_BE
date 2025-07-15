@@ -77,7 +77,7 @@ namespace teamseven.PhyGen.Controllers
         // =================== ADD QUESTION TO EXAM ===================
 
         [HttpPost("questions")]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Assign question to exam")]
         public async Task<IActionResult> AddExamQuestion([FromBody] ExamQuestionRequest request)
         {
