@@ -121,15 +121,7 @@ namespace teamseven.PhyGen.API.Controllers
             {
                 var systemPrompt = "You are an expert physicist specializing in precise, step-by-step solutions using advanced Chain of Thought reasoning. Leverage your thinking capabilities for accurate explanations.";
 
-                var userPrompt = $@"For the given problem, think step-by-step before responding:
-1. Restate the problem clearly in English.
-2. List all given data and assumptions.
-3. Derive the necessary formulas.
-4. Solve step by step, explaining each calculation.
-5. Verify the solution against all conditions.
-6. Provide the final answer in LaTeX format within \boxed{{}}.
-
-Ensure all mathematical expressions are in LaTeX and use clear English.
+                var userPrompt = $@"Solve the following physics problem with a detailed explanation in plain text. Provide the solution objectively, without personal pronouns or conversational tone. Structure the response as a formal explanation of the problem, given data, derivations, calculations, verification, and conclusion. Use LaTeX for mathematical expressions, and box the final answer. Ensure the response is comprehensive and flows logically as a single, cohesive mathematical solution.
 
 Problem: {request.Message}";
 
@@ -180,14 +172,9 @@ Problem: {request.Message}";
 
             try
             {
-                var systemPrompt = "You are an expert physicist providing pure LaTeX mathematical derivations without any text explanations. Use thinking for precise derivations.";
+                var systemPrompt = "You are an expert physicist providing pure LaTeX code for mathematical derivations, optimized for rendering in Manim animations. Ensure high accuracy in formulas and derivations.";
 
-                var userPrompt = $@"For the given problem, provide ONLY the LaTeX code for the solution, including:
-- All necessary formulas.
-- Step-by-step derivations using LaTeX math mode.
-- The final answer in \boxed{{}}.
-
-Do NOT include any explanatory text or natural language.
+                var userPrompt = $@"For the given problem, provide ONLY the LaTeX code for the solution in a single align* environment. Do not include any explanatory text, natural language, documentclass, packages, begin/end document, or the problem statement. Include all necessary formulas, step-by-step derivations in LaTeX math mode, and the final answer in \boxed{{}}. Make it suitable for integration into Manim for visual display, focusing on clarity and precision without extra formatting.
 
 Problem: {request.Message}";
 
