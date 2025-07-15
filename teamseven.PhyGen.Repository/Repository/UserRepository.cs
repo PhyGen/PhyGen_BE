@@ -86,7 +86,7 @@ namespace teamseven.PhyGen.Repository.Repository
         {
             { "user", 1 },
             { "admin", 2 },
-            { "staff", 3 }
+            { "moderator", 3 }
         };
 
         public async Task<(bool IsSuccess, string ResultOrError)> ChangeUserRoleAsync(int userId, string role)
