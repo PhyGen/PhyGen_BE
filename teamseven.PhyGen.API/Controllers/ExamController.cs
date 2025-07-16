@@ -51,11 +51,29 @@ namespace teamseven.PhyGen.Controllers
                 return NotFound(new { Message = ex.Message });
             }
         }
+        // =================== GET EXAM BY USERID ===================
+        [HttpGet("user/{userId}")]
+        [AllowAnonymous]
+        [SwaggerOperation(Summary = "Get exams by user ID", Description = "Retrieves all exams created by a specific user")]
+        public async Task<IActionResult> GetExamsByUserId(int userId)
+        {
+            try
+            {
+                var exams = await _serviceProvider.ExamService.GetExamsByUserIdAsync(userId);
+                return Ok(exams);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving exams by userId");
+                return StatusCode(500, new { Message = "Internal server error." });
+            }
+        }
+
 
         // =================== CREATE EXAM ===================
 
         [HttpPost]
-        [Authorize(Policy = "SaleStaffPolicy")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Create exam", Description = "Creates a new exam")]
         public async Task<IActionResult> CreateExam([FromBody] ExamRequest request)
         {

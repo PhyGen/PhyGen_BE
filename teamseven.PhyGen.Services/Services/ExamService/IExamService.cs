@@ -18,6 +18,8 @@ namespace teamseven.PhyGen.Services.Services.ExamService
 
         Task CreateExamQuestionAsync(ExamQuestionRequest examQuestionRequest);
 
+        Task<IEnumerable<ExamResponse>> GetExamsByUserIdAsync(int userId);
+
         Task<IEnumerable<ExamQuestionResponse>> GetExamQuestionByIdAsync(int id);
 
         Task RemoveExamQuestion(ExamQuestionRequest examQuestionRequest);
