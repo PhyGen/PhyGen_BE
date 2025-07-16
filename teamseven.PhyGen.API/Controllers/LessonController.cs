@@ -119,7 +119,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "SaleStaffPolicy")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Create a new lesson", Description = "Creates a new lesson under the specified chapter.")]
         [SwaggerResponse(201, "Lesson created successfully.", typeof(LessonDataResponse))]
         [SwaggerResponse(400, "Invalid request data.", typeof(ProblemDetails))]

@@ -146,6 +146,26 @@ namespace teamseven.PhyGen.Services.Services.ExamService
                 QuestionContent = eq.Question?.Content
             }).ToList();
         }
+        public async Task<IEnumerable<ExamResponse>> GetExamsByUserIdAsync(int userId)
+        {
+            var exams = await _unitOfWork.ExamRepository.GetByCreatorAsync(userId);
+            return exams.Select(e => new ExamResponse
+            {
+                Id = e.Id,
+                Name = e.Name,
+                LessonId = e.LessonId,
+                ExamTypeId = e.ExamTypeId,
+                CreatedByUserId = e.CreatedByUserId,
+                IsDeleted = e.IsDeleted,
+                CreatedAt = e.CreatedAt,
+                UpdatedAt = e.UpdatedAt,
+                CreatedByUserName = e.CreatedByUser?.Email,
+                ExamTypeName = e.ExamType?.Name,
+                LessonName = e.Lesson?.Name,
+                QuestionCount = e.ExamQuestions?.Count ?? 0,
+                HistoryCount = e.ExamHistories?.Count ?? 0
+            }).ToList();
+        }
 
         public async Task RemoveExamQuestion(ExamQuestionRequest examQuestionRequest)
         {

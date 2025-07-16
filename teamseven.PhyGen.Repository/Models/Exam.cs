@@ -9,7 +9,7 @@ public partial class Exam
 {
     public int Id { get; set; }
     public string Name { get; set; }
-    public int LessonId { get; set; }
+    public int? LessonId { get; set; }
     public int ExamTypeId { get; set; }
     public int CreatedByUserId { get; set; }
     public bool IsDeleted { get; set; }
