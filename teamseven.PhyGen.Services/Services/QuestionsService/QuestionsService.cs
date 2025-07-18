@@ -94,9 +94,25 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
             _logger.LogInformation("Question with ID {QuestionId} deleted successfully.", id);
         }
 
-        public Task<QuestionDataResponse> GetQuestionById(int id)
+        public async Task<QuestionDataResponse> GetQuestionById(int id)
         {
-            throw new NotImplementedException();
+            var question = await _unitOfWork.QuestionRepository.GetByIdAsync(id);
+            if (question == null)
+                throw new NotFoundException($"Question with ID {id} not found.");
+
+            return new QuestionDataResponse
+            {
+                Id = question.Id,
+                Content = question.Content,
+                QuestionSource = question.QuestionSource,
+                DifficultyLevel = question.DifficultyLevel,
+                LessonId = question.LessonId,
+                CreatedByUserId = question.CreatedByUserId,
+                CreatedAt = question.CreatedAt,
+                UpdatedAt = question.UpdatedAt,
+                LessonName = question.Lesson?.Name,
+                CreatedByUserName = question.CreatedByUser?.Email
+            };
         }
 
         public Task ModifyQuestionAsync(QuestionDataRequest questionDataRequest)

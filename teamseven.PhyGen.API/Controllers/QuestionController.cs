@@ -179,9 +179,9 @@ namespace teamseven.PhyGen.Controllers
         {
             try
             {
-                ////var question = await _serviceProvider.QuestionsService.GetQuestionByIdAsync(id);
-                //_logger.LogInformation("Question with ID {QuestionId} retrieved successfully.", id);
-                return Ok("Not implemented yet. Dial tri admin.");
+                var question = await _serviceProvider.QuestionsService.GetQuestionById(id);
+                _logger.LogInformation("Question with ID {QuestionId} retrieved successfully.", id);
+                return Ok(question);
             }
             catch (NotFoundException ex)
             {
