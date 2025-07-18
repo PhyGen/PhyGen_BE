@@ -114,7 +114,7 @@ namespace teamseven.PhyGen.Controllers
         // =================== REMOVE QUESTION FROM EXAM ===================
 
         [HttpDelete("questions")]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Remove question from exam")]
         public async Task<IActionResult> RemoveExamQuestion([FromBody] ExamQuestionRequest request)
         {
@@ -144,7 +144,7 @@ namespace teamseven.PhyGen.Controllers
         // =================== CREATE EXAM HISTORY ===================
 
         [HttpPost("history")]
-        [Authorize]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Create exam history")]
         public async Task<IActionResult> CreateExamHistory([FromBody] ExamHistoryRequest request)
         {
@@ -163,7 +163,7 @@ namespace teamseven.PhyGen.Controllers
         // =================== DELETE EXAM HISTORY ===================
 
         [HttpDelete("history")]
-        [Authorize]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Delete exam history")]
         public async Task<IActionResult> DeleteExamHistory([FromBody] ExamHistoryRequest request)
         {
@@ -182,7 +182,7 @@ namespace teamseven.PhyGen.Controllers
         // =================== GET EXAM HISTORY DETAILS ===================
 
         [HttpGet("history/{id}")]
-        [Authorize]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Get exam history details")]
         public async Task<IActionResult> GetExamHistory(int id)
         {
@@ -197,5 +197,50 @@ namespace teamseven.PhyGen.Controllers
                 return StatusCode(500, new { Message = "Internal server error." });
             }
         }
+        // =================== SOFT DELETE EXAM ===================
+        [HttpPut("{id}/soft-delete")]
+        [AllowAnonymous]
+        [SwaggerOperation(Summary = "Soft delete exam", Description = "Mark exam as deleted")]
+        public async Task<IActionResult> SoftDeleteExam(int id)
+        {
+            try
+            {
+                await _serviceProvider.ExamService.SoftDeleteExamAsync(id);
+                return Ok(new { Message = "Exam soft-deleted successfully." });
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Exam not found");
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error soft deleting exam");
+                return StatusCode(500, new { Message = "Internal server error." });
+            }
+        }
+        // =================== RECOVER EXAM ===================
+        [HttpPut("{id}/recover")]
+        [AllowAnonymous]
+        [SwaggerOperation(Summary = "Recover exam", Description = "Recover soft-deleted exam (IsDeleted = false)")]
+        public async Task<IActionResult> RecoverExam(int id)
+        {
+            try
+            {
+                await _serviceProvider.ExamService.RecoverExamAsync(id);
+                return Ok(new { Message = "Exam recovered successfully." });
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Exam not found");
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error recovering exam");
+                return StatusCode(500, new { Message = "Internal server error." });
+            }
+        }
+
     }
 }
