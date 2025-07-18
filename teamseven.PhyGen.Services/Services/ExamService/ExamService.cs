@@ -41,10 +41,40 @@ namespace teamseven.PhyGen.Services.Services.ExamService
         {
             throw new NotImplementedException();
         }
+        public async Task SoftDeleteExamAsync(int examId)
+        {
+            var exam = await _unitOfWork.ExamRepository.GetByIdAsync(examId);
+            if (exam == null)
+                throw new ArgumentException("Exam not found");
 
-     
+            if (exam.IsDeleted == true)
+                return; // đã xoá rồi thì thôi
 
-           public async Task CreateExamQuestionAsync(ExamQuestionRequest examQuestionRequest)
+            exam.IsDeleted = true;
+            exam.UpdatedAt = DateTime.UtcNow;
+
+            _unitOfWork.ExamRepository.Update(exam);
+            await _unitOfWork.SaveChangesWithTransactionAsync();
+        }
+        public async Task RecoverExamAsync(int examId)
+        {
+            var exam = await _unitOfWork.ExamRepository.GetByIdAsync(examId);
+            if (exam == null)
+                throw new ArgumentException("Exam not found");
+
+            if (exam.IsDeleted == false)
+                return;
+
+            exam.IsDeleted = false;
+            exam.UpdatedAt = DateTime.UtcNow;
+
+            _unitOfWork.ExamRepository.Update(exam);
+            await _unitOfWork.SaveChangesWithTransactionAsync();
+        }
+
+
+
+        public async Task CreateExamQuestionAsync(ExamQuestionRequest examQuestionRequest)
         {
             if (examQuestionRequest == null)
                 throw new ArgumentNullException(nameof(examQuestionRequest));

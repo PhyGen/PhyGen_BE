@@ -14,8 +14,9 @@ namespace teamseven.PhyGen.Services.Services.ExamService
 
         Task<IEnumerable<ExamResponse>> GetAllExamAsync();
 
+        Task SoftDeleteExamAsync(int examId);
         Task<ExamResponse> GetExamAsync(int id);
-
+        Task RecoverExamAsync(int examId);
         Task CreateExamQuestionAsync(ExamQuestionRequest examQuestionRequest);
 
         Task<IEnumerable<ExamResponse>> GetExamsByUserIdAsync(int userId);
