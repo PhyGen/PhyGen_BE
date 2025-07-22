@@ -30,6 +30,10 @@ public partial class Solution
 
     public int? OriginalSolutionId { get; set; } // naviated to solution if reused
 
+    public byte[] VideoData { get; set; } // NEW: Lưu nội dung video
+    public string VideoContentType { get; set; } // NEW: Lưu kiểu file (video/mp4)
+
+
     public int CreatedByUserId { get; set; }
 
     public bool IsApproved { get; set; }

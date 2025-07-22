@@ -49,7 +49,9 @@ namespace teamseven.PhyGen.Services.Services.SolutionService
                 CreatedByUserId = solution.CreatedByUserId,
                 IsApproved = solution.IsApproved,
                 CreatedAt = solution.CreatedAt,
-                UpdatedAt = solution.UpdatedAt
+                UpdatedAt = solution.UpdatedAt,
+                VideoData = solution.VideoData,
+                VideoContentType = solution.VideoContentType
             };
         }
 
@@ -91,5 +93,32 @@ namespace teamseven.PhyGen.Services.Services.SolutionService
             await _unitOfWork.SolutionRepository.RemoveAsync(solution);
             await _unitOfWork.SaveChangesWithTransactionAsync();
         }
+        public async Task AddSolutionWithVideoAsync(SolutionWithVideoRequest request)
+        {
+            byte[] videoBytes = null;
+            string contentType = null;
+
+            if (request.VideoFile != null)
+            {
+                using var ms = new MemoryStream();
+                await request.VideoFile.CopyToAsync(ms);
+                videoBytes = ms.ToArray();
+                contentType = request.VideoFile.ContentType; // ví dụ: "video/mp4"
+            }
+
+            var solution = new Solution
+            {
+                QuestionId = request.QuestionId,
+                Content = request.Content,
+                CreatedByUserId = 1, // hoặc lấy từ user context
+                CreatedAt = DateTime.UtcNow,
+                VideoData = videoBytes,
+                VideoContentType = contentType
+            };
+
+            await _unitOfWork.SolutionRepository.AddAsync(solution);
+            await _unitOfWork.SaveChangesWithTransactionAsync();
+        }
+
     }
 }
