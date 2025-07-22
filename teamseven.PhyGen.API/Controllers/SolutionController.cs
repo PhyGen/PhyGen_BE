@@ -8,6 +8,7 @@ using teamseven.PhyGen.Services.Services.ServiceProvider;
 using teamseven.PhyGen.Services.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using teamseven.PhyGen.Services.Object.Responses;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace teamseven.PhyGen.Controllers
 {
@@ -98,5 +99,36 @@ namespace teamseven.PhyGen.Controllers
                 return NotFound(new { Message = ex.Message });
             }
         }
+        [HttpPost("add-with-video")]
+        [AllowAnonymous]
+        [SwaggerOperation(Summary = "Create a new video", Description = "Creates a new video.")]
+        public async Task<IActionResult> AddSolutionWithVideo([FromForm] SolutionWithVideoRequest request)
+        {
+            await _serviceProvider.SolutionService.AddSolutionWithVideoAsync(request);
+            return Ok(new { message = "Success" });
+        }
+        [HttpGet("{id}/video")]
+        [AllowAnonymous]
+        [SwaggerOperation(Summary = "Get video by solution ID", Description = "Returns the video file associated with the solution.")]
+        public async Task<IActionResult> GetSolutionVideo(int id)
+        {
+            try
+            {
+                var solution = await _serviceProvider.SolutionService.GetSolutionByIdAsync(id);
+
+                if (solution.VideoData == null || string.IsNullOrEmpty(solution.VideoContentType))
+                {
+                    return NotFound(new { Message = "Video not found for this solution." });
+                }
+
+                return File(solution.VideoData, solution.VideoContentType);
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogWarning(ex.Message);
+                return NotFound(new { Message = ex.Message });
+            }
+        }
+
     }
 }

@@ -277,6 +277,8 @@ public partial class teamsevenphygendbContext : DbContext
             entity.Property(e => e.IsMp4Generated).HasColumnName("IsMp4Generated").HasDefaultValue(false);
             entity.Property(e => e.IsMp4Reused).HasColumnName("IsMp4Reused").HasDefaultValue(false);
             entity.Property(e => e.OriginalSolutionId).HasColumnName("OriginalSolutionId");
+            entity.Property(e => e.VideoData).HasColumnName("VideoData");
+            entity.Property(e => e.VideoContentType).HasColumnName("VideoContentType").HasMaxLength(255);
             entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.HasOne(d => d.CreatedByUser).WithMany(p => p.Solutions)
