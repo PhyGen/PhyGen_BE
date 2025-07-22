@@ -10,7 +10,7 @@ namespace teamseven.PhyGen.Services.Services.ExamService
 {
     public interface IExamService
     {
-        Task CreateExamAsync(ExamRequest examRequest);
+        Task<int> CreateExamAsync (ExamRequest examRequest);
 
         Task<IEnumerable<ExamResponse>> GetAllExamAsync();
 

@@ -82,8 +82,8 @@ namespace teamseven.PhyGen.Controllers
 
             try
             {
-                await _serviceProvider.ExamService.CreateExamAsync(request);
-                return StatusCode(201, new { Message = "Exam created successfully." });
+                var id = await _serviceProvider.ExamService.CreateExamAsync(request);
+                return StatusCode(201, new { Id = id, Message = "Exam created successfully." });
             }
             catch (Exception ex)
             {

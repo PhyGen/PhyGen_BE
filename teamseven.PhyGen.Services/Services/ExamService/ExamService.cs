@@ -18,7 +18,7 @@ namespace teamseven.PhyGen.Services.Services.ExamService
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
 
-        public async Task CreateExamAsync(ExamRequest examRequest)
+        public async Task<int> CreateExamAsync(ExamRequest examRequest)
         {
             if (examRequest == null)
                 throw new ArgumentNullException(nameof(examRequest));
@@ -35,6 +35,7 @@ namespace teamseven.PhyGen.Services.Services.ExamService
 
             await _unitOfWork.ExamRepository.AddAsync(exam);
             await _unitOfWork.SaveChangesWithTransactionAsync();
+            return exam.Id;
         }
 
         public Task CreateExamHistoryAsync(ExamHistoryRequest examHistoryRequest)
