@@ -159,6 +159,21 @@ namespace teamseven.PhyGen.Services.Services.ExamService
         {
             throw new NotImplementedException();
         }
+        public async Task RenameExamAsync(int examId, string newName)
+        {
+            if (string.IsNullOrWhiteSpace(newName))
+                throw new ArgumentException("New exam name cannot be empty");
+
+            var exam = await _unitOfWork.ExamRepository.GetByIdAsync(examId);
+            if (exam == null)
+                throw new ArgumentException("Exam not found");
+
+            exam.Name = newName;
+            exam.UpdatedAt = DateTime.UtcNow;
+
+            _unitOfWork.ExamRepository.Update(exam);
+            await _unitOfWork.SaveChangesWithTransactionAsync();
+        }
 
         public async Task<IEnumerable<ExamQuestionResponse>> GetExamQuestionByIdAsync(int id)
         {

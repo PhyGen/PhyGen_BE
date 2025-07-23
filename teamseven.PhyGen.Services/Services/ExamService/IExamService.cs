@@ -13,6 +13,7 @@ namespace teamseven.PhyGen.Services.Services.ExamService
         Task<int> CreateExamAsync (ExamRequest examRequest);
 
         Task<IEnumerable<ExamResponse>> GetAllExamAsync();
+        Task RenameExamAsync(int examId, string newName);
 
         Task SoftDeleteExamAsync(int examId);
         Task<ExamResponse> GetExamAsync(int id);
