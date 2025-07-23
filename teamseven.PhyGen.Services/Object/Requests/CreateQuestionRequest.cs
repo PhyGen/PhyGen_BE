@@ -17,7 +17,8 @@ namespace teamseven.PhyGen.Services.Requests
         public string DifficultyLevel { get; set; }
 
         [Required(ErrorMessage = "Lesson ID is required")]
-        public int LessonId { get; set; }
+        public int? LessonId { get; set; }
+        public string? Image { get; set; }
 
         [Required(ErrorMessage = "Created by user ID is required")]
         public int CreatedByUserId { get; set; }

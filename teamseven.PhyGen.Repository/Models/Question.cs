@@ -25,11 +25,15 @@ public partial class Question
 
     public int? TextbookId { get; set; } 
 
-    public int LessonId { get; set; }
+    public int? LessonId { get; set; }
 
     public int CreatedByUserId { get; set; } 
 
     public DateTime CreatedAt { get; set; }
+
+    [MaxLength(5000)]
+    public string Image { get; set; } // có thể là URL hoặc base64 hoặc gì đó bạn quy định
+
 
     public DateTime? UpdatedAt { get; set; }
 

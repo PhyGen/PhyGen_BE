@@ -31,12 +31,6 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
                 throw new ArgumentNullException(nameof(questionDataRequest), "Question data request cannot be null.");
             }
 
-            if (await _unitOfWork.LessonRepository.GetByIdAsync(questionDataRequest.LessonId) == null)
-            {
-                _logger.LogWarning("Lesson with ID {LessonId} not found.", questionDataRequest.LessonId);
-                throw new NotFoundException($"Lesson with ID {questionDataRequest.LessonId} not found.");
-            }
-
             if (await _unitOfWork.UserRepository.GetByIdAsync(questionDataRequest.CreatedByUserId) == null)
             {
                 _logger.LogWarning("User with ID {UserId} not found.", questionDataRequest.CreatedByUserId);
@@ -48,6 +42,7 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
                 Content = questionDataRequest.Content,
                 QuestionSource = questionDataRequest.QuestionSource,
                 DifficultyLevel = questionDataRequest.DifficultyLevel,
+                Image = questionDataRequest.Image,
                 LessonId = questionDataRequest.LessonId,
                 CreatedByUserId = questionDataRequest.CreatedByUserId,
                 CreatedAt = DateTime.UtcNow
@@ -106,6 +101,7 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
                 Content = question.Content,
                 QuestionSource = question.QuestionSource,
                 DifficultyLevel = question.DifficultyLevel,
+                Image = question.Image,
                 LessonId = question.LessonId,
                 CreatedByUserId = question.CreatedByUserId,
                 CreatedAt = question.CreatedAt,

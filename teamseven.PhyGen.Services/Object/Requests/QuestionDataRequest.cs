@@ -22,7 +22,8 @@ public class QuestionDataRequest
 
     [Required(ErrorMessage = "Lesson ID is required.")]
     [Range(1, int.MaxValue, ErrorMessage = "Lesson ID must be a positive integer.")]
-    public int LessonId { get; set; }
+    public int? LessonId { get; set; }
+    public string? Image { get; set; }
 
     [Required(ErrorMessage = "Created by user ID is required.")]
     [Range(1, int.MaxValue, ErrorMessage = "Created by user ID must be a positive integer.")]
