@@ -20,6 +20,8 @@ namespace teamseven.PhyGen.Repository.Repository
         {
             return await _context.ExamQuestions
                 .Where(eq => eq.ExamId == examId)
+                .Include(eq => eq.Exam)     // Tải Exam để lấy ExamName
+                .Include(eq => eq.Question) // Tải Question để lấy QuestionContent
                 .ToListAsync();
         }
 
@@ -29,7 +31,15 @@ namespace teamseven.PhyGen.Repository.Repository
                 .Where(eq => eq.QuestionId == questionId)
                 .ToListAsync();
         }
-
+        public async Task<IEnumerable<Exam>> GetByCreatorAsync(int userId)
+        {
+            return await _context.Exams
+                .Where(e => e.CreatedByUserId == userId && !e.IsDeleted) // Lọc theo userId và không bị xóa
+                .Include(e => e.Lesson)        // Tải Lesson để lấy LessonName
+                .Include(e => e.ExamType)      // Tải ExamType để lấy ExamTypeName
+                .Include(e => e.CreatedByUser) // Tải CreatedByUser để lấy Name hoặc Email
+                .ToListAsync();
+        }
         public async Task<int> AddAsync(ExamQuestion examQuestion)
         {
             return await CreateAsync(examQuestion);
