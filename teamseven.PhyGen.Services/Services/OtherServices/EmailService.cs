@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using teamseven.PhyGen.Services.Interfaces;
 
-namespace teamseven.PhyGen.Services.Services
+namespace teamseven.PhyGen.Services.Services.OtherServices
 {
     public class EmailService : IEmailService
     {

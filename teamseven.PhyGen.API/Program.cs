@@ -1,8 +1,11 @@
 ﻿using Azure.Storage.Blobs;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -21,6 +24,7 @@ using teamseven.PhyGen.Services.Services.ChapterService;
 using teamseven.PhyGen.Services.Services.ExamService;
 using teamseven.PhyGen.Services.Services.GradeService;
 using teamseven.PhyGen.Services.Services.LessonService;
+using teamseven.PhyGen.Services.Services.OtherServices;
 using teamseven.PhyGen.Services.Services.QuestionReportService;
 using teamseven.PhyGen.Services.Services.QuestionsService;
 using teamseven.PhyGen.Services.Services.SemesterService;
@@ -50,7 +54,23 @@ builder.Services.AddDbContext<teamsevenphygendbContext>(options =>
 // ================= CẤU HÌNH AUTHENTICATION =================
 ConfigureAuthentication(builder.Services, builder.Configuration);
 
-
+try
+{
+    if (FirebaseApp.DefaultInstance == null)
+    {
+        string jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, builder.Configuration.GetSection("Firebase:CredentialsPath").Value);
+        FirebaseApp.Create(new AppOptions
+        {
+            Credential = GoogleCredential.FromFile(jsonPath)
+        });
+        Console.WriteLine("FirebaseApp khởi tạo thành công.");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Lỗi khi khởi tạo Firebase: {ex.Message}");
+    throw;
+}
 
 
 // ================= ĐĂNG KÝ REPOSITORY & SERVICE =================
@@ -91,6 +111,7 @@ builder.Services.AddScoped<IServiceProviders, ServiceProviders>();
 builder.Services.AddTransient<IEmailService, EmailService>(); // Email service (Transient)
 builder.Services.AddSingleton<IPasswordEncryptionService, PasswordEncryptionService>(); // Encryption (Singleton)
 builder.Services.AddSingleton<IIdObfuscator, IdObfuscator>();
+builder.Services.AddSingleton<NotificationService>();
 
 // 2. Singleton: Một instance duy nhất cho cả ứng dụng, dùng cho dịch vụ không trạng thái
 //    - Ví dụ: Cấu hình, logger toàn cục
