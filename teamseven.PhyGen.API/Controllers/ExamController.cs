@@ -140,6 +140,23 @@ namespace teamseven.PhyGen.Controllers
             var questions = await _serviceProvider.ExamService.GetExamQuestionByIdAsync(id);
             return Ok(questions);
         }
+        [HttpPut("rename/{examId}")]
+        public async Task<IActionResult> RenameExam(int examId, string newName)
+        {
+            try
+            {
+                await _serviceProvider.ExamService.RenameExamAsync(examId, newName);
+                return Ok(new { Message = "Exam renamed successfully" });
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Internal error", Detail = ex.Message });
+            }
+        }
 
         // =================== CREATE EXAM HISTORY ===================
 
