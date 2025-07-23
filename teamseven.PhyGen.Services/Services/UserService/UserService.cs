@@ -126,12 +126,6 @@ namespace teamseven.PhyGen.Services.Services.UserService
         //
         public async Task<(bool IsSuccess, string ResultOrError)> CreateQuestionAsync(CreateQuestionRequest request)
         {
-            // Kiểm tra Lesson tồn tại
-            var lesson = await _unitOfWork.UserRepository.GetByIdAsync(request.LessonId);
-            if (lesson == null)
-            {
-                return (false, $"Lesson with ID {request.LessonId} not found");
-            }
             // Kiểm tra User (người tạo) tồn tại
             var user = await _unitOfWork.UserRepository.GetByIdAsync(request.CreatedByUserId) as User;
             if (user == null)

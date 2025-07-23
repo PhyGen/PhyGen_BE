@@ -189,6 +189,7 @@ public partial class teamsevenphygendbContext : DbContext
             entity.Property(e => e.CreatedByUserId).HasColumnName("CreatedByUserId");
             entity.Property(e => e.DifficultyLevel).HasColumnName("DifficultyLevel").HasMaxLength(50);
             entity.Property(e => e.QuestionSource).HasColumnName("QuestionSource").HasMaxLength(500);
+            entity.Property(e => e.Image).HasColumnName("Image").HasMaxLength(5000);
             entity.Property(e => e.TemplateQuestionId).HasColumnName("TemplateQuestionId");
             entity.Property(e => e.IsCloned).HasColumnName("IsCloned").HasDefaultValue(false);
             entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");

@@ -18,7 +18,8 @@ public class QuestionDataResponse
 
     public string DifficultyLevel { get; set; }
 
-    public int LessonId { get; set; }
+    public int? LessonId { get; set; }
+    public string? Image { get; set; }
 
     public int CreatedByUserId { get; set; }
 

@@ -108,9 +108,9 @@ namespace teamseven.PhyGen.Services.Services.SolutionService
 
             var solution = new Solution
             {
-                QuestionId = request.QuestionId,
+                QuestionId = request.QuestionId ?? -1,
                 Content = request.Content,
-                CreatedByUserId = 1, // hoặc lấy từ user context
+                CreatedByUserId = 1, 
                 CreatedAt = DateTime.UtcNow,
                 VideoData = videoBytes,
                 VideoContentType = contentType
