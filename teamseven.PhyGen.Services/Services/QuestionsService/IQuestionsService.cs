@@ -20,6 +20,7 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
             int? lessonId = null,
             string? difficultyLevel = null,
             int? chapterId = null,
-            int isSort = 0);
+            int isSort = 0,
+            int? createdByUserId = null);
     }
 }

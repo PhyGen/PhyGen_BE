@@ -1,12 +1,4 @@
-﻿namespace teamseven.PhyGen.Services.Object.Responses
+﻿public class GeminiResponse
 {
-    public class Gemini15ChatResponse
-    {
-        public string Response { get; set; } = string.Empty;
-    }
-
-    public class Gemini25ChatResponse
-    {
-        public string Response { get; set; } = string.Empty;
-    }
+    public string Text { get; set; }
 }
