@@ -55,46 +55,51 @@ namespace teamseven.PhyGen.Repository.Repository
         }
 
         public async Task<(List<Question>, int)> GetPagedAsync(
-            int pageNumber,
-            int pageSize,
-            string? search = null,
-            string? sort = null,
-            int? lessonId = null,
-            string? difficultyLevel = null,
-            int? chapterId = null,
-            int isSort = 0) // Default isSort = 0 (No)
+    int pageNumber,
+    int pageSize,
+    string? search = null,
+    string? sort = null,
+    int? lessonId = null,
+    string? difficultyLevel = null,
+    int? chapterId = null,
+    int isSort = 0,
+    int createdByUserId = 0) // Default = 0 => không lọc theo user
         {
             var query = _context.Questions
-                .Include(q => q.Lesson) // For chapterId filter
+                .Include(q => q.Lesson)
                 .AsQueryable();
 
-            // Search (accent-insensitive on Content and QuestionSource)
+            // 🎯 Lọc theo người tạo (nếu có)
+            if (createdByUserId != 0)
+            {
+                query = query.Where(q => q.CreatedByUserId == createdByUserId);
+            }
+
+            // 🔍 Search (bỏ dấu)
             if (!string.IsNullOrEmpty(search))
             {
                 var searchNormalized = search.RemoveDiacritics().ToLower();
-                query = query.Where(q => q.Content.RemoveDiacritics().ToLower().Contains(searchNormalized) ||
-                                        q.QuestionSource.RemoveDiacritics().ToLower().Contains(searchNormalized));
+                query = query.Where(q =>
+                    q.Content.RemoveDiacritics().ToLower().Contains(searchNormalized) ||
+                    q.QuestionSource.RemoveDiacritics().ToLower().Contains(searchNormalized));
             }
 
-            // Filter by LessonId
             if (lessonId.HasValue)
             {
                 query = query.Where(q => q.LessonId == lessonId.Value);
             }
 
-            // Filter by DifficultyLevel
             if (!string.IsNullOrEmpty(difficultyLevel))
             {
                 query = query.Where(q => q.DifficultyLevel == difficultyLevel);
             }
 
-            // Filter by ChapterId (via Lesson)
             if (chapterId.HasValue)
             {
                 query = query.Where(q => q.Lesson.ChapterId == chapterId.Value);
             }
 
-            // Sort
+            // 📊 Sắp xếp
             if (isSort == 1)
             {
                 if (!string.IsNullOrEmpty(sort))
@@ -126,21 +131,21 @@ namespace teamseven.PhyGen.Repository.Repository
                             query = query.OrderByDescending(q => q.UpdatedAt);
                             break;
                         default:
-                            query = query.OrderByDescending(q => q.CreatedAt); // Default when sort invalid
+                            query = query.OrderByDescending(q => q.CreatedAt);
                             break;
                     }
                 }
                 else
                 {
-                    query = query.OrderByDescending(q => q.CreatedAt); // Default when isSort=1, no sort param
+                    query = query.OrderByDescending(q => q.CreatedAt);
                 }
             }
             else
             {
-                query = query.OrderBy(q => q.Id); // Default when isSort=0 (No)
+                query = query.OrderBy(q => q.Id);
             }
 
-            // Pagination
+            // 📄 Pagination
             var totalItems = await query.CountAsync();
             var items = await query
                 .Skip((pageNumber - 1) * pageSize)
@@ -150,4 +155,4 @@ namespace teamseven.PhyGen.Repository.Repository
             return (items, totalItems);
         }
     }
-}
+    }

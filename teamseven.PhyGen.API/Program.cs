@@ -158,8 +158,6 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // ================= CẤU HÌNH AUTOMAPPER =================
-
-
 // ================= CẤU HÌNH CONTROLLERS =================
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();

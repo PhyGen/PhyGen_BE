@@ -44,7 +44,8 @@ namespace teamseven.PhyGen.Controllers
              [FromQuery] int? chapterId = null,
              [FromQuery] int? pageNumber = null,
              [FromQuery] int? pageSize = null,
-             [FromQuery] int isSort = 0) // Default isSort = 0 (No)
+             [FromQuery] int isSort = 0,
+             [FromQuery] int? userId = null) 
         {
             try
             {
@@ -74,7 +75,8 @@ namespace teamseven.PhyGen.Controllers
                     lessonId,
                     difficultyLevel,
                     chapterId,
-                    isSort);
+                    isSort,
+                    userId);
                 _logger.LogInformation("Retrieved {Count} questions for page {PageNumber}.", pagedQuestions.Items.Count, pagedQuestions.PageNumber);
                 return Ok(pagedQuestions);
             }
