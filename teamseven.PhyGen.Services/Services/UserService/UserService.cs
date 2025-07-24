@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using teamseven.PhyGen.Repository;
 using teamseven.PhyGen.Repository.Models;
 using teamseven.PhyGen.Repository.Repository;
+using teamseven.PhyGen.Services.Extensions;
 using teamseven.PhyGen.Services.Object.Requests;
 using teamseven.PhyGen.Services.Object.Responses;
 using teamseven.PhyGen.Services.Requests;
@@ -16,6 +17,7 @@ namespace teamseven.PhyGen.Services.Services.UserService
     {
         Task <IEnumerable<User>> GetUsersAsync ();
         Task <UserResponse> GetUserByIdAsync (int id);
+        Task UpdateUserAsync(UserResponse user);
         Task<UserResponse> SoftDeleteUserAsync(int id);
         Task<(bool IsSuccess, string ResultOrError)> UpdateUserProfileAsync(int id, UpdateUserProfileRequest request);
 
@@ -40,6 +42,7 @@ namespace teamseven.PhyGen.Services.Services.UserService
             return new PhyGen.Services.Object.Responses.UserResponse
             {
                 Id = user.Id,
+                Balance = user.Balance,
                 Email = user.Email,
                 FullName = user.FullName,
                 AvatarUrl = user.AvatarUrl,
@@ -162,6 +165,24 @@ namespace teamseven.PhyGen.Services.Services.UserService
             //do user id ton tai, ko can validation vi day la ham phu
             var user = await _unitOfWork.UserRepository.GetByIdAsync(id);
             return user.FullName;
+        }
+        // Trong UserService.cs
+        public async Task UpdateUserAsync(UserResponse user)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user), "User cannot be null.");
+            }
+
+            var existingUser = await _unitOfWork.UserRepository.GetByIdAsync(user.Id);
+            if (existingUser == null)
+                throw new NotFoundException($"User with ID {user.Id} not found.");
+
+            existingUser.Balance = user.Balance; 
+            existingUser.UpdatedAt = DateTime.UtcNow; 
+
+            await _unitOfWork.UserRepository.UpdateAsync(existingUser);
+            await _unitOfWork.SaveChangesWithTransactionAsync();
         }
     }
 }

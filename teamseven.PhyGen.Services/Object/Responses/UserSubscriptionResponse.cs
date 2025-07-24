@@ -4,7 +4,7 @@ namespace teamseven.PhyGen.Repository.Dtos
 {
     public class UserSubscriptionResponse
     {
-        public long Id { get; set; }
+        public int Id { get; set; }
         public int UserId { get; set; }
         public int SubscriptionTypeId { get; set; }
         public string PaymentStatus { get; set; }
@@ -15,8 +15,6 @@ namespace teamseven.PhyGen.Repository.Dtos
         public DateTime? EndDate { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-
-        // related
         public string UserEmail { get; set; }
         public string SubscriptionName { get; set; }
     }

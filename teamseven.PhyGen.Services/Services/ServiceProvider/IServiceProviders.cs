@@ -41,5 +41,7 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         IQuestionReportService QuestionReportService { get; }
 
         ITextBookService TextBookService { get; }
+
+        IPayOSService PayOSService { get; }
     }
 }

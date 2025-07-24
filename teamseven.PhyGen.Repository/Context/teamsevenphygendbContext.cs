@@ -376,6 +376,7 @@ public partial class teamsevenphygendbContext : DbContext
             entity.Property(e => e.UpdatedBy).HasColumnName("UpdatedBy");
             entity.Property(e => e.EmailVerifiedAt).HasColumnName("EmailVerifiedAt");
             entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt");
+            entity.Property(e => e.Balance).HasColumnName("Balance"); 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)

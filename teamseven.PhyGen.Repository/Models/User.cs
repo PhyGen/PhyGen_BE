@@ -32,6 +32,7 @@ public partial class User
     public DateTime? UpdatedAt { get; set; }
 
     public int? UpdatedBy { get; set; }
+    public decimal? Balance { get; set; } 
 
     public virtual ICollection<ExamHistory> ExamHistories { get; set; } = new List<ExamHistory>();
 

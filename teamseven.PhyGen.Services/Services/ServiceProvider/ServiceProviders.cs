@@ -35,6 +35,7 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         private readonly IExamService _examService;
         private readonly IQuestionReportService _questionReportService;
         private readonly ITextBookService _textBookService;
+        private readonly IPayOSService _payOSService;
         public ServiceProviders(
             IAuthService authService,
             ILoginService loginService,
@@ -52,7 +53,8 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
             IUserSubscriptionService userSubscriptionService,
             IExamService examService,
             IQuestionReportService questionReportService,
-            ITextBookService textBookService)
+            ITextBookService textBookService,
+            IPayOSService payOSService)
         {
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
             _loginService = loginService ?? throw new ArgumentNullException(nameof(loginService));
@@ -71,6 +73,7 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
             _examService = examService ?? throw new ArgumentNullException(nameof(examService));
             _questionReportService = questionReportService ?? throw new ArgumentNullException(nameof(questionReportService));
             _textBookService = textBookService ?? throw new ArgumentNullException(nameof(textBookService));
+            _payOSService = payOSService ?? throw new ArgumentNullException(nameof(payOSService));
         }
       
 
@@ -93,5 +96,7 @@ namespace teamseven.PhyGen.Services.Services.ServiceProvider
         public IQuestionReportService QuestionReportService => _questionReportService;
 
         public ITextBookService TextBookService => _textBookService;
+
+        public IPayOSService PayOSService => _payOSService;
     }
 }

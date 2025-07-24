@@ -32,7 +32,16 @@ namespace teamseven.PhyGen.Repository.Repository
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
         }
+        public async Task<UserSubscription> GetByPaymentGatewayTransactionIdAsync(string transactionId)
+        {
+            if (string.IsNullOrEmpty(transactionId))
+            {
+                throw new ArgumentNullException(nameof(transactionId), "PaymentGatewayTransactionId cannot be null or empty.");
+            }
 
+            return await _context.UserSubscriptions
+                .FirstOrDefaultAsync(us => us.PaymentGatewayTransactionId == transactionId);
+        }
         public async Task<List<UserSubscription>?> GetActiveSubscriptionsAsync(long userId)
         {
             return await _context.UserSubscriptions
