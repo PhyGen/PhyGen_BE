@@ -19,6 +19,9 @@ public class QuestionDataResponse
     public string DifficultyLevel { get; set; }
 
     public int? LessonId { get; set; }
+
+    public int? ChapterId { get; set; }
+
     public string? Image { get; set; }
 
     public int CreatedByUserId { get; set; }
@@ -30,4 +33,6 @@ public class QuestionDataResponse
     //related
     public string CreatedByUserName { get; set; }
     public string LessonName { get; set; }
+
+    public string ChapterName { get; set; }
 }
