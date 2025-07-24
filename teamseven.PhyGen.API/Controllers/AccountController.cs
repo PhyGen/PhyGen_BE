@@ -4,6 +4,7 @@ using teamseven.PhyGen.Services.Object.Requests;
 
 using teamseven.PhyGen.Services.Services.UserService;
 using teamseven.PhyGen.Services.Services.ServiceProvider;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace teamseven.PhyGen.API.Controllers
 {
@@ -27,6 +28,34 @@ namespace teamseven.PhyGen.API.Controllers
 
         }
 
+        [HttpPut("premium/{userId}")]
+        [AllowAnonymous]
+        [SwaggerOperation(
+        Summary = "Upgrade user to premium",
+        Description = "If user's balance >= 10000 and user is not already premium, deduct 10000 and upgrade to premium")]
+        [SwaggerResponse(200, "Upgraded successfully")]
+        [SwaggerResponse(400, "Not enough balance or already premium")]
+        [SwaggerResponse(404, "User not found")]
+        public async Task<IActionResult> UpgradeToPremium(int userId)
+        {
+            try
+            {
+                var success = await _serviceProvider.UserService.UpgradeToPremiumAsync(userId);
+
+                if (!success)
+                    return BadRequest(new { Message = "User already premium or insufficient balance." });
+
+                return Ok(new { Message = "User upgraded to premium successfully." });
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Internal server error" });
+            }
+        }
 
 
         [HttpGet("{id}")]

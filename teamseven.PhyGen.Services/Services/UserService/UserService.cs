@@ -19,6 +19,7 @@ namespace teamseven.PhyGen.Services.Services.UserService
         Task <UserResponse> GetUserByIdAsync (int id);
         Task UpdateUserAsync(UserResponse user);
         Task<UserResponse> SoftDeleteUserAsync(int id);
+        Task<bool> UpgradeToPremiumAsync(int userId);
         Task<(bool IsSuccess, string ResultOrError)> UpdateUserProfileAsync(int id, UpdateUserProfileRequest request);
 
         Task<string?> GetOnlyUserNameById(int id);
@@ -184,5 +185,27 @@ namespace teamseven.PhyGen.Services.Services.UserService
             await _unitOfWork.UserRepository.UpdateAsync(existingUser);
             await _unitOfWork.SaveChangesWithTransactionAsync();
         }
+        public async Task<bool> UpgradeToPremiumAsync(int userId)
+        {
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
+            if (user == null)
+                throw new ArgumentException("User not found");
+
+            if (user.IsPremium == true)
+                return false; // đã là premium
+
+            if (user.Balance < 10000)
+                return false; // không đủ tiền
+
+            user.Balance -= 10000;
+            user.IsPremium = true; 
+            user.UpdatedAt = DateTime.UtcNow;
+
+            _unitOfWork.UserRepository.Update(user);
+            await _unitOfWork.SaveChangesWithTransactionAsync();
+
+            return true;
+        }
+
     }
 }
