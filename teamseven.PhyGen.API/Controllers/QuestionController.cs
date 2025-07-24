@@ -145,6 +145,46 @@ namespace teamseven.PhyGen.Controllers
             }
         }
 
+        [HttpPut("{id}")]
+        [AllowAnonymous]
+        [SwaggerOperation(Summary = "Update a question", Description = "Updates a question by its ID.")]
+        [SwaggerResponse(200, "Question updated successfully.", typeof(QuestionDataResponse))]
+        [SwaggerResponse(400, "Invalid request data.", typeof(ProblemDetails))]
+        [SwaggerResponse(404, "Question not found.", typeof(ProblemDetails))]
+        [SwaggerResponse(500, "Internal server error.", typeof(ProblemDetails))]
+        public async Task<IActionResult> UpdateQuestion(int id, [FromBody] UpdateQuestionRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                _logger.LogWarning("Invalid request data for updating question.");
+                return BadRequest(ModelState);
+            }
+
+            if (id != request.Id)
+            {
+                _logger.LogWarning("Mismatch between route ID and body ID.");
+                return BadRequest(new { Message = "Route ID and request ID do not match." });
+            }
+
+            try
+            {
+                var updatedQuestion = await _serviceProvider.QuestionsService.ModifyQuestionAsync(request);
+                _logger.LogInformation("Question with ID {QuestionId} updated successfully.", request.Id);
+                return Ok(updatedQuestion);
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Not found: {Message}", ex.Message);
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating question: {Message}", ex.Message);
+                return StatusCode(500, new { Message = "An error occurred while updating the question." });
+            }
+        }
+
+
         [HttpDelete("{id}")]
         [AllowAnonymous]
         [SwaggerOperation(Summary = "Delete a question", Description = "Deletes a question by its ID.")]
