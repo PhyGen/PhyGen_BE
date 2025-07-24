@@ -66,7 +66,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Update a solution", Description = "Updates a solution.")]
         public async Task<IActionResult> Update(int id, [FromBody] SolutionDataRequest request)
         {
@@ -85,7 +85,7 @@ namespace teamseven.PhyGen.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Policy = "DeliveringStaffPolicy")]
+        [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Delete a solution", Description = "Deletes a solution.")]
         public async Task<IActionResult> Delete(int id)
         {
