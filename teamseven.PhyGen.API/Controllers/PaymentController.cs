@@ -46,8 +46,8 @@ namespace teamseven.PhyGen.API.Controllers
                 (int)request.Amount, // Chuyển decimal sang int vì PayOS yêu cầu
                 request.Description,
                 items,
-                "https://your-domain.com/cancel",
-                "https://your-domain.com/success"
+                "https://fe-phy-gen.vercel.app/",
+                "https://fe-phy-gen.vercel.app/"
             );
             // Gọi service để tạo payment link
             CreatePaymentResult result = await _serviceProvider.PayOSService.CreatePaymentLink(paymentData);
