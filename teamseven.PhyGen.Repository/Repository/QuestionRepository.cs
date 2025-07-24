@@ -17,7 +17,9 @@ namespace teamseven.PhyGen.Repository.Repository
 
         public async Task<List<Question>?> GetAllAsync()
         {
-            return await base.GetAllAsync();
+            return await _context.Questions
+                .Include(q => q.Lesson)
+                .ToListAsync();
         }
 
         public async Task<Question?> GetByIdAsync(int id)

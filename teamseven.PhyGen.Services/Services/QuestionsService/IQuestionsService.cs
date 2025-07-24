@@ -11,7 +11,7 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
         Task<QuestionDataResponse> AddQuestionAsync(QuestionDataRequest questionDataRequest);
         Task DeleteQuestionAsync(int id);
         Task<QuestionDataResponse> GetQuestionById(int id);
-        Task ModifyQuestionAsync(QuestionDataRequest questionDataRequest);
+        Task<QuestionDataResponse> ModifyQuestionAsync(UpdateQuestionRequest questionDataRequest);
         Task<PagedResponse<QuestionDataResponse>> GetQuestionsAsync(
             int? pageNumber = null,
             int? pageSize = null,

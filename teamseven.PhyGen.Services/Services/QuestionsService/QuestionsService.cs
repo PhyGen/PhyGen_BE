@@ -111,10 +111,58 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
             };
         }
 
-        public Task ModifyQuestionAsync(QuestionDataRequest questionDataRequest)
+        public async Task<QuestionDataResponse> ModifyQuestionAsync(UpdateQuestionRequest questionDataRequest)
         {
-            throw new NotImplementedException();
+            if (questionDataRequest == null)
+            {
+                _logger.LogWarning("QuestionDataRequest is null.");
+                throw new ArgumentNullException(nameof(questionDataRequest));
+            }
+
+            var existingQuestion = await _unitOfWork.QuestionRepository.GetByIdAsync(questionDataRequest.Id);
+            if (existingQuestion == null)
+            {
+                _logger.LogWarning("Question with ID {QuestionId} not found.", questionDataRequest.Id);
+                throw new NotFoundException($"Question with ID {questionDataRequest.Id} not found.");
+            }
+
+            existingQuestion.Content = questionDataRequest.Content;
+            //existingQuestion.QuestionSource = questionDataRequest.QuestionSource;
+            existingQuestion.DifficultyLevel = questionDataRequest.DifficultyLevel;
+            //existingQuestion.Image = questionDataRequest.Image;
+            //existingQuestion.LessonId = questionDataRequest.LessonId;
+            existingQuestion.UpdatedAt = DateTime.UtcNow;
+
+            try
+            {
+                await _unitOfWork.QuestionRepository.UpdateAsync(existingQuestion);
+                await _unitOfWork.SaveChangesWithTransactionAsync();
+
+                _logger.LogInformation("Question with ID {QuestionId} updated successfully.", existingQuestion.Id);
+
+                // ✅ Trả về dữ liệu sau khi cập nhật
+                return new QuestionDataResponse
+                {
+                    Id = existingQuestion.Id,
+                    Content = existingQuestion.Content,
+                    QuestionSource = existingQuestion.QuestionSource,
+                    DifficultyLevel = existingQuestion.DifficultyLevel,
+                    Image = existingQuestion.Image,
+                    LessonId = existingQuestion.LessonId,
+                    CreatedAt = existingQuestion.CreatedAt,
+                    UpdatedAt = existingQuestion.UpdatedAt
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating question with ID {QuestionId}: {Message}", existingQuestion.Id, ex.Message);
+                throw new ApplicationException($"Error updating question with ID {existingQuestion.Id}", ex);
+            }
         }
+
+
+
+
         public async Task<PagedResponse<QuestionDataResponse>> GetQuestionsAsync(
     int? pageNumber = null,
     int? pageSize = null,
@@ -205,6 +253,7 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
                 }
                 var allLessons = await _unitOfWork.LessonRepository.GetAllAsync();
                 var allUsers = await _unitOfWork.UserRepository.GetAllAsync();
+                var allChapters = await _unitOfWork.ChapterRepository.GetAllAsync();
                 var questionResponses = questions.Select(q => new QuestionDataResponse
                 {
                     Id = q.Id,
@@ -212,10 +261,12 @@ namespace teamseven.PhyGen.Services.Services.QuestionsService
                     QuestionSource = q.QuestionSource,
                     DifficultyLevel = q.DifficultyLevel,
                     LessonId = q.LessonId,
+                    ChapterId = q.Lesson?.ChapterId,
                     CreatedByUserId = q.CreatedByUserId,
                     CreatedAt = q.CreatedAt,
                     UpdatedAt = q.UpdatedAt,
                     LessonName = allLessons.FirstOrDefault(l => l.Id == q.LessonId)?.Name ?? string.Empty,
+                    ChapterName = allChapters.FirstOrDefault(c => c.Id == q.Lesson?.ChapterId)?.Name ?? string.Empty,
                     CreatedByUserName = allUsers.FirstOrDefault(u => u.Id == q.CreatedByUserId)?.Email ?? string.Empty
                 }).ToList();
 
