@@ -11,5 +11,8 @@ namespace teamseven.PhyGen.Services.Services.SolutionService
         Task UpdateSolutionAsync(SolutionDataRequest request);
         Task DeleteSolutionAsync(int id);
         Task AddSolutionWithVideoAsync(SolutionWithVideoRequest request);
+        Task UpdateSolutionVideoAsync(SolutionWithVideoRequest request);
+
+        
     }
 }

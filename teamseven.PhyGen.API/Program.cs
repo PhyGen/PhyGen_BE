@@ -106,6 +106,7 @@ builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<ILessonService, LessonService>();
 builder.Services.AddScoped<ITextBookService, TextBookService>();
 builder.Services.AddScoped<IPayOSService, PayOSService>(); // Đăng ký IPayOSService trước
+builder.Services.AddScoped<SupabaseService>();
 builder.Services.AddScoped<IServiceProviders, ServiceProviders>();
 
 // 📌 Utility & Helper Services
