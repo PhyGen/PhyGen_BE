@@ -141,20 +141,20 @@ namespace teamseven.PhyGen.Services.Services.SolutionService
             {
                 var videoUrl = await _supabaseService.UploadVideoAsync(request.VideoFile);
 
-                solution.Mp4Url = videoUrl;
+                solution.VideoData = videoUrl;
                 solution.VideoContentType = request.VideoFile.ContentType ?? "video/mp4";
                 solution.IsMp4Generated = true;
                 solution.UpdatedAt = DateTime.UtcNow;
             }
 
             if (!string.IsNullOrEmpty(request.Content))
+            {
                 solution.Content = request.Content;
-
-            if (!string.IsNullOrEmpty(request.VideoData))
-                solution.VideoData = request.VideoData;
+            }
 
             await _unitOfWork.SolutionRepository.UpdateAsync(solution);
             await _unitOfWork.SaveChangesWithTransactionAsync();
         }
+
     }
 }

@@ -166,28 +166,13 @@ namespace teamseven.PhyGen.Controllers
         [SwaggerResponse(200, "Solution video updated successfully")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Solution not found")]
-        public async Task<IActionResult> UpdateSolutionVideo(int id, [FromForm] SolutionWithVideoRequest request)
+        [HttpPut("video")]
+        public async Task<IActionResult> UpdateSolutionVideo([FromForm] SolutionWithVideoRequest request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            try
-            {
-                request.SolutionId = id;
-                await _serviceProvider.SolutionService.UpdateSolutionVideoAsync(request);
-                return Ok(new { message = "Solution video updated successfully." });
-            }
-            catch (NotFoundException ex)
-            {
-                _logger.LogWarning(ex.Message);
-                return NotFound(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to update solution video.");
-                return BadRequest(new { message = ex.Message });
-            }
+            await _serviceProvider.SolutionService.UpdateSolutionVideoAsync(request);
+            return Ok(new { message = "Video uploaded and solution updated successfully." });
         }
+
 
     }
 }
