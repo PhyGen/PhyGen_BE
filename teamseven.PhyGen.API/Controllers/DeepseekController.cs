@@ -111,7 +111,7 @@ namespace teamseven.PhyGen.API.Controllers
             }
         }
 
-        [HttpPost("solve")]
+        [HttpPost("solutions")]
         [SwaggerOperation(Summary = "Solve physics problem with DeepSeek API", Description = "Sends a physics problem to DeepSeek API for detailed step-by-step solution. Uses streaming for faster response, lower temperature for accuracy, and fallback if empty.")]
         [SwaggerResponse(200, "Physics solution retrieved successfully.", typeof(DeepSeekChatResponse))]
         [SwaggerResponse(400, "Invalid request data.", typeof(object))]
@@ -270,7 +270,7 @@ Problem: {request.Message}";
             }
         }
 
-        [HttpPost("chat")]
+        [HttpPost("conversations")]
         [SwaggerOperation(Summary = "General chat with DeepSeek API", Description = "Sends a message to DeepSeek chat model for general response. Uses streaming and low temperature for consistency.")]
         [SwaggerResponse(200, "Chat response retrieved successfully.", typeof(DeepSeekChatResponse))]
         [SwaggerResponse(400, "Invalid request data.", typeof(object))]

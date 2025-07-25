@@ -104,7 +104,7 @@ namespace teamseven.PhyGen.API.Controllers
             }
         }
 
-        [HttpPost("solve")]
+        [HttpPost("solutions")]
         [SwaggerOperation(Summary = "Solve physics problem with Gemini 2.5 API", Description = "Sends a physics problem to Gemini 2.5 for detailed step-by-step solution with enhanced thinking mode.")]
         [SwaggerResponse(200, "Physics solution retrieved successfully.", typeof(Gemini25ChatResponse))]
         [SwaggerResponse(400, "Invalid request data.", typeof(object))]
@@ -210,7 +210,7 @@ Problem: {request.Message}";
             }
         }
 
-        [HttpPost("chat")]
+        [HttpPost("conversations")]
         [SwaggerOperation(Summary = "General chat with Gemini 2.5 API", Description = "Sends a message to Gemini 2.5 for general response with enhanced reasoning.")]
         [SwaggerResponse(200, "Chat response retrieved successfully.", typeof(Gemini25ChatResponse))]
         [SwaggerResponse(400, "Invalid request data.", typeof(object))]
