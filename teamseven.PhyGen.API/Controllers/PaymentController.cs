@@ -32,7 +32,17 @@ namespace teamseven.PhyGen.API.Controllers
             {
                 return BadRequest(new { Message = "Invalid request data" });
             }
+            var user = await _serviceProvider.UserService.GetUserByIdAsync(request.UserId);
+            if (user != null)
+            {
+                if (!user.Balance.HasValue)
+                {
+                    user.Balance = 0m;
+                }
 
+                user.Balance += request.Amount;
+                await _serviceProvider.UserService.UpdateUserAsync(user);
+            }
             // Tạo orderCode unique (sẽ dùng làm PaymentGatewayTransactionId)
             long orderCode = DateTimeOffset.Now.ToUnixTimeMilliseconds(); // 24/07/2025 03:18 PM +07
 
@@ -64,17 +74,6 @@ namespace teamseven.PhyGen.API.Controllers
 
             // Lưu thông tin vào UserSubscription qua service
             await _serviceProvider.UserSubscriptionService.AddSubscriptionAsync(subscriptionRequest);
-            var user = await _serviceProvider.UserService.GetUserByIdAsync(request.UserId);
-            if (user != null)
-            {
-                if (!user.Balance.HasValue)
-                {
-                    user.Balance = 0m;
-                }
-
-                user.Balance += request.Amount;
-                await _serviceProvider.UserService.UpdateUserAsync(user);
-            }
             return Ok(new { CheckoutUrl = result.checkoutUrl });
         }
 
