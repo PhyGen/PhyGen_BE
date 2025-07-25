@@ -47,6 +47,7 @@ namespace teamseven.PhyGen.Services.Services.UserService
                 Email = user.Email,
                 FullName = user.FullName,
                 AvatarUrl = user.AvatarUrl,
+                IsPremium = user.IsPremium,
                 PhoneNumber = user.PhoneNumber,
                 RoleId = user.RoleId,
                 IsActive = user.IsActive,

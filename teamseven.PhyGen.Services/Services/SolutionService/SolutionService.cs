@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using teamseven.PhyGen.Repository;
 using teamseven.PhyGen.Repository.Models;
 using teamseven.PhyGen.Services.Object.Requests;
@@ -98,7 +98,7 @@ namespace teamseven.PhyGen.Services.Services.SolutionService
             await _unitOfWork.SolutionRepository.RemoveAsync(solution);
             await _unitOfWork.SaveChangesWithTransactionAsync();
         }
-        public async Task AddSolutionWithVideoAsync(SolutionWithVideoRequest request)
+        public async Task<int> AddSolutionWithVideoAsync(SolutionWithVideoRequest request)
         {
             //string videoUrl = null;
 

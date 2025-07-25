@@ -12,6 +12,7 @@ namespace teamseven.PhyGen.Services.Object.Responses
         public string? Email { get; set; }
         public decimal? Balance { get; set; }
         public string? FullName { get; set; }
+        public bool? IsPremium { get; set; }
         public string AvatarUrl { get; set; }
         public string PhoneNumber { get; set; }
         public int RoleId { get; set; }
