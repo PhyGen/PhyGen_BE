@@ -1,15 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
 using System.Threading.Tasks;
 using teamseven.PhyGen.Services.Object.Requests;
 using teamseven.PhyGen.Services.Services.ServiceProvider;
 using teamseven.PhyGen.Services.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using teamseven.PhyGen.Services.Object.Responses;
-using Microsoft.Extensions.DependencyInjection;
-using teamseven.PhyGen.Repository.Models;
+
 
 namespace teamseven.PhyGen.Controllers
 {
@@ -40,6 +38,8 @@ namespace teamseven.PhyGen.Controllers
         [HttpGet("{id}")]
         [AllowAnonymous]
         [SwaggerOperation(Summary = "Get solution by ID", Description = "Retrieves a solution by ID.")]
+        [SwaggerResponse(200, "Solution found", typeof(SolutionDataResponse))]
+        [SwaggerResponse(404, "Solution not found")]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -50,44 +50,51 @@ namespace teamseven.PhyGen.Controllers
             catch (NotFoundException ex)
             {
                 _logger.LogWarning(ex.Message);
-                return NotFound(new { Message = ex.Message });
+                return NotFound(new { message = ex.Message });
             }
         }
 
         [HttpPost]
         [AllowAnonymous]
-        [SwaggerOperation(Summary = "Create a new solution", Description = "Creates a new solution.")]
+        [SwaggerOperation(Summary = "Create a new solution", Description = "Creates a new solution without video.")]
+        [SwaggerResponse(201, "Solution created successfully")]
+        [SwaggerResponse(400, "Invalid request")]
         public async Task<IActionResult> Create([FromBody] CreateSolutionRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             await _serviceProvider.SolutionService.CreateSolutionAsync(request);
-            return StatusCode(201, new { Message = "Solution created successfully." });
+            return StatusCode(201, new { message = "Solution created successfully." });
         }
 
         [HttpPut("{id}")]
         [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Update a solution", Description = "Updates a solution.")]
+        [SwaggerResponse(200, "Solution updated successfully")]
+        [SwaggerResponse(400, "Invalid request")]
+        [SwaggerResponse(404, "Solution not found")]
         public async Task<IActionResult> Update(int id, [FromBody] SolutionDataRequest request)
         {
             if (!ModelState.IsValid || request.Id != id)
-                return BadRequest(new { Message = "Invalid request data." });
+                return BadRequest(new { message = "Invalid request data." });
 
             try
             {
                 await _serviceProvider.SolutionService.UpdateSolutionAsync(request);
-                return Ok(new { Message = "Solution updated successfully." });
+                return Ok(new { message = "Solution updated successfully." });
             }
             catch (NotFoundException ex)
             {
-                return NotFound(new { Message = ex.Message });
+                return NotFound(new { message = ex.Message });
             }
         }
 
         [HttpDelete("{id}")]
         [Authorize(Policy = "SaleStaffPolicy")]
         [SwaggerOperation(Summary = "Delete a solution", Description = "Deletes a solution.")]
+        [SwaggerResponse(204, "Deleted successfully")]
+        [SwaggerResponse(404, "Solution not found")]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -97,37 +104,88 @@ namespace teamseven.PhyGen.Controllers
             }
             catch (NotFoundException ex)
             {
-                return NotFound(new { Message = ex.Message });
+                return NotFound(new { message = ex.Message });
             }
         }
+
         [HttpPost("video")]
         [AllowAnonymous]
-        [SwaggerOperation(Summary = "Create a new video", Description = "Creates a new video.")]
+        [Consumes("multipart/form-data")]
+        [SwaggerOperation(Summary = "Create a new solution with video", Description = "Uploads video and creates a solution with video URL.")]
+        [SwaggerResponse(200, "Solution with video created successfully")]
+        [SwaggerResponse(400, "Invalid request")]
         public async Task<IActionResult> AddSolutionWithVideo([FromForm] SolutionWithVideoRequest request)
         {
-            int solutionId = await _serviceProvider.SolutionService.AddSolutionWithVideoAsync(request);
-            return Ok(new { message = "Success", solutionId = solutionId });
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                await _serviceProvider.SolutionService.AddSolutionWithVideoAsync(request);
+                return Ok(new { message = "Solution with video created successfully." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to create solution with video.");
+                return BadRequest(new { message = ex.Message });
+            }
         }
+
         [HttpGet("{id}/video")]
         [AllowAnonymous]
-        [SwaggerOperation(Summary = "Get video by solution ID", Description = "Returns the video file associated with the solution.")]
+        [SwaggerOperation(Summary = "Get video URL by solution ID", Description = "Returns the video URL associated with the solution.")]
+        [SwaggerResponse(200, "Video URL found")]
+        [SwaggerResponse(404, "Video not found")]
         public async Task<IActionResult> GetSolutionVideo(int id)
         {
             try
             {
                 var solution = await _serviceProvider.SolutionService.GetSolutionByIdAsync(id);
 
-                if (solution.VideoData == null || string.IsNullOrEmpty(solution.VideoContentType))
+                if (string.IsNullOrWhiteSpace(solution.VideoData))
                 {
-                    return NotFound(new { Message = "Video not found for this solution." });
+                    return NotFound(new { message = "Video URL not found for this solution." });
                 }
 
-                return File(solution.VideoData, solution.VideoContentType);
+                return Ok(new { url = solution.VideoData });
             }
             catch (NotFoundException ex)
             {
                 _logger.LogWarning(ex.Message);
-                return NotFound(new { Message = ex.Message });
+                return NotFound(new { message = ex.Message });
+            }
+        }
+        [HttpPut("{id}/video")]
+        //[Authorize(Policy = "SaleStaffPolicy")] 
+        [AllowAnonymous]
+        [Consumes("multipart/form-data")]
+        [SwaggerOperation(
+            Summary = "Update solution video",
+            Description = "Uploads new video and updates the existing solution with video URL and metadata."
+        )]
+        [SwaggerResponse(200, "Solution video updated successfully")]
+        [SwaggerResponse(400, "Invalid request")]
+        [SwaggerResponse(404, "Solution not found")]
+        public async Task<IActionResult> UpdateSolutionVideo(int id, [FromForm] SolutionWithVideoRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                request.SolutionId = id;
+                await _serviceProvider.SolutionService.UpdateSolutionVideoAsync(request);
+                return Ok(new { message = "Solution video updated successfully." });
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogWarning(ex.Message);
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to update solution video.");
+                return BadRequest(new { message = ex.Message });
             }
         }
 

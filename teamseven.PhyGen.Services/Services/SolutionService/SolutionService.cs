@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using teamseven.PhyGen.Repository;
 using teamseven.PhyGen.Repository.Models;
 using teamseven.PhyGen.Services.Object.Requests;
 using teamseven.PhyGen.Services.Object.Responses;
 using teamseven.PhyGen.Services.Extensions;
-using System.Reflection.Metadata.Ecma335;
+using teamseven.PhyGen.Services.Services.OtherServices;
 
 namespace teamseven.PhyGen.Services.Services.SolutionService
 {
@@ -12,11 +12,13 @@ namespace teamseven.PhyGen.Services.Services.SolutionService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<SolutionService> _logger;
+        private readonly SupabaseService _supabaseService;
 
-        public SolutionService(IUnitOfWork unitOfWork, ILogger<SolutionService> logger)
+        public SolutionService(IUnitOfWork unitOfWork, ILogger<SolutionService> logger, SupabaseService supabaseService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _supabaseService = supabaseService;
         }
 
         public async Task<IEnumerable<SolutionDataResponse>> GetAllSolutionsAsync()
@@ -31,7 +33,9 @@ namespace teamseven.PhyGen.Services.Services.SolutionService
                 CreatedByUserId = s.CreatedByUserId,
                 IsApproved = s.IsApproved,
                 CreatedAt = s.CreatedAt,
-                UpdatedAt = s.UpdatedAt
+                UpdatedAt = s.UpdatedAt,
+                VideoData = s.VideoData,
+                VideoContentType = s.VideoContentType
             });
         }
 
@@ -96,31 +100,61 @@ namespace teamseven.PhyGen.Services.Services.SolutionService
         }
         public async Task<int> AddSolutionWithVideoAsync(SolutionWithVideoRequest request)
         {
-            byte[] videoBytes = null;
-            string contentType = null;
+            //string videoUrl = null;
+
+            //if (request.VideoFile != null)
+            //{
+            //    // Upload lên Supabase và lấy URL
+            //    videoUrl = await _supabaseService.UploadVideoAsync(request.VideoFile);
+            //}
+
+            //var solution = new Solution
+            //{
+            //    QuestionId = request.QuestionId ?? -1,
+            //    Content = request.Content,
+            //    CreatedByUserId = 1,
+            //    CreatedAt = DateTime.UtcNow,
+            //    VideoData = videoUrl // lưu URL thay vì byte[]
+            //,
+            //    VideoContentType = request.VideoFile?.ContentType ?? "video/mp4", 
+            //};
+
+            //try
+            //{
+            //    await _unitOfWork.SolutionRepository.AddAsync(solution);
+            //    await _unitOfWork.SaveChangesWithTransactionAsync();
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(ex, "Lỗi khi thêm Solution");
+            //    throw; 
+            //}
+
+        }
+        public async Task UpdateSolutionVideoAsync(SolutionWithVideoRequest request)
+        {
+            var solution = await _unitOfWork.SolutionRepository.GetByIdAsync(request.SolutionId);
+            if (solution == null)
+                throw new NotFoundException("Solution not found.");
 
             if (request.VideoFile != null)
             {
-                using var ms = new MemoryStream();
-                await request.VideoFile.CopyToAsync(ms);
-                videoBytes = ms.ToArray();
-                contentType = request.VideoFile.ContentType; // ví dụ: "video/mp4"
+                var videoUrl = await _supabaseService.UploadVideoAsync(request.VideoFile);
+
+                solution.Mp4Url = videoUrl;
+                solution.VideoContentType = request.VideoFile.ContentType ?? "video/mp4";
+                solution.IsMp4Generated = true;
+                solution.UpdatedAt = DateTime.UtcNow;
             }
 
-            var solution = new Solution
-            {
-                QuestionId = request.QuestionId ?? -1,
-                Content = request.Content,
-                CreatedByUserId = 1, 
-                CreatedAt = DateTime.UtcNow,
-                VideoData = videoBytes,
-                VideoContentType = contentType
-            };
+            if (!string.IsNullOrEmpty(request.Content))
+                solution.Content = request.Content;
 
-            await _unitOfWork.SolutionRepository.AddAsync(solution);
+            if (!string.IsNullOrEmpty(request.VideoData))
+                solution.VideoData = request.VideoData;
+
+            await _unitOfWork.SolutionRepository.UpdateAsync(solution);
             await _unitOfWork.SaveChangesWithTransactionAsync();
-
-            return solution.Id;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using teamseven.PhyGen.Services.Object.Requests;
+using teamseven.PhyGen.Services.Object.Requests;
 using teamseven.PhyGen.Services.Object.Responses;
 
 namespace teamseven.PhyGen.Services.Services.SolutionService
@@ -10,6 +10,7 @@ namespace teamseven.PhyGen.Services.Services.SolutionService
         Task CreateSolutionAsync(CreateSolutionRequest request);
         Task UpdateSolutionAsync(SolutionDataRequest request);
         Task DeleteSolutionAsync(int id);
-        Task<int> AddSolutionWithVideoAsync(SolutionWithVideoRequest request);
+        Task AddSolutionWithVideoAsync(SolutionWithVideoRequest request);
+        Task UpdateSolutionVideoAsync(SolutionWithVideoRequest request);
     }
 }
