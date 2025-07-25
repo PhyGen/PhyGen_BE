@@ -99,7 +99,7 @@ namespace teamseven.PhyGen.Controllers
                 return NotFound(new { Message = ex.Message });
             }
         }
-        [HttpPost("add-with-video")]
+        [HttpPost("video")]
         [AllowAnonymous]
         [SwaggerOperation(Summary = "Create a new video", Description = "Creates a new video.")]
         public async Task<IActionResult> AddSolutionWithVideo([FromForm] SolutionWithVideoRequest request)
