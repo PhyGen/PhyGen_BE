@@ -4,6 +4,7 @@ using teamseven.PhyGen.Repository.Models;
 using teamseven.PhyGen.Services.Object.Requests;
 using teamseven.PhyGen.Services.Object.Responses;
 using teamseven.PhyGen.Services.Extensions;
+using System.Reflection.Metadata.Ecma335;
 
 namespace teamseven.PhyGen.Services.Services.SolutionService
 {
@@ -93,7 +94,7 @@ namespace teamseven.PhyGen.Services.Services.SolutionService
             await _unitOfWork.SolutionRepository.RemoveAsync(solution);
             await _unitOfWork.SaveChangesWithTransactionAsync();
         }
-        public async Task AddSolutionWithVideoAsync(SolutionWithVideoRequest request)
+        public async Task<int> AddSolutionWithVideoAsync(SolutionWithVideoRequest request)
         {
             byte[] videoBytes = null;
             string contentType = null;
@@ -118,7 +119,8 @@ namespace teamseven.PhyGen.Services.Services.SolutionService
 
             await _unitOfWork.SolutionRepository.AddAsync(solution);
             await _unitOfWork.SaveChangesWithTransactionAsync();
-        }
 
+            return solution.Id;
+        }
     }
 }

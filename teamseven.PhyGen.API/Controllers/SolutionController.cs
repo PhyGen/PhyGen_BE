@@ -9,6 +9,7 @@ using teamseven.PhyGen.Services.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using teamseven.PhyGen.Services.Object.Responses;
 using Microsoft.Extensions.DependencyInjection;
+using teamseven.PhyGen.Repository.Models;
 
 namespace teamseven.PhyGen.Controllers
 {
@@ -104,8 +105,8 @@ namespace teamseven.PhyGen.Controllers
         [SwaggerOperation(Summary = "Create a new video", Description = "Creates a new video.")]
         public async Task<IActionResult> AddSolutionWithVideo([FromForm] SolutionWithVideoRequest request)
         {
-            await _serviceProvider.SolutionService.AddSolutionWithVideoAsync(request);
-            return Ok(new { message = "Success" });
+            int solutionId = await _serviceProvider.SolutionService.AddSolutionWithVideoAsync(request);
+            return Ok(new { message = "Success", solutionId = solutionId });
         }
         [HttpGet("{id}/video")]
         [AllowAnonymous]

@@ -25,7 +25,7 @@ namespace teamseven.PhyGen.API.Controllers
             _logger = logger;
         }
 
-        [HttpPost("create-payment")]
+        [HttpPost("payment")]
         public async Task<IActionResult> CreatePayment(CreatePaymentRequest request)
         {
             if (request == null || request.UserId <= 0 || request.Amount <= 0)
@@ -64,8 +64,17 @@ namespace teamseven.PhyGen.API.Controllers
 
             // Lưu thông tin vào UserSubscription qua service
             await _serviceProvider.UserSubscriptionService.AddSubscriptionAsync(subscriptionRequest);
+            var user = await _serviceProvider.UserService.GetUserByIdAsync(request.UserId);
+            if (user != null)
+            {
+                if (!user.Balance.HasValue)
+                {
+                    user.Balance = 0m;
+                }
 
-            // Trả về URL cho FE
+                user.Balance += request.Amount;
+                await _serviceProvider.UserService.UpdateUserAsync(user);
+            }
             return Ok(new { CheckoutUrl = result.checkoutUrl });
         }
 
