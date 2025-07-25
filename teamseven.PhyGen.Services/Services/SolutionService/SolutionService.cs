@@ -98,39 +98,39 @@ namespace teamseven.PhyGen.Services.Services.SolutionService
             await _unitOfWork.SolutionRepository.RemoveAsync(solution);
             await _unitOfWork.SaveChangesWithTransactionAsync();
         }
-        public async Task<int> AddSolutionWithVideoAsync(SolutionWithVideoRequest request)
-        {
-            //string videoUrl = null;
+        //public async Task<int> AddSolutionWithVideoAsync(SolutionWithVideoRequest request)
+        //{
+        //    //string videoUrl = null;
 
-            //if (request.VideoFile != null)
-            //{
-            //    // Upload lên Supabase và lấy URL
-            //    videoUrl = await _supabaseService.UploadVideoAsync(request.VideoFile);
-            //}
+        //    //if (request.VideoFile != null)
+        //    //{
+        //    //    // Upload lên Supabase và lấy URL
+        //    //    videoUrl = await _supabaseService.UploadVideoAsync(request.VideoFile);
+        //    //}
 
-            //var solution = new Solution
-            //{
-            //    QuestionId = request.QuestionId ?? -1,
-            //    Content = request.Content,
-            //    CreatedByUserId = 1,
-            //    CreatedAt = DateTime.UtcNow,
-            //    VideoData = videoUrl // lưu URL thay vì byte[]
-            //,
-            //    VideoContentType = request.VideoFile?.ContentType ?? "video/mp4", 
-            //};
+        //    //var solution = new Solution
+        //    //{
+        //    //    QuestionId = request.QuestionId ?? -1,
+        //    //    Content = request.Content,
+        //    //    CreatedByUserId = 1,
+        //    //    CreatedAt = DateTime.UtcNow,
+        //    //    VideoData = videoUrl // lưu URL thay vì byte[]
+        //    //,
+        //    //    VideoContentType = request.VideoFile?.ContentType ?? "video/mp4", 
+        //    //};
 
-            //try
-            //{
-            //    await _unitOfWork.SolutionRepository.AddAsync(solution);
-            //    await _unitOfWork.SaveChangesWithTransactionAsync();
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(ex, "Lỗi khi thêm Solution");
-            //    throw; 
-            //}
+        //    //try
+        //    //{
+        //    //    await _unitOfWork.SolutionRepository.AddAsync(solution);
+        //    //    await _unitOfWork.SaveChangesWithTransactionAsync();
+        //    //}
+        //    //catch (Exception ex)
+        //    //{
+        //    //    _logger.LogError(ex, "Lỗi khi thêm Solution");
+        //    //    throw; 
+        //    //}
 
-        }
+        //}
         public async Task UpdateSolutionVideoAsync(SolutionWithVideoRequest request)
         {
             var solution = await _unitOfWork.SolutionRepository.GetByIdAsync(request.SolutionId);

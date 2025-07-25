@@ -108,28 +108,28 @@ namespace teamseven.PhyGen.Controllers
             }
         }
 
-        [HttpPost("video")]
-        [AllowAnonymous]
-        [Consumes("multipart/form-data")]
-        [SwaggerOperation(Summary = "Create a new solution with video", Description = "Uploads video and creates a solution with video URL.")]
-        [SwaggerResponse(200, "Solution with video created successfully")]
-        [SwaggerResponse(400, "Invalid request")]
-        public async Task<IActionResult> AddSolutionWithVideo([FromForm] SolutionWithVideoRequest request)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        //[HttpPost("video")]
+        //[AllowAnonymous]
+        //[Consumes("multipart/form-data")]
+        //[SwaggerOperation(Summary = "Create a new solution with video", Description = "Uploads video and creates a solution with video URL.")]
+        //[SwaggerResponse(200, "Solution with video created successfully")]
+        //[SwaggerResponse(400, "Invalid request")]
+        //public async Task<IActionResult> AddSolutionWithVideo([FromForm] SolutionWithVideoRequest request)
+        //{
+        //    if (!ModelState.IsValid)
+        //        return BadRequest(ModelState);
 
-            try
-            {
-                await _serviceProvider.SolutionService.AddSolutionWithVideoAsync(request);
-                return Ok(new { message = "Solution with video created successfully." });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to create solution with video.");
-                return BadRequest(new { message = ex.Message });
-            }
-        }
+        //    try
+        //    {
+        //        await _serviceProvider.SolutionService.AddSolutionWithVideoAsync(request);
+        //        return Ok(new { message = "Solution with video created successfully." });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Failed to create solution with video.");
+        //        return BadRequest(new { message = ex.Message });
+        //    }
+        //}
 
         [HttpGet("{id}/video")]
         [AllowAnonymous]
